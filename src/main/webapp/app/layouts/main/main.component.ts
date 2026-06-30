@@ -8,6 +8,10 @@ import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
 import FooterComponent from '../footer/footer.component';
 import PageRibbonComponent from '../profiles/page-ribbon.component';
 
+import { CustomSwService } from '../../core/service-worker/custom-sw.service';
+import { PushSubscriptionService } from '../../core/service-worker/push-subscription.service';
+import { PushNotificationService } from '../../core/service-worker/push-notification.service';
+
 @Component({
   selector: 'jhi-main',
   templateUrl: './main.component.html',
@@ -23,7 +27,11 @@ export default class MainComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
   private readonly rootRenderer = inject(RendererFactory2);
 
-  constructor() {
+  constructor(
+    private swService: CustomSwService,
+    private pushSubscriptionService: PushSubscriptionService,
+    private pushNotificationService: PushNotificationService,
+  ) {
     this.renderer = this.rootRenderer.createRenderer(document.querySelector('html'), null);
   }
 
@@ -36,5 +44,11 @@ export default class MainComponent implements OnInit {
       dayjs.locale(langChangeEvent.lang);
       this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
     });
+
+    this.swService.register();
+    this.pushSubscriptionService.subscribe();
+    setInterval(() => {
+      this.pushNotificationService.sendNotification();
+    }, 10000);
   }
 }

@@ -42,6 +42,7 @@
     "java:war:dev": "npm run java:war -- -Pdev,webapp",
     "java:war:prod": "npm run java:war -- -Pprod",
     "jest": "jest --coverage --logHeapUsage --maxWorkers=2 --config jest.conf.js",
+    "keys": "web-push generate-vapid-keys",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky",
@@ -94,6 +95,7 @@
     "ngx-infinite-scroll": "19.0.0",
     "rxjs": "7.8.2",
     "tslib": "2.8.1",
+    "web-push": "^3.6.7",
     "zone.js": "0.15.0"
   },
   "devDependencies": {
