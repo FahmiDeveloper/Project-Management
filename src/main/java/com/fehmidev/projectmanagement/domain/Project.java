@@ -37,8 +37,8 @@ public class Project implements Serializable {
     @Column(name = "name", length = 150, nullable = false)
     private String name;
 
-    @Lob
-    @Column(name = "description")
+    @Size(max = 500)
+    @Column(name = "description", length = 500)
     private String description;
 
     @NotNull

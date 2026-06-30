@@ -31,8 +31,8 @@ public class Sprint implements Serializable {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @Lob
-    @Column(name = "goal")
+    @Size(max = 500)
+    @Column(name = "goal", length = 500)
     private String goal;
 
     @NotNull

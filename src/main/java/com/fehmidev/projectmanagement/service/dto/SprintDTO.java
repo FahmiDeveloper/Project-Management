@@ -19,7 +19,6 @@ public class SprintDTO implements Serializable {
     @Size(min = 2, max = 100)
     private String name;
 
-    @Lob
     private String goal;
 
     @NotNull

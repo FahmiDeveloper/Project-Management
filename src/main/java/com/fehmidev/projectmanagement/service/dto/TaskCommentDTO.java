@@ -16,7 +16,6 @@ public class TaskCommentDTO implements Serializable {
 
     private Long id;
 
-    @Lob
     private String content;
 
     @NotNull

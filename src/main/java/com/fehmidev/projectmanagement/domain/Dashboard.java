@@ -36,8 +36,8 @@ public class Dashboard implements Serializable {
     @Column(name = "layout", nullable = false)
     private String layout;
 
-    @Lob
-    @Column(name = "config")
+    @Size(max = 500)
+    @Column(name = "config", length = 500)
     private String config;
 
     @NotNull
