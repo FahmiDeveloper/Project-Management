@@ -1,0 +1,37 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "ProjectManagement",
+    "buildTool": "maven",
+    "cacheProvider": "ehcache",
+    "clientFramework": "angular",
+    "entities": [
+      "Department",
+      "Employee",
+      "Client",
+      "Project",
+      "ProjectMember",
+      "Milestone",
+      "Sprint",
+      "Task",
+      "TaskComment",
+      "Attachment",
+      "Checklist",
+      "ChecklistItem",
+      "TimeEntry",
+      "Notification",
+      "ActivityLog",
+      "ReportSnapshot",
+      "Dashboard"
+    ],
+    "jhipsterVersion": "8.11.0",
+    "jwtSecretKey": "ZGYwYWRhOTE5ZjA2NmVhNmEwZjIyNzZhMGM5ZGRhZGQ3ZjQyMDJkOTU1YmQ5YjU0OGRlNjYwZTVlMjA3Mzg0MjhjNDA5MjA5MTA3ZjgzNjhlYTBiZmM4NjZjMWY0NWQ0NDcwNWE4YTdkOWI5ZGNjM2Q5NTRlZDUxZmI3YmZmYTk=",
+    "languages": ["en"],
+    "lastLiquibaseTimestamp": 1782841912000,
+    "nativeLanguage": "en",
+    "packageName": "com.fehmidev.projectmanagement",
+    "prodDatabaseType": "postgresql",
+    "testFrameworks": []
+  }
+}

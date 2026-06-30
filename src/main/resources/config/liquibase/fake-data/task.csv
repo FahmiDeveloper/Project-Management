@@ -1,0 +1,11 @@
+id;title;description;priority;status;story_points;estimated_hours;spent_hours;start_date;due_date;completion_percentage
+1;welcome and;../fake-data/blob/hipster.txt;CRITICAL;IN_REVIEW;85;566.03;6106.95;2026-06-30;2026-06-30;81
+2;while blindly rationalize;../fake-data/blob/hipster.txt;MEDIUM;DONE;97;24374.77;3509.62;2026-06-30;2026-06-30;18
+3;fortunately leading;../fake-data/blob/hipster.txt;LOW;TESTING;35;22050.26;25288.13;2026-06-29;2026-06-30;50
+4;e-mail disloyal;../fake-data/blob/hipster.txt;LOW;TODO;23;5376.35;20981.9;2026-06-30;2026-06-30;2
+5;nor who fully;../fake-data/blob/hipster.txt;MEDIUM;DONE;15;14883.2;3831.47;2026-06-30;2026-06-30;47
+6;license;../fake-data/blob/hipster.txt;HIGH;DONE;72;5896.9;31632.23;2026-06-30;2026-06-30;87
+7;pleasant disclosure provided;../fake-data/blob/hipster.txt;LOW;IN_PROGRESS;94;27302.02;28009.23;2026-06-29;2026-06-30;97
+8;cardboard whenever anxiously;../fake-data/blob/hipster.txt;LOW;TESTING;63;23798.88;20523.44;2026-06-30;2026-06-29;89
+9;broken so genuine;../fake-data/blob/hipster.txt;MEDIUM;BLOCKED;31;1872.17;9932.26;2026-06-29;2026-06-30;29
+10;pro tenderly;../fake-data/blob/hipster.txt;HIGH;TESTING;68;12610.09;10119.14;2026-06-30;2026-06-30;45

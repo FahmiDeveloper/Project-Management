@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (attachment(); as attachmentRef) {
+      <div>
+        <h2 data-cy="attachmentDetailsHeading"><span jhiTranslate="projectManagementApp.attachment.detail.title">Attachment</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ attachmentRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.attachment.fileName">File Name</span></dt>
+          <dd>
+            <span>{{ attachmentRef.fileName }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.attachment.fileUrl">File Url</span></dt>
+          <dd>
+            <span>{{ attachmentRef.fileUrl }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.attachment.fileType">File Type</span></dt>
+          <dd>
+            <span>{{ attachmentRef.fileType }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.attachment.fileSize">File Size</span></dt>
+          <dd>
+            <span>{{ attachmentRef.fileSize }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.attachment.uploadedDate">Uploaded Date</span></dt>
+          <dd>
+            <span>{{ attachmentRef.uploadedDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.attachment.task">Task</span></dt>
+          <dd>
+            @if (attachment()!.task) {
+              <div>
+                <a [routerLink]="['/task', attachment()!.task?.id, 'view']">{{ attachmentRef.task?.title }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.attachment.employee">Employee</span></dt>
+          <dd>
+            @if (attachment()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', attachment()!.employee?.id, 'view']">{{ attachmentRef.employee?.firstName }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/attachment', attachmentRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

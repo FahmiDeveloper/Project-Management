@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (reportSnapshot(); as reportSnapshotRef) {
+      <div>
+        <h2 data-cy="reportSnapshotDetailsHeading">
+          <span jhiTranslate="projectManagementApp.reportSnapshot.detail.title">Report Snapshot</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ reportSnapshotRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.reportSnapshot.name">Name</span></dt>
+          <dd>
+            <span>{{ reportSnapshotRef.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.reportSnapshot.type">Type</span></dt>
+          <dd>
+            <span>{{ reportSnapshotRef.type }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.reportSnapshot.generatedDate">Generated Date</span></dt>
+          <dd>
+            <span>{{ reportSnapshotRef.generatedDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.reportSnapshot.data">Data</span></dt>
+          <dd>
+            <span>{{ reportSnapshotRef.data }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.reportSnapshot.project">Project</span></dt>
+          <dd>
+            @if (reportSnapshot()!.project) {
+              <div>
+                <a [routerLink]="['/project', reportSnapshot()!.project?.id, 'view']">{{ reportSnapshotRef.project?.name }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/report-snapshot', reportSnapshotRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,27 @@
+{
+  "projectManagementApp": {
+    "checklistItem": {
+      "home": {
+        "title": "Checklist Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Checklist Item",
+        "createOrEditLabel": "Create or edit a Checklist Item",
+        "notFound": "No Checklist Items found"
+      },
+      "created": "A new Checklist Item is created with identifier {{ param }}",
+      "updated": "A Checklist Item is updated with identifier {{ param }}",
+      "deleted": "A Checklist Item is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Checklist Item {{ id }}?"
+      },
+      "detail": {
+        "title": "Checklist Item"
+      },
+      "id": "ID",
+      "content": "Content",
+      "isDone": "Is Done",
+      "position": "Position",
+      "checklist": "Checklist"
+    }
+  }
+}

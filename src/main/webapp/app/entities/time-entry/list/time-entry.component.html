@@ -1,0 +1,161 @@
+<div>
+  <h2 id="page-heading" data-cy="TimeEntryHeading">
+    <span jhiTranslate="projectManagementApp.timeEntry.home.title">Time Entries</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="projectManagementApp.timeEntry.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-time-entry"
+        [routerLink]="['/time-entry/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="projectManagementApp.timeEntry.home.createLabel">Create a new Time Entry</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (timeEntries().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="projectManagementApp.timeEntry.home.notFound">No Time Entries found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.timeEntry.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="startTime">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.timeEntry.startTime">Start Time</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="endTime">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.timeEntry.endTime">End Time</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="hours">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.timeEntry.hours">Hours</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="entryDate">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.timeEntry.entryDate">Entry Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="task.title">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.timeEntry.task">Task</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="employee.firstName">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.timeEntry.employee">Employee</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (timeEntry of timeEntries(); track trackId(timeEntry)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/time-entry', timeEntry.id, 'view']">{{ timeEntry.id }}</a>
+              </td>
+              <td>{{ timeEntry.description }}</td>
+              <td>{{ timeEntry.startTime | formatMediumDatetime }}</td>
+              <td>{{ timeEntry.endTime | formatMediumDatetime }}</td>
+              <td>{{ timeEntry.hours }}</td>
+              <td>{{ timeEntry.entryDate | formatMediumDate }}</td>
+              <td>
+                @if (timeEntry.task) {
+                  <div>
+                    <a [routerLink]="['/task', timeEntry.task.id, 'view']">{{ timeEntry.task.title }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (timeEntry.employee) {
+                  <div>
+                    <a [routerLink]="['/employee', timeEntry.employee.id, 'view']">{{ timeEntry.employee.firstName }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/time-entry', timeEntry.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/time-entry', timeEntry.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(timeEntry)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (timeEntries().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

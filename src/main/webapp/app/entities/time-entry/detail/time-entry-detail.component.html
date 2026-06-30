@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (timeEntry(); as timeEntryRef) {
+      <div>
+        <h2 data-cy="timeEntryDetailsHeading"><span jhiTranslate="projectManagementApp.timeEntry.detail.title">Time Entry</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.timeEntry.description">Description</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.timeEntry.startTime">Start Time</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.startTime | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.timeEntry.endTime">End Time</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.endTime | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.timeEntry.hours">Hours</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.hours }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.timeEntry.entryDate">Entry Date</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.entryDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.timeEntry.task">Task</span></dt>
+          <dd>
+            @if (timeEntry()!.task) {
+              <div>
+                <a [routerLink]="['/task', timeEntry()!.task?.id, 'view']">{{ timeEntryRef.task?.title }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.timeEntry.employee">Employee</span></dt>
+          <dd>
+            @if (timeEntry()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', timeEntry()!.employee?.id, 'view']">{{ timeEntryRef.employee?.firstName }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/time-entry', timeEntryRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

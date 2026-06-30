@@ -1,0 +1,11 @@
+id;title;description;start_date;due_date;status
+1;phooey diagram leading;../fake-data/blob/hipster.txt;2026-06-29;2026-06-29;PLANNED
+2;scarily waver;../fake-data/blob/hipster.txt;2026-06-30;2026-06-30;COMPLETED
+3;thick political;../fake-data/blob/hipster.txt;2026-06-30;2026-06-29;CANCELLED
+4;ugh afford;../fake-data/blob/hipster.txt;2026-06-29;2026-06-30;COMPLETED
+5;abseil because rapid;../fake-data/blob/hipster.txt;2026-06-30;2026-06-30;IN_PROGRESS
+6;whale;../fake-data/blob/hipster.txt;2026-06-29;2026-06-29;CANCELLED
+7;huzzah;../fake-data/blob/hipster.txt;2026-06-30;2026-06-30;PLANNED
+8;gee;../fake-data/blob/hipster.txt;2026-06-29;2026-06-30;IN_PROGRESS
+9;quit;../fake-data/blob/hipster.txt;2026-06-30;2026-06-30;PLANNED
+10;gigantic creaking bathhouse;../fake-data/blob/hipster.txt;2026-06-30;2026-06-30;COMPLETED

@@ -1,0 +1,130 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-project-member-heading"
+        data-cy="ProjectMemberCreateUpdateHeading"
+        jhiTranslate="projectManagementApp.projectMember.home.createOrEditLabel"
+      >
+        Create or edit a Project Member
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.projectMember.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let roleRef = editForm.get('role')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_role" jhiTranslate="projectManagementApp.projectMember.role">Role</label>
+          <select class="form-control" name="role" formControlName="role" id="field_role" data-cy="role">
+            <option [ngValue]="null">{{ 'projectManagementApp.MemberRole.null' | translate }}</option>
+            @for (memberRole of memberRoleValues; track $index) {
+              <option [value]="memberRole">{{ 'projectManagementApp.MemberRole.' + memberRole | translate }}</option>
+            }
+          </select>
+          @if (roleRef.invalid && (roleRef.dirty || roleRef.touched)) {
+            <div>
+              @if (editForm.get('role')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let joinedDateRef = editForm.get('joinedDate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_joinedDate" jhiTranslate="projectManagementApp.projectMember.joinedDate">Joined Date</label>
+          <div class="input-group">
+            <input
+              id="field_joinedDate"
+              data-cy="joinedDate"
+              type="text"
+              class="form-control"
+              name="joinedDate"
+              ngbDatepicker
+              #joinedDateDp="ngbDatepicker"
+              formControlName="joinedDate"
+            />
+            <button type="button" class="btn btn-secondary" (click)="joinedDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+          </div>
+          @if (joinedDateRef.invalid && (joinedDateRef.dirty || joinedDateRef.touched)) {
+            <div>
+              @if (editForm.get('joinedDate')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let activeRef = editForm.get('active')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_active" jhiTranslate="projectManagementApp.projectMember.active">Active</label>
+          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
+          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
+            <div>
+              @if (editForm.get('active')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_project" jhiTranslate="projectManagementApp.projectMember.project">Project</label>
+          <select
+            class="form-control"
+            id="field_project"
+            data-cy="project"
+            name="project"
+            formControlName="project"
+            [compareWith]="compareProject"
+          >
+            <option [ngValue]="null"></option>
+            @for (projectOption of projectsSharedCollection; track $index) {
+              <option [ngValue]="projectOption">{{ projectOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_employee" jhiTranslate="projectManagementApp.projectMember.employee">Employee</label>
+          <select
+            class="form-control"
+            id="field_employee"
+            data-cy="employee"
+            name="employee"
+            formControlName="employee"
+            [compareWith]="compareEmployee"
+          >
+            <option [ngValue]="null"></option>
+            @for (employeeOption of employeesSharedCollection; track $index) {
+              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

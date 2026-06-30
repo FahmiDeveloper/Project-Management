@@ -1,0 +1,52 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (checklistItem(); as checklistItemRef) {
+      <div>
+        <h2 data-cy="checklistItemDetailsHeading">
+          <span jhiTranslate="projectManagementApp.checklistItem.detail.title">Checklist Item</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ checklistItemRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.checklistItem.content">Content</span></dt>
+          <dd>
+            <span>{{ checklistItemRef.content }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.checklistItem.isDone">Is Done</span></dt>
+          <dd>
+            <span>{{ checklistItemRef.isDone }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.checklistItem.position">Position</span></dt>
+          <dd>
+            <span>{{ checklistItemRef.position }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.checklistItem.checklist">Checklist</span></dt>
+          <dd>
+            @if (checklistItem()!.checklist) {
+              <div>
+                <a [routerLink]="['/checklist', checklistItem()!.checklist?.id, 'view']">{{ checklistItemRef.checklist?.title }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/checklist-item', checklistItemRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

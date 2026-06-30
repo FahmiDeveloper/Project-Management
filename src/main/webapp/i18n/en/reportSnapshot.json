@@ -1,0 +1,28 @@
+{
+  "projectManagementApp": {
+    "reportSnapshot": {
+      "home": {
+        "title": "Report Snapshots",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Report Snapshot",
+        "createOrEditLabel": "Create or edit a Report Snapshot",
+        "notFound": "No Report Snapshots found"
+      },
+      "created": "A new Report Snapshot is created with identifier {{ param }}",
+      "updated": "A Report Snapshot is updated with identifier {{ param }}",
+      "deleted": "A Report Snapshot is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Report Snapshot {{ id }}?"
+      },
+      "detail": {
+        "title": "Report Snapshot"
+      },
+      "id": "ID",
+      "name": "Name",
+      "type": "Type",
+      "generatedDate": "Generated Date",
+      "data": "Data",
+      "project": "Project"
+    }
+  }
+}

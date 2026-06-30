@@ -1,0 +1,28 @@
+{
+  "projectManagementApp": {
+    "projectMember": {
+      "home": {
+        "title": "Project Members",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Project Member",
+        "createOrEditLabel": "Create or edit a Project Member",
+        "notFound": "No Project Members found"
+      },
+      "created": "A new Project Member is created with identifier {{ param }}",
+      "updated": "A Project Member is updated with identifier {{ param }}",
+      "deleted": "A Project Member is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Project Member {{ id }}?"
+      },
+      "detail": {
+        "title": "Project Member"
+      },
+      "id": "ID",
+      "role": "Role",
+      "joinedDate": "Joined Date",
+      "active": "Active",
+      "project": "Project",
+      "employee": "Employee"
+    }
+  }
+}

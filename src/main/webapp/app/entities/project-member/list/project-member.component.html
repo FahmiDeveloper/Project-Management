@@ -1,0 +1,157 @@
+<div>
+  <h2 id="page-heading" data-cy="ProjectMemberHeading">
+    <span jhiTranslate="projectManagementApp.projectMember.home.title">Project Members</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="projectManagementApp.projectMember.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-project-member"
+        [routerLink]="['/project-member/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="projectManagementApp.projectMember.home.createLabel">Create a new Project Member</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (projectMembers().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="projectManagementApp.projectMember.home.notFound">No Project Members found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="role">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.projectMember.role">Role</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="joinedDate">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.projectMember.joinedDate">Joined Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="active">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.projectMember.active">Active</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="project.id">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.projectMember.project">Project</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="employee.id">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.projectMember.employee">Employee</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (projectMember of projectMembers(); track trackId(projectMember)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/project-member', projectMember.id, 'view']">{{ projectMember.id }}</a>
+              </td>
+              <td [jhiTranslate]="'projectManagementApp.MemberRole.' + (projectMember.role ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    PROJECT_MANAGER: 'PROJECT_MANAGER',
+                    TEAM_LEAD: 'TEAM_LEAD',
+                    DEVELOPER: 'DEVELOPER',
+                    TESTER: 'TESTER',
+                    DESIGNER: 'DESIGNER',
+                    BUSINESS_ANALYST: 'BUSINESS_ANALYST',
+                  }[projectMember.role ?? 'null']
+                }}
+              </td>
+              <td>{{ projectMember.joinedDate | formatMediumDate }}</td>
+              <td>{{ projectMember.active }}</td>
+              <td>
+                @if (projectMember.project) {
+                  <div>
+                    <a [routerLink]="['/project', projectMember.project.id, 'view']">{{ projectMember.project.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (projectMember.employee) {
+                  <div>
+                    <a [routerLink]="['/employee', projectMember.employee.id, 'view']">{{ projectMember.employee.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/project-member', projectMember.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/project-member', projectMember.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(projectMember)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (projectMembers().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

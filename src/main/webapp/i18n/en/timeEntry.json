@@ -1,0 +1,30 @@
+{
+  "projectManagementApp": {
+    "timeEntry": {
+      "home": {
+        "title": "Time Entries",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Time Entry",
+        "createOrEditLabel": "Create or edit a Time Entry",
+        "notFound": "No Time Entries found"
+      },
+      "created": "A new Time Entry is created with identifier {{ param }}",
+      "updated": "A Time Entry is updated with identifier {{ param }}",
+      "deleted": "A Time Entry is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Time Entry {{ id }}?"
+      },
+      "detail": {
+        "title": "Time Entry"
+      },
+      "id": "ID",
+      "description": "Description",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "hours": "Hours",
+      "entryDate": "Entry Date",
+      "task": "Task",
+      "employee": "Employee"
+    }
+  }
+}

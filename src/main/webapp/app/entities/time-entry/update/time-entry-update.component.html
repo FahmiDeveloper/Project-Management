@@ -1,0 +1,178 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-time-entry-heading"
+        data-cy="TimeEntryCreateUpdateHeading"
+        jhiTranslate="projectManagementApp.timeEntry.home.createOrEditLabel"
+      >
+        Create or edit a Time Entry
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.timeEntry.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_description" jhiTranslate="projectManagementApp.timeEntry.description">Description</label>
+          <input
+            type="text"
+            class="form-control"
+            name="description"
+            id="field_description"
+            data-cy="description"
+            formControlName="description"
+          />
+        </div>
+
+        @let startTimeRef = editForm.get('startTime')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_startTime" jhiTranslate="projectManagementApp.timeEntry.startTime">Start Time</label>
+          <div class="d-flex">
+            <input
+              id="field_startTime"
+              data-cy="startTime"
+              type="datetime-local"
+              class="form-control"
+              name="startTime"
+              formControlName="startTime"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (startTimeRef.invalid && (startTimeRef.dirty || startTimeRef.touched)) {
+            <div>
+              @if (editForm.get('startTime')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('startTime')?.errors?.datetimelocal"
+                jhiTranslate="entity.validation.datetimelocal"
+                >This field should be a date and time.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let endTimeRef = editForm.get('endTime')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_endTime" jhiTranslate="projectManagementApp.timeEntry.endTime">End Time</label>
+          <div class="d-flex">
+            <input
+              id="field_endTime"
+              data-cy="endTime"
+              type="datetime-local"
+              class="form-control"
+              name="endTime"
+              formControlName="endTime"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (endTimeRef.invalid && (endTimeRef.dirty || endTimeRef.touched)) {
+            <div>
+              @if (editForm.get('endTime')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('endTime')?.errors?.datetimelocal"
+                jhiTranslate="entity.validation.datetimelocal"
+                >This field should be a date and time.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let hoursRef = editForm.get('hours')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_hours" jhiTranslate="projectManagementApp.timeEntry.hours">Hours</label>
+          <input type="number" class="form-control" name="hours" id="field_hours" data-cy="hours" formControlName="hours" />
+          @if (hoursRef.invalid && (hoursRef.dirty || hoursRef.touched)) {
+            <div>
+              @if (editForm.get('hours')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('hours')?.errors?.number" jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let entryDateRef = editForm.get('entryDate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_entryDate" jhiTranslate="projectManagementApp.timeEntry.entryDate">Entry Date</label>
+          <div class="input-group">
+            <input
+              id="field_entryDate"
+              data-cy="entryDate"
+              type="text"
+              class="form-control"
+              name="entryDate"
+              ngbDatepicker
+              #entryDateDp="ngbDatepicker"
+              formControlName="entryDate"
+            />
+            <button type="button" class="btn btn-secondary" (click)="entryDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+          </div>
+          @if (entryDateRef.invalid && (entryDateRef.dirty || entryDateRef.touched)) {
+            <div>
+              @if (editForm.get('entryDate')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_task" jhiTranslate="projectManagementApp.timeEntry.task">Task</label>
+          <select class="form-control" id="field_task" data-cy="task" name="task" formControlName="task" [compareWith]="compareTask">
+            <option [ngValue]="null"></option>
+            @for (taskOption of tasksSharedCollection; track $index) {
+              <option [ngValue]="taskOption">{{ taskOption.title }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_employee" jhiTranslate="projectManagementApp.timeEntry.employee">Employee</label>
+          <select
+            class="form-control"
+            id="field_employee"
+            data-cy="employee"
+            name="employee"
+            formControlName="employee"
+            [compareWith]="compareEmployee"
+          >
+            <option [ngValue]="null"></option>
+            @for (employeeOption of employeesSharedCollection; track $index) {
+              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

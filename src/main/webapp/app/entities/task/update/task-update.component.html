@@ -1,0 +1,337 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-task-heading" data-cy="TaskCreateUpdateHeading" jhiTranslate="projectManagementApp.task.home.createOrEditLabel">
+        Create or edit a Task
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.task.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let titleRef = editForm.get('title')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_title" jhiTranslate="projectManagementApp.task.title">Title</label>
+          <input type="text" class="form-control" name="title" id="field_title" data-cy="title" formControlName="title" />
+          @if (titleRef.invalid && (titleRef.dirty || titleRef.touched)) {
+            <div>
+              @if (editForm.get('title')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('title')?.errors?.minlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
+                  >This field is required to be at least 2 characters.</small
+                >
+              }
+              @if (editForm.get('title')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >This field cannot be longer than 200 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_description" jhiTranslate="projectManagementApp.task.description">Description</label>
+          <textarea
+            class="form-control"
+            name="description"
+            id="field_description"
+            data-cy="description"
+            formControlName="description"
+          ></textarea>
+        </div>
+
+        @let priorityRef = editForm.get('priority')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_priority" jhiTranslate="projectManagementApp.task.priority">Priority</label>
+          <select class="form-control" name="priority" formControlName="priority" id="field_priority" data-cy="priority">
+            <option [ngValue]="null">{{ 'projectManagementApp.TaskPriority.null' | translate }}</option>
+            @for (taskPriority of taskPriorityValues; track $index) {
+              <option [value]="taskPriority">{{ 'projectManagementApp.TaskPriority.' + taskPriority | translate }}</option>
+            }
+          </select>
+          @if (priorityRef.invalid && (priorityRef.dirty || priorityRef.touched)) {
+            <div>
+              @if (editForm.get('priority')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let statusRef = editForm.get('status')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_status" jhiTranslate="projectManagementApp.task.status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'projectManagementApp.TaskStatus.null' | translate }}</option>
+            @for (taskStatus of taskStatusValues; track $index) {
+              <option [value]="taskStatus">{{ 'projectManagementApp.TaskStatus.' + taskStatus | translate }}</option>
+            }
+          </select>
+          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
+            <div>
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let storyPointsRef = editForm.get('storyPoints')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_storyPoints" jhiTranslate="projectManagementApp.task.storyPoints">Story Points</label>
+          <input
+            type="number"
+            class="form-control"
+            name="storyPoints"
+            id="field_storyPoints"
+            data-cy="storyPoints"
+            formControlName="storyPoints"
+          />
+          @if (storyPointsRef.invalid && (storyPointsRef.dirty || storyPointsRef.touched)) {
+            <div>
+              @if (editForm.get('storyPoints')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
+                  >This field should be at least 1.</small
+                >
+              }
+              @if (editForm.get('storyPoints')?.errors?.max) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
+                  >This field cannot be more than 100.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('storyPoints')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let estimatedHoursRef = editForm.get('estimatedHours')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_estimatedHours" jhiTranslate="projectManagementApp.task.estimatedHours"
+            >Estimated Hours</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="estimatedHours"
+            id="field_estimatedHours"
+            data-cy="estimatedHours"
+            formControlName="estimatedHours"
+          />
+          @if (estimatedHoursRef.invalid && (estimatedHoursRef.dirty || estimatedHoursRef.touched)) {
+            <div>
+              @if (editForm.get('estimatedHours')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >This field should be at least 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('estimatedHours')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let spentHoursRef = editForm.get('spentHours')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_spentHours" jhiTranslate="projectManagementApp.task.spentHours">Spent Hours</label>
+          <input
+            type="number"
+            class="form-control"
+            name="spentHours"
+            id="field_spentHours"
+            data-cy="spentHours"
+            formControlName="spentHours"
+          />
+          @if (spentHoursRef.invalid && (spentHoursRef.dirty || spentHoursRef.touched)) {
+            <div>
+              @if (editForm.get('spentHours')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >This field should be at least 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('spentHours')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_startDate" jhiTranslate="projectManagementApp.task.startDate">Start Date</label>
+          <div class="input-group">
+            <input
+              id="field_startDate"
+              data-cy="startDate"
+              type="text"
+              class="form-control"
+              name="startDate"
+              ngbDatepicker
+              #startDateDp="ngbDatepicker"
+              formControlName="startDate"
+            />
+            <button type="button" class="btn btn-secondary" (click)="startDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dueDate" jhiTranslate="projectManagementApp.task.dueDate">Due Date</label>
+          <div class="input-group">
+            <input
+              id="field_dueDate"
+              data-cy="dueDate"
+              type="text"
+              class="form-control"
+              name="dueDate"
+              ngbDatepicker
+              #dueDateDp="ngbDatepicker"
+              formControlName="dueDate"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dueDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+          </div>
+        </div>
+
+        @let completionPercentageRef = editForm.get('completionPercentage')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_completionPercentage" jhiTranslate="projectManagementApp.task.completionPercentage"
+            >Completion Percentage</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="completionPercentage"
+            id="field_completionPercentage"
+            data-cy="completionPercentage"
+            formControlName="completionPercentage"
+          />
+          @if (completionPercentageRef.invalid && (completionPercentageRef.dirty || completionPercentageRef.touched)) {
+            <div>
+              @if (editForm.get('completionPercentage')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('completionPercentage')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >This field should be at least 0.</small
+                >
+              }
+              @if (editForm.get('completionPercentage')?.errors?.max) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
+                  >This field cannot be more than 100.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('completionPercentage')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_sprint" jhiTranslate="projectManagementApp.task.sprint">Sprint</label>
+          <select
+            class="form-control"
+            id="field_sprint"
+            data-cy="sprint"
+            name="sprint"
+            formControlName="sprint"
+            [compareWith]="compareSprint"
+          >
+            <option [ngValue]="null"></option>
+            @for (sprintOption of sprintsSharedCollection; track $index) {
+              <option [ngValue]="sprintOption">{{ sprintOption.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_milestone" jhiTranslate="projectManagementApp.task.milestone">Milestone</label>
+          <select
+            class="form-control"
+            id="field_milestone"
+            data-cy="milestone"
+            name="milestone"
+            formControlName="milestone"
+            [compareWith]="compareMilestone"
+          >
+            <option [ngValue]="null"></option>
+            @for (milestoneOption of milestonesSharedCollection; track $index) {
+              <option [ngValue]="milestoneOption">{{ milestoneOption.title }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_assignedTo" jhiTranslate="projectManagementApp.task.assignedTo">Assigned To</label>
+          <select
+            class="form-control"
+            id="field_assignedTo"
+            data-cy="assignedTo"
+            name="assignedTo"
+            formControlName="assignedTo"
+            [compareWith]="compareEmployee"
+          >
+            <option [ngValue]="null"></option>
+            @for (employeeOption of employeesSharedCollection; track $index) {
+              <option [ngValue]="employeeOption">{{ employeeOption.employeeNumber }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_createdBy" jhiTranslate="projectManagementApp.task.createdBy">Created By</label>
+          <select
+            class="form-control"
+            id="field_createdBy"
+            data-cy="createdBy"
+            name="createdBy"
+            formControlName="createdBy"
+            [compareWith]="compareEmployee"
+          >
+            <option [ngValue]="null"></option>
+            @for (employeeOption of employeesSharedCollection; track $index) {
+              <option [ngValue]="employeeOption">{{ employeeOption.employeeNumber }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

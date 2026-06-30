@@ -1,0 +1,203 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-employee-heading"
+        data-cy="EmployeeCreateUpdateHeading"
+        jhiTranslate="projectManagementApp.employee.home.createOrEditLabel"
+      >
+        Create or edit a Employee
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.employee.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let employeeNumberRef = editForm.get('employeeNumber')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_employeeNumber" jhiTranslate="projectManagementApp.employee.employeeNumber"
+            >Employee Number</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="employeeNumber"
+            id="field_employeeNumber"
+            data-cy="employeeNumber"
+            formControlName="employeeNumber"
+          />
+          @if (employeeNumberRef.invalid && (employeeNumberRef.dirty || employeeNumberRef.touched)) {
+            <div>
+              @if (editForm.get('employeeNumber')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('employeeNumber')?.errors?.minlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '3' }"
+                  >This field is required to be at least 3 characters.</small
+                >
+              }
+              @if (editForm.get('employeeNumber')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                  >This field cannot be longer than 20 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let firstNameRef = editForm.get('firstName')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_firstName" jhiTranslate="projectManagementApp.employee.firstName">First Name</label>
+          <input type="text" class="form-control" name="firstName" id="field_firstName" data-cy="firstName" formControlName="firstName" />
+          @if (firstNameRef.invalid && (firstNameRef.dirty || firstNameRef.touched)) {
+            <div>
+              @if (editForm.get('firstName')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('firstName')?.errors?.minlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
+                  >This field is required to be at least 2 characters.</small
+                >
+              }
+              @if (editForm.get('firstName')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >This field cannot be longer than 50 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let lastNameRef = editForm.get('lastName')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_lastName" jhiTranslate="projectManagementApp.employee.lastName">Last Name</label>
+          <input type="text" class="form-control" name="lastName" id="field_lastName" data-cy="lastName" formControlName="lastName" />
+          @if (lastNameRef.invalid && (lastNameRef.dirty || lastNameRef.touched)) {
+            <div>
+              @if (editForm.get('lastName')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('lastName')?.errors?.minlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
+                  >This field is required to be at least 2 characters.</small
+                >
+              }
+              @if (editForm.get('lastName')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >This field cannot be longer than 50 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let phoneRef = editForm.get('phone')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_phone" jhiTranslate="projectManagementApp.employee.phone">Phone</label>
+          <input type="text" class="form-control" name="phone" id="field_phone" data-cy="phone" formControlName="phone" />
+          @if (phoneRef.invalid && (phoneRef.dirty || phoneRef.touched)) {
+            <div>
+              @if (editForm.get('phone')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                  >This field cannot be longer than 20 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let jobTitleRef = editForm.get('jobTitle')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_jobTitle" jhiTranslate="projectManagementApp.employee.jobTitle">Job Title</label>
+          <input type="text" class="form-control" name="jobTitle" id="field_jobTitle" data-cy="jobTitle" formControlName="jobTitle" />
+          @if (jobTitleRef.invalid && (jobTitleRef.dirty || jobTitleRef.touched)) {
+            <div>
+              @if (editForm.get('jobTitle')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('jobTitle')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >This field cannot be longer than 100 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let hireDateRef = editForm.get('hireDate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_hireDate" jhiTranslate="projectManagementApp.employee.hireDate">Hire Date</label>
+          <div class="input-group">
+            <input
+              id="field_hireDate"
+              data-cy="hireDate"
+              type="text"
+              class="form-control"
+              name="hireDate"
+              ngbDatepicker
+              #hireDateDp="ngbDatepicker"
+              formControlName="hireDate"
+            />
+            <button type="button" class="btn btn-secondary" (click)="hireDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+          </div>
+          @if (hireDateRef.invalid && (hireDateRef.dirty || hireDateRef.touched)) {
+            <div>
+              @if (editForm.get('hireDate')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_user" jhiTranslate="projectManagementApp.employee.user">User</label>
+          <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
+            <option [ngValue]="null"></option>
+            @for (userOption of usersSharedCollection; track $index) {
+              <option [ngValue]="userOption">{{ userOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_department" jhiTranslate="projectManagementApp.employee.department">Department</label>
+          <select
+            class="form-control"
+            id="field_department"
+            data-cy="department"
+            name="department"
+            formControlName="department"
+            [compareWith]="compareDepartment"
+          >
+            <option [ngValue]="null"></option>
+            @for (departmentOption of departmentsSharedCollection; track $index) {
+              <option [ngValue]="departmentOption">{{ departmentOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

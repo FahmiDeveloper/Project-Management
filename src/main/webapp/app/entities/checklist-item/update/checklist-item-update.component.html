@@ -1,0 +1,88 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-checklist-item-heading"
+        data-cy="ChecklistItemCreateUpdateHeading"
+        jhiTranslate="projectManagementApp.checklistItem.home.createOrEditLabel"
+      >
+        Create or edit a Checklist Item
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.checklistItem.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let contentRef = editForm.get('content')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_content" jhiTranslate="projectManagementApp.checklistItem.content">Content</label>
+          <input type="text" class="form-control" name="content" id="field_content" data-cy="content" formControlName="content" />
+          @if (contentRef.invalid && (contentRef.dirty || contentRef.touched)) {
+            <div>
+              @if (editForm.get('content')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let isDoneRef = editForm.get('isDone')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_isDone" jhiTranslate="projectManagementApp.checklistItem.isDone">Is Done</label>
+          <input type="checkbox" class="form-check" name="isDone" id="field_isDone" data-cy="isDone" formControlName="isDone" />
+          @if (isDoneRef.invalid && (isDoneRef.dirty || isDoneRef.touched)) {
+            <div>
+              @if (editForm.get('isDone')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_position" jhiTranslate="projectManagementApp.checklistItem.position">Position</label>
+          <input type="number" class="form-control" name="position" id="field_position" data-cy="position" formControlName="position" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_checklist" jhiTranslate="projectManagementApp.checklistItem.checklist">Checklist</label>
+          <select
+            class="form-control"
+            id="field_checklist"
+            data-cy="checklist"
+            name="checklist"
+            formControlName="checklist"
+            [compareWith]="compareChecklist"
+          >
+            <option [ngValue]="null"></option>
+            @for (checklistOption of checklistsSharedCollection; track $index) {
+              <option [ngValue]="checklistOption">{{ checklistOption.title }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

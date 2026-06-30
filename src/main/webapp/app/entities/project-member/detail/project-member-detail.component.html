@@ -1,0 +1,70 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (projectMember(); as projectMemberRef) {
+      <div>
+        <h2 data-cy="projectMemberDetailsHeading">
+          <span jhiTranslate="projectManagementApp.projectMember.detail.title">Project Member</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ projectMemberRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.projectMember.role">Role</span></dt>
+          <dd>
+            <span [jhiTranslate]="'projectManagementApp.MemberRole.' + (projectMemberRef.role ?? 'null')">{{
+              {
+                null: '',
+                PROJECT_MANAGER: 'PROJECT_MANAGER',
+                TEAM_LEAD: 'TEAM_LEAD',
+                DEVELOPER: 'DEVELOPER',
+                TESTER: 'TESTER',
+                DESIGNER: 'DESIGNER',
+                BUSINESS_ANALYST: 'BUSINESS_ANALYST',
+              }[projectMemberRef.role ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.projectMember.joinedDate">Joined Date</span></dt>
+          <dd>
+            <span>{{ projectMemberRef.joinedDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.projectMember.active">Active</span></dt>
+          <dd>
+            <span>{{ projectMemberRef.active }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.projectMember.project">Project</span></dt>
+          <dd>
+            @if (projectMember()!.project) {
+              <div>
+                <a [routerLink]="['/project', projectMember()!.project?.id, 'view']">{{ projectMemberRef.project?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.projectMember.employee">Employee</span></dt>
+          <dd>
+            @if (projectMember()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', projectMember()!.employee?.id, 'view']">{{ projectMemberRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/project-member', projectMemberRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

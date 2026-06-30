@@ -1,0 +1,114 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (task(); as taskRef) {
+      <div>
+        <h2 data-cy="taskDetailsHeading"><span jhiTranslate="projectManagementApp.task.detail.title">Task</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ taskRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.title">Title</span></dt>
+          <dd>
+            <span>{{ taskRef.title }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.description">Description</span></dt>
+          <dd>
+            <span>{{ taskRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.priority">Priority</span></dt>
+          <dd>
+            <span [jhiTranslate]="'projectManagementApp.TaskPriority.' + (taskRef.priority ?? 'null')">{{
+              { null: '', LOW: 'LOW', MEDIUM: 'MEDIUM', HIGH: 'HIGH', CRITICAL: 'CRITICAL' }[taskRef.priority ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.status">Status</span></dt>
+          <dd>
+            <span [jhiTranslate]="'projectManagementApp.TaskStatus.' + (taskRef.status ?? 'null')">{{
+              {
+                null: '',
+                TODO: 'TODO',
+                IN_PROGRESS: 'IN_PROGRESS',
+                IN_REVIEW: 'IN_REVIEW',
+                TESTING: 'TESTING',
+                DONE: 'DONE',
+                BLOCKED: 'BLOCKED',
+              }[taskRef.status ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.storyPoints">Story Points</span></dt>
+          <dd>
+            <span>{{ taskRef.storyPoints }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.estimatedHours">Estimated Hours</span></dt>
+          <dd>
+            <span>{{ taskRef.estimatedHours }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.spentHours">Spent Hours</span></dt>
+          <dd>
+            <span>{{ taskRef.spentHours }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.startDate">Start Date</span></dt>
+          <dd>
+            <span>{{ taskRef.startDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.dueDate">Due Date</span></dt>
+          <dd>
+            <span>{{ taskRef.dueDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.completionPercentage">Completion Percentage</span></dt>
+          <dd>
+            <span>{{ taskRef.completionPercentage }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.sprint">Sprint</span></dt>
+          <dd>
+            @if (task()!.sprint) {
+              <div>
+                <a [routerLink]="['/sprint', task()!.sprint?.id, 'view']">{{ taskRef.sprint?.name }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.milestone">Milestone</span></dt>
+          <dd>
+            @if (task()!.milestone) {
+              <div>
+                <a [routerLink]="['/milestone', task()!.milestone?.id, 'view']">{{ taskRef.milestone?.title }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.assignedTo">Assigned To</span></dt>
+          <dd>
+            @if (task()!.assignedTo) {
+              <div>
+                <a [routerLink]="['/employee', task()!.assignedTo?.id, 'view']">{{ taskRef.assignedTo?.employeeNumber }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.createdBy">Created By</span></dt>
+          <dd>
+            @if (task()!.createdBy) {
+              <div>
+                <a [routerLink]="['/employee', task()!.createdBy?.id, 'view']">{{ taskRef.createdBy?.employeeNumber }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/task', taskRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (activityLog(); as activityLogRef) {
+      <div>
+        <h2 data-cy="activityLogDetailsHeading"><span jhiTranslate="projectManagementApp.activityLog.detail.title">Activity Log</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ activityLogRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.activityLog.action">Action</span></dt>
+          <dd>
+            <span>{{ activityLogRef.action }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.activityLog.entityName">Entity Name</span></dt>
+          <dd>
+            <span>{{ activityLogRef.entityName }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.activityLog.entityId">Entity Id</span></dt>
+          <dd>
+            <span>{{ activityLogRef.entityId }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.activityLog.description">Description</span></dt>
+          <dd>
+            <span>{{ activityLogRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.activityLog.createdDate">Created Date</span></dt>
+          <dd>
+            <span>{{ activityLogRef.createdDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.activityLog.employee">Employee</span></dt>
+          <dd>
+            @if (activityLog()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', activityLog()!.employee?.id, 'view']">{{ activityLogRef.employee?.firstName }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/activity-log', activityLogRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

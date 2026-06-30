@@ -1,0 +1,117 @@
+/**************************************************************************
+ * PROJECT MANAGEMENT SYSTEM
+ * Phase 1
+ * JHipster 8.11.0
+ **************************************************************************/
+
+ application {
+  config {
+    baseName ProjectManagement,
+    applicationType monolith
+    authenticationType jwt
+    packageName com.fehmidev.projectmanagement
+    prodDatabaseType postgresql
+    cacheProvider ehcache
+    buildTool maven
+    clientFramework angular
+    testFrameworks []
+  }
+  entities *
+}
+
+/**************************************************************************
+ * ENUMS
+ **************************************************************************/
+
+enum ProjectStatus {
+  PLANNED,
+  ACTIVE,
+  ON_HOLD,
+  COMPLETED,
+  CANCELLED
+}
+
+enum MemberRole {
+  PROJECT_MANAGER,
+  TEAM_LEAD,
+  DEVELOPER,
+  TESTER,
+  DESIGNER,
+  BUSINESS_ANALYST
+}
+
+/**************************************************************************
+ * ENTITIES
+ **************************************************************************/
+
+entity Department {
+  name String required minlength(2) maxlength(100),
+  description String maxlength(500)
+}
+
+entity Employee {
+  employeeNumber String required unique minlength(3) maxlength(20),
+  firstName String required minlength(2) maxlength(50),
+  lastName String required minlength(2) maxlength(50),
+  phone String maxlength(20),
+  jobTitle String required maxlength(100),
+  hireDate LocalDate required
+}
+
+entity Client {
+  companyName String required minlength(2) maxlength(100),
+  contactName String required minlength(2) maxlength(100),
+  email String required,
+  phone String maxlength(20),
+  address String maxlength(255),
+  city String maxlength(100),
+  country String maxlength(100),
+  website String maxlength(255)
+}
+
+entity Project {
+  code String required unique minlength(2) maxlength(20),
+  name String required minlength(2) maxlength(150),
+  description TextBlob,
+  startDate LocalDate required,
+  endDate LocalDate,
+  budget BigDecimal min(0),
+  progress Integer required min(0) max(100),
+  status ProjectStatus required
+}
+
+entity ProjectMember {
+  role MemberRole required,
+  joinedDate LocalDate required,
+  active Boolean required
+}
+
+/**************************************************************************
+ * RELATIONSHIPS
+ **************************************************************************/
+
+relationship ManyToOne {
+
+  Employee{department} to Department
+
+  Project{client} to Client
+  Project{manager} to Employee
+
+  ProjectMember{project} to Project
+  ProjectMember{employee} to Employee
+}
+
+relationship OneToOne {
+
+  Employee{user} to User with builtInEntity
+}
+
+/**************************************************************************
+ * OPTIONS
+ **************************************************************************/
+
+dto * with mapstruct
+
+service * with serviceClass
+
+paginate * with pagination

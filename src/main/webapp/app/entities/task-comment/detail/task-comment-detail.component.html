@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (taskComment(); as taskCommentRef) {
+      <div>
+        <h2 data-cy="taskCommentDetailsHeading"><span jhiTranslate="projectManagementApp.taskComment.detail.title">Task Comment</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ taskCommentRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.taskComment.content">Content</span></dt>
+          <dd>
+            <span>{{ taskCommentRef.content }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.taskComment.createdDate">Created Date</span></dt>
+          <dd>
+            <span>{{ taskCommentRef.createdDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.taskComment.task">Task</span></dt>
+          <dd>
+            @if (taskComment()!.task) {
+              <div>
+                <a [routerLink]="['/task', taskComment()!.task?.id, 'view']">{{ taskCommentRef.task?.title }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.taskComment.employee">Employee</span></dt>
+          <dd>
+            @if (taskComment()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', taskComment()!.employee?.id, 'view']">{{ taskCommentRef.employee?.firstName }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/task-comment', taskCommentRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

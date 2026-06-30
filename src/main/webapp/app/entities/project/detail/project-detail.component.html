@@ -1,0 +1,82 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (project(); as projectRef) {
+      <div>
+        <h2 data-cy="projectDetailsHeading"><span jhiTranslate="projectManagementApp.project.detail.title">Project</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ projectRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.code">Code</span></dt>
+          <dd>
+            <span>{{ projectRef.code }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.name">Name</span></dt>
+          <dd>
+            <span>{{ projectRef.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.description">Description</span></dt>
+          <dd>
+            <span>{{ projectRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.startDate">Start Date</span></dt>
+          <dd>
+            <span>{{ projectRef.startDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.endDate">End Date</span></dt>
+          <dd>
+            <span>{{ projectRef.endDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.budget">Budget</span></dt>
+          <dd>
+            <span>{{ projectRef.budget }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.progress">Progress</span></dt>
+          <dd>
+            <span>{{ projectRef.progress }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.status">Status</span></dt>
+          <dd>
+            <span [jhiTranslate]="'projectManagementApp.ProjectStatus.' + (projectRef.status ?? 'null')">{{
+              { null: '', PLANNED: 'PLANNED', ACTIVE: 'ACTIVE', ON_HOLD: 'ON_HOLD', COMPLETED: 'COMPLETED', CANCELLED: 'CANCELLED' }[
+                projectRef.status ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.client">Client</span></dt>
+          <dd>
+            @if (project()!.client) {
+              <div>
+                <a [routerLink]="['/client', project()!.client?.id, 'view']">{{ projectRef.client?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.manager">Manager</span></dt>
+          <dd>
+            @if (project()!.manager) {
+              <div>
+                <a [routerLink]="['/employee', project()!.manager?.id, 'view']">{{ projectRef.manager?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/project', projectRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,43 @@
+{
+  "annotations": {
+    "changelogDate": "20260630173952"
+  },
+  "applications": ["ProjectManagement"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "role",
+      "fieldType": "MemberRole",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PROJECT_MANAGER,TEAM_LEAD,DEVELOPER,TESTER,DESIGNER,BUSINESS_ANALYST"
+    },
+    {
+      "fieldName": "joinedDate",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "active",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "ProjectMember",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "project",
+      "relationshipName": "project",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "employee",
+      "relationshipName": "employee",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

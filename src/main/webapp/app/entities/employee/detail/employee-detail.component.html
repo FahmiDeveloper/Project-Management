@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (employee(); as employeeRef) {
+      <div>
+        <h2 data-cy="employeeDetailsHeading"><span jhiTranslate="projectManagementApp.employee.detail.title">Employee</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ employeeRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.employeeNumber">Employee Number</span></dt>
+          <dd>
+            <span>{{ employeeRef.employeeNumber }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.firstName">First Name</span></dt>
+          <dd>
+            <span>{{ employeeRef.firstName }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.lastName">Last Name</span></dt>
+          <dd>
+            <span>{{ employeeRef.lastName }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.phone">Phone</span></dt>
+          <dd>
+            <span>{{ employeeRef.phone }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.jobTitle">Job Title</span></dt>
+          <dd>
+            <span>{{ employeeRef.jobTitle }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.hireDate">Hire Date</span></dt>
+          <dd>
+            <span>{{ employeeRef.hireDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.user">User</span></dt>
+          <dd>
+            <span>{{ employeeRef.user?.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.department">Department</span></dt>
+          <dd>
+            @if (employee()!.department) {
+              <div>
+                <a [routerLink]="['/department', employee()!.department?.id, 'view']">{{ employeeRef.department?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/employee', employeeRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

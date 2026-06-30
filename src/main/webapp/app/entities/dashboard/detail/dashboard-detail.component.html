@@ -1,0 +1,74 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (dashboard(); as dashboardRef) {
+      <div>
+        <h2 data-cy="dashboardDetailsHeading"><span jhiTranslate="projectManagementApp.dashboard.detail.title">Dashboard</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ dashboardRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.name">Name</span></dt>
+          <dd>
+            <span>{{ dashboardRef.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.description">Description</span></dt>
+          <dd>
+            <span>{{ dashboardRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.layout">Layout</span></dt>
+          <dd>
+            <span>{{ dashboardRef.layout }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.config">Config</span></dt>
+          <dd>
+            <span>{{ dashboardRef.config }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.isDefault">Is Default</span></dt>
+          <dd>
+            <span>{{ dashboardRef.isDefault }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.createdDate">Created Date</span></dt>
+          <dd>
+            <span>{{ dashboardRef.createdDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.updatedDate">Updated Date</span></dt>
+          <dd>
+            <span>{{ dashboardRef.updatedDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.employee">Employee</span></dt>
+          <dd>
+            @if (dashboard()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', dashboard()!.employee?.id, 'view']">{{ dashboardRef.employee?.firstName }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.dashboard.project">Project</span></dt>
+          <dd>
+            @if (dashboard()!.project) {
+              <div>
+                <a [routerLink]="['/project', dashboard()!.project?.id, 'view']">{{ dashboardRef.project?.name }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/dashboard', dashboardRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

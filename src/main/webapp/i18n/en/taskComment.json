@@ -1,0 +1,27 @@
+{
+  "projectManagementApp": {
+    "taskComment": {
+      "home": {
+        "title": "Task Comments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Task Comment",
+        "createOrEditLabel": "Create or edit a Task Comment",
+        "notFound": "No Task Comments found"
+      },
+      "created": "A new Task Comment is created with identifier {{ param }}",
+      "updated": "A Task Comment is updated with identifier {{ param }}",
+      "deleted": "A Task Comment is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Task Comment {{ id }}?"
+      },
+      "detail": {
+        "title": "Task Comment"
+      },
+      "id": "ID",
+      "content": "Content",
+      "createdDate": "Created Date",
+      "task": "Task",
+      "employee": "Employee"
+    }
+  }
+}

@@ -1,0 +1,82 @@
+/**************************************************************************
+ * PROJECT MANAGEMENT SYSTEM
+ * Phase 4
+ * JHipster 8.11.0
+ **************************************************************************/
+
+ application {
+  config {
+    baseName ProjectManagement,
+    applicationType monolith
+    authenticationType jwt
+    packageName com.fehmidev.projectmanagement
+    prodDatabaseType postgresql
+    cacheProvider ehcache
+    buildTool maven
+    clientFramework angular
+    testFrameworks []
+  }
+  entities *
+}
+
+/**************************************************************************
+ * ENTITIES
+ **************************************************************************/
+
+entity Notification {
+  title String required,
+  message String required,
+  type String required,
+  isRead Boolean required,
+  createdDate Instant required
+}
+
+entity ActivityLog {
+  action String required,
+  entityName String required,
+  entityId Long,
+  description String,
+  createdDate Instant required
+}
+
+entity ReportSnapshot {
+  name String required,
+  type String required,
+  generatedDate Instant required,
+  data TextBlob
+}
+
+entity Dashboard {
+  name String required,
+  description String,
+  layout String required,
+  config TextBlob,
+  isDefault Boolean required,
+  createdDate Instant required,
+  updatedDate Instant
+}
+
+/**************************************************************************
+ * RELATIONSHIPS
+ **************************************************************************/
+
+relationship ManyToOne {
+
+  Notification{employee(firstName)} to Employee,
+
+  ActivityLog{employee(firstName)} to Employee,
+
+  ReportSnapshot{project(name)} to Project,
+
+  Dashboard{employee(firstName)} to Employee,
+
+  Dashboard{project(name)} to Project
+}
+
+/**************************************************************************
+ * OPTIONS
+ **************************************************************************/
+
+dto * with mapstruct
+service * with serviceClass
+paginate * with pagination

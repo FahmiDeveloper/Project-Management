@@ -1,0 +1,134 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-attachment-heading"
+        data-cy="AttachmentCreateUpdateHeading"
+        jhiTranslate="projectManagementApp.attachment.home.createOrEditLabel"
+      >
+        Create or edit a Attachment
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.attachment.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let fileNameRef = editForm.get('fileName')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_fileName" jhiTranslate="projectManagementApp.attachment.fileName">File Name</label>
+          <input type="text" class="form-control" name="fileName" id="field_fileName" data-cy="fileName" formControlName="fileName" />
+          @if (fileNameRef.invalid && (fileNameRef.dirty || fileNameRef.touched)) {
+            <div>
+              @if (editForm.get('fileName')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let fileUrlRef = editForm.get('fileUrl')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_fileUrl" jhiTranslate="projectManagementApp.attachment.fileUrl">File Url</label>
+          <input type="text" class="form-control" name="fileUrl" id="field_fileUrl" data-cy="fileUrl" formControlName="fileUrl" />
+          @if (fileUrlRef.invalid && (fileUrlRef.dirty || fileUrlRef.touched)) {
+            <div>
+              @if (editForm.get('fileUrl')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_fileType" jhiTranslate="projectManagementApp.attachment.fileType">File Type</label>
+          <input type="text" class="form-control" name="fileType" id="field_fileType" data-cy="fileType" formControlName="fileType" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_fileSize" jhiTranslate="projectManagementApp.attachment.fileSize">File Size</label>
+          <input type="number" class="form-control" name="fileSize" id="field_fileSize" data-cy="fileSize" formControlName="fileSize" />
+        </div>
+
+        @let uploadedDateRef = editForm.get('uploadedDate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_uploadedDate" jhiTranslate="projectManagementApp.attachment.uploadedDate"
+            >Uploaded Date</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_uploadedDate"
+              data-cy="uploadedDate"
+              type="datetime-local"
+              class="form-control"
+              name="uploadedDate"
+              formControlName="uploadedDate"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (uploadedDateRef.invalid && (uploadedDateRef.dirty || uploadedDateRef.touched)) {
+            <div>
+              @if (editForm.get('uploadedDate')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('uploadedDate')?.errors?.datetimelocal"
+                jhiTranslate="entity.validation.datetimelocal"
+                >This field should be a date and time.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_task" jhiTranslate="projectManagementApp.attachment.task">Task</label>
+          <select class="form-control" id="field_task" data-cy="task" name="task" formControlName="task" [compareWith]="compareTask">
+            <option [ngValue]="null"></option>
+            @for (taskOption of tasksSharedCollection; track $index) {
+              <option [ngValue]="taskOption">{{ taskOption.title }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_employee" jhiTranslate="projectManagementApp.attachment.employee">Employee</label>
+          <select
+            class="form-control"
+            id="field_employee"
+            data-cy="employee"
+            name="employee"
+            formControlName="employee"
+            [compareWith]="compareEmployee"
+          >
+            <option [ngValue]="null"></option>
+            @for (employeeOption of employeesSharedCollection; track $index) {
+              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

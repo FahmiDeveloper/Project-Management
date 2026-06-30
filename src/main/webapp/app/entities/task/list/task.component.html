@@ -1,0 +1,241 @@
+<div>
+  <h2 id="page-heading" data-cy="TaskHeading">
+    <span jhiTranslate="projectManagementApp.task.home.title">Tasks</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="projectManagementApp.task.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-task"
+        [routerLink]="['/task/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="projectManagementApp.task.home.createLabel">Create a new Task</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (tasks().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="projectManagementApp.task.home.notFound">No Tasks found</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="title">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.title">Title</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="priority">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.priority">Priority</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="status">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.status">Status</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="storyPoints">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.storyPoints">Story Points</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="estimatedHours">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.estimatedHours">Estimated Hours</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="spentHours">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.spentHours">Spent Hours</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="startDate">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.startDate">Start Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dueDate">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.dueDate">Due Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="completionPercentage">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.completionPercentage">Completion Percentage</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="sprint.name">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.sprint">Sprint</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="milestone.title">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.milestone">Milestone</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="assignedTo.employeeNumber">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.assignedTo">Assigned To</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="createdBy.employeeNumber">
+              <div class="d-flex">
+                <span jhiTranslate="projectManagementApp.task.createdBy">Created By</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of tasks(); track trackId(task)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/task', task.id, 'view']">{{ task.id }}</a>
+              </td>
+              <td>{{ task.title }}</td>
+              <td>{{ task.description }}</td>
+              <td [jhiTranslate]="'projectManagementApp.TaskPriority.' + (task.priority ?? 'null')">
+                {{ { null: '', LOW: 'LOW', MEDIUM: 'MEDIUM', HIGH: 'HIGH', CRITICAL: 'CRITICAL' }[task.priority ?? 'null'] }}
+              </td>
+              <td [jhiTranslate]="'projectManagementApp.TaskStatus.' + (task.status ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    TODO: 'TODO',
+                    IN_PROGRESS: 'IN_PROGRESS',
+                    IN_REVIEW: 'IN_REVIEW',
+                    TESTING: 'TESTING',
+                    DONE: 'DONE',
+                    BLOCKED: 'BLOCKED',
+                  }[task.status ?? 'null']
+                }}
+              </td>
+              <td>{{ task.storyPoints }}</td>
+              <td>{{ task.estimatedHours }}</td>
+              <td>{{ task.spentHours }}</td>
+              <td>{{ task.startDate | formatMediumDate }}</td>
+              <td>{{ task.dueDate | formatMediumDate }}</td>
+              <td>{{ task.completionPercentage }}</td>
+              <td>
+                @if (task.sprint) {
+                  <div>
+                    <a [routerLink]="['/sprint', task.sprint.id, 'view']">{{ task.sprint.name }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (task.milestone) {
+                  <div>
+                    <a [routerLink]="['/milestone', task.milestone.id, 'view']">{{ task.milestone.title }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (task.assignedTo) {
+                  <div>
+                    <a [routerLink]="['/employee', task.assignedTo.id, 'view']">{{ task.assignedTo.employeeNumber }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (task.createdBy) {
+                  <div>
+                    <a [routerLink]="['/employee', task.createdBy.id, 'view']">{{ task.createdBy.employeeNumber }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/task', task.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/task', task.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(task)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (tasks().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>
