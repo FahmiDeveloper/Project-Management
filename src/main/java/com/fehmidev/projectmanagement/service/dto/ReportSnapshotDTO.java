@@ -23,7 +23,6 @@ public class ReportSnapshotDTO implements Serializable {
     @NotNull
     private Instant generatedDate;
 
-    @Lob
     private String data;
 
     private ProjectDTO project;

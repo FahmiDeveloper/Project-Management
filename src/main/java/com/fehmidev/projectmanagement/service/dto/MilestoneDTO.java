@@ -21,7 +21,6 @@ public class MilestoneDTO implements Serializable {
     @Size(min = 2, max = 150)
     private String title;
 
-    @Lob
     private String description;
 
     @NotNull

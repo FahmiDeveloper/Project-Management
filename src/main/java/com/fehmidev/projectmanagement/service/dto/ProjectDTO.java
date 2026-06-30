@@ -24,7 +24,6 @@ public class ProjectDTO implements Serializable {
     @Size(min = 2, max = 150)
     private String name;
 
-    @Lob
     private String description;
 
     @NotNull

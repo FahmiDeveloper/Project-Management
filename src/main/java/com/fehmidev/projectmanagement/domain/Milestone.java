@@ -31,8 +31,8 @@ public class Milestone implements Serializable {
     @Column(name = "title", length = 150, nullable = false)
     private String title;
 
-    @Lob
-    @Column(name = "description")
+    @Size(max = 500)
+    @Column(name = "description", length = 500)
     private String description;
 
     @NotNull

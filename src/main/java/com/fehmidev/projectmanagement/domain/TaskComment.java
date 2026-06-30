@@ -25,8 +25,8 @@ public class TaskComment implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Lob
-    @Column(name = "content", nullable = false)
+    @Size(max = 500)
+    @Column(name = "content", length = 500)
     private String content;
 
     @NotNull

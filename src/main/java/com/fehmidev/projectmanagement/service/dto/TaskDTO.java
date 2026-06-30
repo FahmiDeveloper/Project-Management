@@ -20,7 +20,6 @@ public class TaskDTO implements Serializable {
     @Size(min = 2, max = 200)
     private String title;
 
-    @Lob
     private String description;
 
     @NotNull

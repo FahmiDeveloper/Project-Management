@@ -37,8 +37,8 @@ public class ReportSnapshot implements Serializable {
     @Column(name = "generated_date", nullable = false)
     private Instant generatedDate;
 
-    @Lob
-    @Column(name = "data")
+    @Size(max = 500)
+    @Column(name = "data", length = 500)
     private String data;
 
     @ManyToOne(fetch = FetchType.LAZY)

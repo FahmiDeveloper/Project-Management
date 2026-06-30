@@ -22,7 +22,6 @@ public class DashboardDTO implements Serializable {
     @NotNull
     private String layout;
 
-    @Lob
     private String config;
 
     @NotNull
