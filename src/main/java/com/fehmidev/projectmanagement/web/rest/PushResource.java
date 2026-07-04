@@ -4,6 +4,7 @@ import com.fehmidev.projectmanagement.service.PushSubscriptionService;
 import com.fehmidev.projectmanagement.service.WebPushService;
 import com.fehmidev.projectmanagement.service.dto.PushMessageDTO;
 import com.fehmidev.projectmanagement.service.dto.PushSubscriptionDTO;
+import java.util.Map;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,13 @@ public class PushResource {
 
     @PostMapping("/send")
     public void sendNotification(@RequestBody PushMessageDTO message) {
-        webPushService.send(message.getTitle(), message.getBody(), message.getUrl());
+        webPushService.send(message.getTitle(), message.getBody(), message.getUrl(), message.getImage());
+    }
+
+    @PostMapping("/fcm-token")
+    public void saveFcmToken(@RequestBody Map<String, String> body) {
+        String token = body.get("token");
+        // Save token to DB per user, then use FCM to send notifications
+        service.saveFcmToken(token);
     }
 }

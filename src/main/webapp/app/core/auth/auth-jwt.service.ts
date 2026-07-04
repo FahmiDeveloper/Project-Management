@@ -18,7 +18,14 @@ export class AuthServerProvider {
   private readonly applicationConfigService = inject(ApplicationConfigService);
 
   getToken(): string {
-    return this.stateStorageService.getAuthenticationToken() ?? '';
+    // 1. First attempt to fetch via JHipster's default state storage
+    let token = this.stateStorageService.getAuthenticationToken();
+
+    // 2. Capacitor Fallback: If not found in memory/service state, check window native storages
+    if (!token) {
+      token = window.localStorage.getItem('authenticationToken') || window.sessionStorage.getItem('authenticationToken') || '';
+    }
+    return token;
   }
 
   login(credentials: Login): Observable<void> {
@@ -29,12 +36,26 @@ export class AuthServerProvider {
 
   logout(): Observable<void> {
     return new Observable(observer => {
+      // Clear JHipster state
       this.stateStorageService.clearAuthenticationToken();
+
+      // Clear native window fallbacks for Capacitor
+      window.localStorage.removeItem('authenticationToken');
+      window.sessionStorage.removeItem('authenticationToken');
+
       observer.complete();
     });
   }
 
   private authenticateSuccess(response: JwtToken, rememberMe: boolean): void {
+    // Save to JHipster state engine so route guards and interceptors function seamlessly
     this.stateStorageService.storeAuthenticationToken(response.id_token, rememberMe);
+
+    // Save to native window storage fallbacks for your Capacitor environment
+    if (rememberMe) {
+      window.localStorage.setItem('authenticationToken', response.id_token);
+    } else {
+      window.sessionStorage.setItem('authenticationToken', response.id_token);
+    }
   }
 }

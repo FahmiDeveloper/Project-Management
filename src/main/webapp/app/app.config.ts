@@ -23,6 +23,7 @@ import routes from './app.routes';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { NgbDateDayjsAdapter } from './config/datepicker-adapter';
 import { AppPageTitleStrategy } from './app-page-title-strategy';
+import { provideNgxWebstorage, withLocalStorage, withSessionStorage } from 'ngx-webstorage';
 
 const routerFeatures: RouterFeatures[] = [
   withComponentInputBinding(),
@@ -56,6 +57,7 @@ export const appConfig: ApplicationConfig = {
     { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
     httpInterceptorProviders,
     { provide: TitleStrategy, useClass: AppPageTitleStrategy },
+    provideNgxWebstorage(withLocalStorage(), withSessionStorage()),
     // jhipster-needle-angular-add-module JHipster will add new module here
   ],
 };
