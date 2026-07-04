@@ -8,6 +8,13 @@
 
     <p class="lead" jhiTranslate="home.subtitle">This is your homepage</p>
 
+    <div class="mt-3">
+      <button class="btn btn-primary" (click)="testNotification()" [disabled]="notificationSent">
+        🔔 {{ notificationSent ? 'Notification Sent!' : 'Test Push Notification' }}
+      </button>
+      <span *ngIf="notificationSent" class="ml-2 text-success">✅ Check your phone!</span>
+    </div>
+
     <div>
       @if (account() !== null) {
         <div class="alert alert-success">
