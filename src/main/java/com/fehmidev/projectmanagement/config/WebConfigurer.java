@@ -90,7 +90,24 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             source.registerCorsConfiguration("/management/**", config);
             source.registerCorsConfiguration("/v3/api-docs", config);
             source.registerCorsConfiguration("/swagger-ui/**", config);
+            source.registerCorsConfiguration("/api/push/**", config); // ← ADD THIS
         }
+
+        // Force-add Capacitor origins in case they're missing from yml
+        CorsConfiguration capacitorConfig = new CorsConfiguration();
+        capacitorConfig.addAllowedOrigin("http://localhost"); // Capacitor WebView
+        capacitorConfig.addAllowedOrigin("capacitor://localhost"); // Capacitor scheme
+        capacitorConfig.addAllowedOrigin("https://outburst-rocket-provoke.ngrok-free.dev");
+        capacitorConfig.addAllowedMethod("*");
+        capacitorConfig.addAllowedHeader("*");
+        capacitorConfig.addExposedHeader("Authorization");
+        capacitorConfig.addExposedHeader("Link");
+        capacitorConfig.addExposedHeader("X-Total-Count");
+        capacitorConfig.setAllowCredentials(true);
+        capacitorConfig.setMaxAge(1800L);
+
+        source.registerCorsConfiguration("/**", capacitorConfig); // ← catches everything
+
         return new CorsFilter(source);
     }
 }
