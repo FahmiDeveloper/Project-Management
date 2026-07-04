@@ -10,22 +10,19 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FirebaseConfig {
-    // @PostConstruct
-    // public void init() {
-    // try {
-    // if (FirebaseApp.getApps().isEmpty()) {
-    // InputStream serviceAccount = getClass()
-    // .getClassLoader()
-    // .getResourceAsStream("firebase-service-account.json");
 
-    // FirebaseOptions options = FirebaseOptions.builder()
-    // .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-    // .build();
+    @PostConstruct
+    public void init() {
+        try {
+            if (FirebaseApp.getApps().isEmpty()) {
+                InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase-service-account.json");
 
-    // FirebaseApp.initializeApp(options);
-    // }
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // }
+                FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+
+                FirebaseApp.initializeApp(options);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
