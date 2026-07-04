@@ -122,3 +122,8 @@ jhipster:
 # ===================================================================
 
 # application:
+
+webpush:
+  public-key: 'BMBClrCEAlJsrqvJWkhGtj69HjRdWwPMyD9-PA0HL3AX33fnf1w3K8frwLPUJJhE3Qv-urWm3TcimtVmNsVwu-E'
+  private-key: 'N_3D_UvtjjvW2lTfckpCm4L6KGOBKwyt1NN0Dx3DCbQ'
+  subject: 'mailto:coursangularfahmi@gmail.com'
