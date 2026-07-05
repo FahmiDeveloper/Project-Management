@@ -1,29 +1,31 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
-
 import { StateStorageService } from 'app/core/auth/state-storage.service';
-import { ApplicationConfigService } from '../config/application-config.service';
+import { ApplicationConfigService } from 'app/core/config/application-config.service';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  private readonly stateStorageService = inject(StateStorageService);
-  private readonly applicationConfigService = inject(ApplicationConfigService);
+export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+  const stateStorageService = inject(StateStorageService);
+  const applicationConfigService = inject(ApplicationConfigService);
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const serverApiUrl = this.applicationConfigService.getEndpointFor('');
-    if (!request.url || (request.url.startsWith('http') && !(serverApiUrl && request.url.startsWith(serverApiUrl)))) {
-      return next.handle(request);
-    }
+  // Get the token from JHipster's state storage
+  let token = stateStorageService.getAuthenticationToken();
 
-    const token: string | null = this.stateStorageService.getAuthenticationToken();
-    if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-    return next.handle(request);
+  // Capacitor Fallback: Fall back to native storage just in case state sync lagged
+  if (!token) {
+    token = window.localStorage.getItem('authenticationToken') || window.sessionStorage.getItem('authenticationToken');
   }
-}
+
+  const serverApiUrl = applicationConfigService.getEndpointFor('');
+
+  // FORCE header inclusion if hitting the ngrok endpoint OR any route containing '/api/'
+  if (token && (req.url.startsWith(serverApiUrl) || req.url.includes('/api/') || req.url.startsWith('http'))) {
+    req = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  return next(req);
+};
