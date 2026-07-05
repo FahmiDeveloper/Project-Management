@@ -192,7 +192,7 @@ jhipster:
     name: 'projectManagementApp'
   # By default CORS is disabled. Uncomment to enable.
   cors:
-    allowed-origins: 'http://localhost:8100,http://localhost:9000,capacitor://localhost,https://outburst-rocket-provoke.ngrok-free.dev'
+    allowed-origins: 'http://localhost:9000,http://localhost:8080,capacitor://localhost,http://localhost,https://outburst-rocket-provoke.ngrok-free.dev'
     allowed-methods: '*'
     allowed-headers: '*'
     exposed-headers: 'Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params'
