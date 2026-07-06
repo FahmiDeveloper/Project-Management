@@ -11,12 +11,14 @@ import PageRibbonComponent from '../profiles/page-ribbon.component';
 import { CustomSwService } from '../../core/service-worker/custom-sw.service';
 import { PushSubscriptionService } from '../../core/service-worker/push-subscription.service';
 import { PushNotificationService } from '../../core/service-worker/push-notification.service';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'jhi-main',
   templateUrl: './main.component.html',
   providers: [AppPageTitleStrategy],
-  imports: [RouterOutlet, FooterComponent, PageRibbonComponent],
+  imports: [RouterOutlet, FooterComponent, PageRibbonComponent, CommonModule],
 })
 export default class MainComponent implements OnInit {
   private readonly renderer: Renderer2;
@@ -29,6 +31,9 @@ export default class MainComponent implements OnInit {
   private readonly swService = inject(CustomSwService);
   private readonly pushSubscriptionService = inject(PushSubscriptionService);
   private readonly pushNotificationService = inject(PushNotificationService);
+  private readonly http = inject(HttpClient);
+
+  notificationSent = false;
 
   constructor() {
     this.renderer = this.rootRenderer.createRenderer(document.querySelector('html'), null);
@@ -49,5 +54,23 @@ export default class MainComponent implements OnInit {
       dayjs.locale(langChangeEvent.lang);
       this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
     });
+  }
+
+  testNotification(): void {
+    this.http
+      .post(SERVER_API_URL + 'api/push/send', {
+        title: 'Hello 👋',
+        body: 'This is a test notification from your app! Tap the expand button on the right to read the rest of this extra long message safely inside your status tray.',
+        icon: '/content/icons/icon-192x192.png',
+        image: 'https://outburst-rocket-provoke.ngrok-free.dev/content/icons/icon-192x192.png',
+        url: '/',
+      })
+      .subscribe({
+        next: () => {
+          this.notificationSent = true;
+          setTimeout(() => (this.notificationSent = false), 3000); // reset after 3s
+        },
+        error: err => console.error('Notification error:', err),
+      });
   }
 }

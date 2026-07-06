@@ -54,36 +54,23 @@ public class WebPushService {
     }
 
     // ← Sends to all registered mobile devices (FCM)
-    // ← Sends to all registered mobile devices (FCM)
     public void sendToMobile(String title, String body, String imageUrl) {
         subscriptionService
             .findAllFcmTokens()
             .forEach(token -> {
                 try {
-                    // 1. Explicitly build the Android Notification layout with the matching Channel ID
-                    AndroidNotification androidNotification = AndroidNotification.builder()
-                        .setImage(imageUrl)
-                        .setChannelId("fcm_default_channel") // <-- MUST match your frontend channel ID!
-                        .setSound("default")
-                        .build();
+                    AndroidNotification androidNotification = AndroidNotification.builder().setImage(imageUrl).build();
 
-                    // 2. Wrap it inside the AndroidConfig along with HIGH priority delivery settings
-                    AndroidConfig androidConfig = AndroidConfig.builder()
-                        .setPriority(AndroidConfig.Priority.HIGH)
-                        .setNotification(androidNotification) // <-- FIX: Attach the layout here
-                        .build();
+                    AndroidConfig androidConfig = AndroidConfig.builder().setNotification(androidNotification).build();
 
-                    // 3. Compile everything together into the final payload message
                     Message message = Message.builder()
                         .setToken(token)
                         .setNotification(Notification.builder().setTitle(title).setBody(body).setImage(imageUrl).build())
-                        .setAndroidConfig(androidConfig) // <-- FIX: Set the complete configuration mapping
+                        .setAndroidConfig(AndroidConfig.builder().setPriority(AndroidConfig.Priority.HIGH).build())
                         .build();
 
-                    String response = FirebaseMessaging.getInstance().send(message);
-                    System.out.println("Successfully sent message via FCM: " + response);
+                    FirebaseMessaging.getInstance().send(message);
                 } catch (Exception e) {
-                    System.err.println("Failed to send FCM message to token: " + token);
                     e.printStackTrace();
                 }
             });
