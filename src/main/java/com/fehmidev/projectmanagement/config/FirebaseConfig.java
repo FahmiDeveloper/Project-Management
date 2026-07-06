@@ -17,7 +17,7 @@ public class FirebaseConfig {
             if (FirebaseApp.getApps().isEmpty()) {
                 InputStream serviceAccount = getClass()
                     .getClassLoader()
-                    .getResourceAsStream("project-management-60177-firebase-adminsdk-fbsvc-089481a4f0.json");
+                    .getResourceAsStream("project-management-60177-firebase-adminsdk-fbsvc-b63a7e499f.json");
 
                 FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
 
