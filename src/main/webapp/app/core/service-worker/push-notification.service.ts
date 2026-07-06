@@ -4,7 +4,6 @@ import { Capacitor } from '@capacitor/core';
 import { PushNotifications, Token } from '@capacitor/push-notifications';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { environment } from 'environments/environment';
-import { log } from 'node:console';
 
 @Injectable({ providedIn: 'root' })
 export class PushNotificationService {
