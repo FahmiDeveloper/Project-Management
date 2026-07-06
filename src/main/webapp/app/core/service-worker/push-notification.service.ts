@@ -4,6 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import { PushNotifications, Token } from '@capacitor/push-notifications';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { environment } from 'environments/environment';
+import { log } from 'node:console';
 
 @Injectable({ providedIn: 'root' })
 export class PushNotificationService {
@@ -24,6 +25,8 @@ export class PushNotificationService {
     });
 
     PushNotifications.addListener('registration', (token: Token) => {
+      console.log('tttttttttoooookkkkeeeennn', token.value);
+
       this.sendFcmTokenToServer(token.value);
     });
 
