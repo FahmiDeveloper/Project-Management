@@ -41,9 +41,12 @@ export default class MainComponent implements OnInit {
 
   ngOnInit(): void {
     // try to log in automatically
-    this.accountService.identity().subscribe(() => {
+    this.accountService.identity().subscribe(account => {
       this.swService.register();
       this.pushSubscriptionService.subscribe();
+      if (account) {
+        this.pushNotificationService.init();
+      }
       // setInterval(() => {
       //   this.pushNotificationService.sendNotification();
       // }, 10000);
