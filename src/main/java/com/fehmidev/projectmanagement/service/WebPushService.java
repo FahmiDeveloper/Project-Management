@@ -3,6 +3,8 @@ package com.fehmidev.projectmanagement.service;
 import com.fehmidev.projectmanagement.service.dto.PushSubscriptionDTO;
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidNotification;
+import com.google.firebase.messaging.ApnsConfig;
+import com.google.firebase.messaging.Aps;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -68,8 +70,13 @@ public class WebPushService {
                         .setPriority(AndroidConfig.Priority.HIGH) // Forces delivery in Doze/Background mode
                         .build();
 
-                    // 3. Build APNs config for iOS devices (forces instant delivery via APNs priority 10)
-                    ApnsConfig apnsConfig = ApnsConfig.builder().putHeader("apns-priority", "10").build();
+                    // 3. Build APNs config for iOS devices with required aps payload
+                    Aps aps = Aps.builder().build(); // Creates the mandatory empty placeholder object
+
+                    ApnsConfig apnsConfig = ApnsConfig.builder()
+                        .setAps(aps) // Resolves "aps must be specified" exception
+                        .putHeader("apns-priority", "10")
+                        .build();
 
                     // 4. Construct the final unified message
                     Message message = Message.builder()
