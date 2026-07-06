@@ -59,14 +59,24 @@ public class WebPushService {
             .findAllFcmTokens()
             .forEach(token -> {
                 try {
+                    // 1. Build the Android-specific notification settings (e.g., Image)
                     AndroidNotification androidNotification = AndroidNotification.builder().setImage(imageUrl).build();
 
-                    AndroidConfig androidConfig = AndroidConfig.builder().setNotification(androidNotification).build();
+                    // 2. Combine the notification settings AND the HIGH priority flag into one AndroidConfig
+                    AndroidConfig androidConfig = AndroidConfig.builder()
+                        .setNotification(androidNotification)
+                        .setPriority(AndroidConfig.Priority.HIGH) // Forces delivery in Doze/Background mode
+                        .build();
 
+                    // 3. Build APNs config for iOS devices (forces instant delivery via APNs priority 10)
+                    ApnsConfig apnsConfig = ApnsConfig.builder().putHeader("apns-priority", "10").build();
+
+                    // 4. Construct the final unified message
                     Message message = Message.builder()
                         .setToken(token)
                         .setNotification(Notification.builder().setTitle(title).setBody(body).setImage(imageUrl).build())
-                        .setAndroidConfig(AndroidConfig.builder().setPriority(AndroidConfig.Priority.HIGH).build())
+                        .setAndroidConfig(androidConfig) // Pass the combined config here
+                        .setApnsConfig(apnsConfig) // Ensures iOS background reliability
                         .build();
 
                     FirebaseMessaging.getInstance().send(message);
