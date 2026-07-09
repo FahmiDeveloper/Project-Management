@@ -69,7 +69,15 @@ export default class MainComponent implements OnInit {
     });
 
     // try to log in automatically
-    this.accountService.identity().subscribe();
+    this.accountService.identity().subscribe(account => {
+      if (!account) {
+        // If not logged in, force open the login interface/modal or navigate to the route
+        this.router.navigate(['/login']);
+
+        // Note: If you are using JHipster's default LoginService modal instead of a route,
+        // you would call this.loginService.login() here instead.
+      }
+    });
 
     this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
       this.appPageTitleStrategy.updateTitle(this.router.routerState.snapshot);

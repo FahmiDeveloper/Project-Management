@@ -11,6 +11,7 @@ import { PushNotificationService } from 'app/core/service-worker/push-notificati
   selector: 'jhi-login',
   imports: [SharedModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
 })
 export default class LoginComponent implements OnInit, AfterViewInit {
   username = viewChild.required<ElementRef>('username');

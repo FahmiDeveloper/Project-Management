@@ -1,19 +1,25 @@
-<div class="body" [ngClass]="getBodyClass()">
-  <div class="body-content">
-    <jhi-page-ribbon />
-
-    <router-outlet />
-
-    <!-- <div class="container-fluid">
-            <div class="card jh-card">
-                <div class="mt-3">
-                    <button class="btn btn-primary" (click)="testNotification()" [disabled]="notificationSent">
-                    🔔 {{ notificationSent ? 'Notification Sent!' : 'Test Push Notification' }}
-                    </button>
-                    <span *ngIf="notificationSent" class="ml-2 text-success">✅ Check your phone!</span>
+<div [ngClass]="getBodyClass()">
+  <!-- If connected, use the internal dashboard layout container -->
+  <ng-container *ngIf="isConnected">
+    <div class="body-content">
+      <jhi-page-ribbon />
+      <router-outlet />
+      <!-- <div class="container-fluid">
+                <div class="card jh-card">
+                    <div class="mt-3">
+                        <button class="btn btn-primary" (click)="testNotification()" [disabled]="notificationSent">
+                        🔔 {{ notificationSent ? 'Notification Sent!' : 'Test Push Notification' }}
+                        </button>
+                        <span *ngIf="notificationSent" class="ml-2 text-success">✅ Check your phone!</span>
+                    </div>
                 </div>
-            </div>
-            <jhi-footer />
-        </div> -->
-  </div>
+                <jhi-footer />
+            </div> -->
+    </div>
+  </ng-container>
+
+  <!-- If NOT connected (Login Page), display just the router-outlet without dashboard cards/side-paddings -->
+  <ng-container *ngIf="!isConnected">
+    <router-outlet />
+  </ng-container>
 </div>
