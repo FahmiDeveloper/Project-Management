@@ -1,0 +1,33 @@
+.body {
+  width: calc(100% - 5rem);
+  margin-left: 5rem;
+  z-index: 1;
+  transition: all 0.5s ease;
+  background: #f4f7fa;
+  padding: 1rem 1.5rem 0 1.5rem;
+
+  position: fixed;
+  top: 5.25rem; /* <-- Change from 0 to 5.25rem (or your exact header height) */
+  height: calc(100vh - 5.25rem); /* <-- Add this to ensure the body manages its own height and scrolling */
+  overflow-y: auto; /* <-- Allows scrolling inside the main app body content container safely */
+
+  .body-content {
+    background-color: #fff;
+    border-radius: 0.625rem;
+    box-shadow: 0px 0px 10px 0 rgb(34 41 47 / 10%);
+    padding: 0.813rem 1.563rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.body-trimmed {
+  width: calc(100% - 16.5625rem);
+  margin-left: 16.5625rem;
+}
+
+.body-md-screen {
+  width: calc(100% - 5rem);
+  margin-left: 5rem;
+}
