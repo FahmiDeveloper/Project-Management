@@ -75,11 +75,13 @@
     "webpack": "5.99.7"
   },
   "dependencies": {
+    "@angular/animations": "^19.2.9",
     "@angular/common": "19.2.9",
     "@angular/compiler": "19.2.9",
     "@angular/core": "19.2.9",
     "@angular/forms": "19.2.9",
     "@angular/localize": "19.2.9",
+    "@angular/material": "^19.2.19",
     "@angular/platform-browser": "19.2.9",
     "@angular/platform-browser-dynamic": "19.2.9",
     "@angular/router": "19.2.9",
@@ -97,6 +99,7 @@
     "@popperjs/core": "2.11.8",
     "bootstrap": "5.3.6",
     "dayjs": "1.11.13",
+    "ngx-device-detector": "^9.0.0",
     "ngx-infinite-scroll": "19.0.0",
     "ngx-webstorage": "^19.0.1",
     "rxjs": "7.8.2",
