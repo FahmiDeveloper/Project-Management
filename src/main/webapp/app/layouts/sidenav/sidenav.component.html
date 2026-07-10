@@ -11,10 +11,9 @@
       <li
         class="sidenav-nav-item"
         [matTooltip]="isDesktop ? navbarDataHome.label : ''"
-        [matTooltipDisabled]="!isDesktop"
         [matTooltipPosition]="'right'"
         [matTooltipClass]="isDesktop ? 'data-tooltip' : ''"
-        [matTooltipDisabled]="isDesktop ? collapsed == true : ''"
+        [matTooltipDisabled]="isDesktop ? collapsed : false"
       >
         <a
           class="sidenav-nav-link"
@@ -56,10 +55,9 @@
         class="sidenav-nav-item"
         *ngFor="let data of getItems()"
         [matTooltip]="isDesktop ? data.label : ''"
-        [matTooltipDisabled]="!isDesktop"
         [matTooltipPosition]="'right'"
         [matTooltipClass]="isDesktop ? 'data-tooltip' : ''"
-        [matTooltipDisabled]="isDesktop ? collapsed == true : ''"
+        [matTooltipDisabled]="isDesktop ? collapsed : false"
       >
         <a
           class="sidenav-nav-link"

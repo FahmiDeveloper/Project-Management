@@ -1,7 +1,7 @@
 @import 'bootstrap-variables';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
-
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 /* ==============================================================
 Bootstrap tweaks
 ===============================================================*/
@@ -226,6 +226,15 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
     .nav-item {
       margin-left: 0.5em;
     }
+  }
+}
+
+/* Update this in your global.scss file */
+.data-tooltip {
+  .mdc-tooltip__surface {
+    font-size: 20px !important;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important;
+    padding: 12px 12px !important;
   }
 }
 /* jhipster-needle-scss-add-main JHipster will add new css style */
