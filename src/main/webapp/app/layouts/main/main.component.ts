@@ -1,17 +1,14 @@
 import { Component, OnInit, Renderer2, RendererFactory2, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import dayjs from 'dayjs/esm';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
-import FooterComponent from '../footer/footer.component';
-import PageRibbonComponent from '../profiles/page-ribbon.component';
 
 import { CustomSwService } from '../../core/service-worker/custom-sw.service';
 import { PushSubscriptionService } from '../../core/service-worker/push-subscription.service';
 import { PushNotificationService } from '../../core/service-worker/push-notification.service';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { SidenavComponent } from '../sidenav/sidenav.component';
