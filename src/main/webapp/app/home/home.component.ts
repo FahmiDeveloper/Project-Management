@@ -22,6 +22,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
 
+  notificationSent = false;
+
+  private readonly http = inject(HttpClient);
+
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
@@ -31,6 +35,24 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   login(): void {
     this.router.navigate(['/login']);
+  }
+
+  testNotification(): void {
+    this.http
+      .post(SERVER_API_URL + 'api/push/send', {
+        title: 'Hello 👋',
+        body: 'This is a test notification from your app! Tap the expand button on the right to read the rest of this extra long message safely inside your status tray.',
+        icon: '/content/icons/icon-192x192.png',
+        image: 'https://outburst-rocket-provoke.ngrok-free.dev/content/icons/icon-192x192.png',
+        url: '/',
+      })
+      .subscribe({
+        next: () => {
+          this.notificationSent = true;
+          setTimeout(() => (this.notificationSent = false), 3000); // reset after 3s
+        },
+        error: err => console.error('Notification error:', err),
+      });
   }
 
   ngOnDestroy(): void {

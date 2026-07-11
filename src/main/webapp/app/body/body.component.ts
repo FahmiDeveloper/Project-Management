@@ -1,8 +1,7 @@
-import { Component, inject, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import FooterComponent from 'app/layouts/footer/footer.component';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import PageRibbonComponent from 'app/layouts/profiles/page-ribbon.component';
 
 @Component({
@@ -15,10 +14,6 @@ export class BodyComponent implements OnInit {
   @Input() collapsed = false;
   @Input() screenWidth = 0;
   @Input() isConnected = false;
-
-  notificationSent = false;
-
-  private readonly http = inject(HttpClient);
 
   isInitialDashboardLoad = true;
 
@@ -59,23 +54,5 @@ export class BodyComponent implements OnInit {
     }
 
     return styleClass;
-  }
-
-  testNotification(): void {
-    this.http
-      .post(SERVER_API_URL + 'api/push/send', {
-        title: 'Hello 👋',
-        body: 'This is a test notification from your app! Tap the expand button on the right to read the rest of this extra long message safely inside your status tray.',
-        icon: '/content/icons/icon-192x192.png',
-        image: 'https://outburst-rocket-provoke.ngrok-free.dev/content/icons/icon-192x192.png',
-        url: '/',
-      })
-      .subscribe({
-        next: () => {
-          this.notificationSent = true;
-          setTimeout(() => (this.notificationSent = false), 3000); // reset after 3s
-        },
-        error: err => console.error('Notification error:', err),
-      });
   }
 }
