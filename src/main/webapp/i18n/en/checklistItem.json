@@ -2,7 +2,7 @@
   "projectManagementApp": {
     "checklistItem": {
       "home": {
-        "title": "Checklist Items",
+        "title": "Checklists items",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Checklist Item",
         "createOrEditLabel": "Create or edit a Checklist Item",

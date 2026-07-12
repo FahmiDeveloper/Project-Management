@@ -2,7 +2,7 @@
   "projectManagementApp": {
     "reportSnapshot": {
       "home": {
-        "title": "Report Snapshots",
+        "title": "Reports snapshots",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Report Snapshot",
         "createOrEditLabel": "Create or edit a Report Snapshot",

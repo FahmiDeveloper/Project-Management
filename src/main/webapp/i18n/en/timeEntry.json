@@ -2,7 +2,7 @@
   "projectManagementApp": {
     "timeEntry": {
       "home": {
-        "title": "Time Entries",
+        "title": "Times entries",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Time Entry",
         "createOrEditLabel": "Create or edit a Time Entry",

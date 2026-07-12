@@ -2,7 +2,7 @@
   "projectManagementApp": {
     "activityLog": {
       "home": {
-        "title": "Activity Logs",
+        "title": "Activities logs",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Activity Log",
         "createOrEditLabel": "Create or edit a Activity Log",

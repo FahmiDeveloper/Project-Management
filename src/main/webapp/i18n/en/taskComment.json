@@ -2,7 +2,7 @@
   "projectManagementApp": {
     "taskComment": {
       "home": {
-        "title": "Task Comments",
+        "title": "Tasks comments",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Task Comment",
         "createOrEditLabel": "Create or edit a Task Comment",

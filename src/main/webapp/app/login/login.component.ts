@@ -14,7 +14,7 @@ import { PushNotificationService } from 'app/core/service-worker/push-notificati
   styleUrls: ['./login.component.scss'],
 })
 export default class LoginComponent implements OnInit, AfterViewInit {
-  username = viewChild.required<ElementRef>('username');
+  username = viewChild<ElementRef>('username');
 
   authenticationError = signal(false);
 
@@ -33,13 +33,13 @@ export default class LoginComponent implements OnInit, AfterViewInit {
     // if already authenticated then navigate to home page
     this.accountService.identity().subscribe(() => {
       if (this.accountService.isAuthenticated()) {
-        this.router.navigate(['']);
+        this.router.navigate(['/home']);
       }
     });
   }
 
   ngAfterViewInit(): void {
-    this.username().nativeElement.focus();
+    this.username()?.nativeElement.focus();
   }
 
   login(): void {
@@ -53,14 +53,19 @@ export default class LoginComponent implements OnInit, AfterViewInit {
             if (account) {
               // Now that identity is fully authenticated and established, fire off FCM initialization
               this.pushNotificationService.init();
+
+              // Navigate after a microtask to avoid ExpressionChangedAfterItHasBeenCheckedError
+              if (!this.router.getCurrentNavigation()) {
+                // There were no routing during login (e.g., from navigationToStoredUrl)
+                // Use setTimeout to defer navigation to the next tick
+                setTimeout(() => {
+                  this.router.navigate(['/home']);
+                }, 0);
+              }
             }
           },
+          error: () => this.authenticationError.set(true),
         });
-
-        if (!this.router.getCurrentNavigation()) {
-          // There were no routing during login (eg from navigationToStoredUrl)
-          this.router.navigate(['']);
-        }
       },
       error: () => this.authenticationError.set(true),
     });
