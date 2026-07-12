@@ -2,7 +2,7 @@
   "projectManagementApp": {
     "projectMember": {
       "home": {
-        "title": "Project Members",
+        "title": "Projects members",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Project Member",
         "createOrEditLabel": "Create or edit a Project Member",

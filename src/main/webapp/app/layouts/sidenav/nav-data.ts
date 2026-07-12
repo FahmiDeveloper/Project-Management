@@ -1,7 +1,7 @@
 import { INavbarData } from './helper';
 
 export const navbarDataHome: INavbarData = {
-  routeLink: '/',
+  routeLink: '/home',
   icon: 'fa fa-home',
   label: 'Home',
 };
@@ -37,27 +37,27 @@ export const navbarDataForDesktop: INavbarData[] = [
   {
     routeLink: 'project-member',
     icon: 'fa fa-sticky-note',
-    label: 'Project member',
+    label: 'Projects members',
   },
   {
     routeLink: 'milestone',
     icon: 'fa fa-clock-o',
-    label: 'Milestone',
+    label: 'Milestones',
   },
   {
     routeLink: 'sprint',
     icon: 'fa fa-calendar',
-    label: 'Sprint',
+    label: 'Sprints',
   },
   {
     routeLink: 'task',
     icon: 'fa fa-tasks',
-    label: 'Task',
+    label: 'Tasks',
   },
   {
     routeLink: 'task-comment',
     icon: 'fa fa-file',
-    label: 'Task comments',
+    label: 'Tasks comments',
   },
   {
     routeLink: 'attachment',
@@ -67,17 +67,17 @@ export const navbarDataForDesktop: INavbarData[] = [
   {
     routeLink: 'checklist',
     icon: 'fa fa-list',
-    label: 'Checklist',
+    label: 'Checklists',
   },
   {
     routeLink: 'checklist-item',
     icon: 'fa fa-file-text-o',
-    label: 'Checklist items',
+    label: 'Checklists items',
   },
   {
     routeLink: 'time-entry',
-    icon: 'fa fa-bell',
-    label: 'Time entry',
+    icon: 'fas fa-clock',
+    label: 'Times entries',
   },
   {
     routeLink: 'notification',
@@ -86,18 +86,18 @@ export const navbarDataForDesktop: INavbarData[] = [
   },
   {
     routeLink: 'activity-log',
-    icon: 'fa fa-bell',
-    label: 'Activity log',
+    icon: 'fas fa-history',
+    label: 'Activities log',
   },
   {
     routeLink: 'report-snapshot',
-    icon: 'fa fa-bell',
-    label: 'Report snapshot',
+    icon: 'fas fa-chart-pie',
+    label: 'Reports snapshots',
   },
   {
     routeLink: 'dashboard',
-    icon: 'fa fa-bell',
-    label: 'Dashboard',
+    icon: 'fas fa-tachometer-alt',
+    label: 'Dashboards',
   },
 ];
 

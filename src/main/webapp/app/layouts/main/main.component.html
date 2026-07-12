@@ -12,6 +12,6 @@
 </ng-container>
 
 <ng-container *ngIf="isMobile">
-  <h3>this is mobile</h3>
-  <h3>{{ isConnected }}</h3>
+  <!-- Remove the *ngIf wrapper and bind the variable directly -->
+  <app-mobile [isConnected]="isConnected"></app-mobile>
 </ng-container>

@@ -14,6 +14,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { HeaderComponent } from 'app/core/header';
 import { BodyComponent } from 'app/body/body.component';
+import { AppMobileComponent } from 'app/app-mobile/app-mobile.component';
 
 interface SideNavToggle {
   screenWidth: number;
@@ -24,7 +25,7 @@ interface SideNavToggle {
   selector: 'jhi-main',
   templateUrl: './main.component.html',
   providers: [AppPageTitleStrategy],
-  imports: [CommonModule, SidenavComponent, HeaderComponent, BodyComponent],
+  imports: [CommonModule, SidenavComponent, HeaderComponent, BodyComponent, AppMobileComponent],
 })
 export default class MainComponent implements OnInit {
   private readonly renderer: Renderer2;
