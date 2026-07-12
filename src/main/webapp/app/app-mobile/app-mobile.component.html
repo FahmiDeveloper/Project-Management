@@ -9,7 +9,7 @@
   <button mat-icon-button (click)="isOpenOverlayNotifs = !isOpenOverlayNotifs" cdkOverlayOrigin #triggerNotifs="cdkOverlayOrigin">
     <mat-icon
       [matBadgeHidden]="!allNotifNotDone || allNotifNotDone.length === 0"
-      [matBadge]="allNotifNotDone?.length || 0"
+      [matBadge]="allNotifNotDone.length || 0"
       matBadgePosition="after"
       matBadgeColor="accent"
       matBadgeSize="medium"
