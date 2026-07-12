@@ -10,6 +10,7 @@ import SharedModule from 'app/shared/shared.module';
 import { SublevelMenuComponent } from './sublevel-menu.component';
 
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
 
 interface SideNavToggle {
   screenWidth: number;
@@ -32,7 +33,7 @@ interface SideNavToggle {
     ]),
   ],
   encapsulation: ViewEncapsulation.None,
-  imports: [SharedModule, RouterModule, SublevelMenuComponent, MatTooltipModule],
+  imports: [SharedModule, RouterModule, SublevelMenuComponent, MatTooltipModule, MatIconModule],
 })
 export class SidenavComponent implements OnInit {
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
