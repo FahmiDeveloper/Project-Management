@@ -50,10 +50,10 @@ public class SecurityConfiguration {
                         csp.policyDirectives(
                             "default-src 'self'; " +
                             "frame-src 'self' data:; " +
-                            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com https://kit.fontawesome.com; " +
-                            "style-src 'self' 'unsafe-inline' https://pro.fontawesome.com; " +
+                            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; " +
+                            "style-src 'self' 'unsafe-inline'; " +
                             "img-src 'self' data:; " +
-                            "font-src 'self' data: https://fonts.gstatic.com https://ka-f.fontawesome.com; " +
+                            "font-src 'self' data:; " +
                             "connect-src 'self' https://outburst-rocket-provoke.ngrok-free.dev capacitor://localhost http://localhost;"
                         )
                     )
