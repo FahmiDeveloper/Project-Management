@@ -2,7 +2,7 @@ import { INavbarData } from './helper';
 
 export const navbarDataHome: INavbarData = {
   routeLink: '/home',
-  icon: 'fa fa-home',
+  icon: 'home',
   label: 'Home',
 };
 
@@ -16,87 +16,87 @@ export const navbarDataHome: INavbarData = {
 export const navbarDataForDesktop: INavbarData[] = [
   {
     routeLink: 'department',
-    icon: 'fa fa-building-o',
+    icon: 'domain',
     label: 'Departments',
   },
   {
     routeLink: 'employee',
-    icon: 'fa fa-users',
+    icon: 'groups_3',
     label: 'Employees',
   },
   {
     routeLink: 'client',
-    icon: 'fa fa-address-card-o',
+    icon: 'group_add',
     label: 'Clients',
   },
   {
     routeLink: 'project',
-    icon: 'fa fa-project-diagram',
+    icon: 'assignment',
     label: 'Projects',
   },
   {
     routeLink: 'project-member',
-    icon: 'fa fa-sticky-note',
+    icon: 'groups',
     label: 'Projects members',
   },
   {
     routeLink: 'milestone',
-    icon: 'fa fa-clock-o',
+    icon: 'flag',
     label: 'Milestones',
   },
   {
     routeLink: 'sprint',
-    icon: 'fa fa-calendar',
+    icon: 'fast_forward',
     label: 'Sprints',
   },
   {
     routeLink: 'task',
-    icon: 'fa fa-tasks',
+    icon: 'attach_money',
     label: 'Tasks',
   },
   {
     routeLink: 'task-comment',
-    icon: 'fa fa-file',
+    icon: 'task_alt',
     label: 'Tasks comments',
   },
   {
     routeLink: 'attachment',
-    icon: 'fa fa-paperclip',
+    icon: 'attach_file',
     label: 'Attachments',
   },
   {
     routeLink: 'checklist',
-    icon: 'fa fa-list',
+    icon: 'playlist_add_check',
     label: 'Checklists',
   },
   {
     routeLink: 'checklist-item',
-    icon: 'fa fa-file-text-o',
+    icon: 'check_box',
     label: 'Checklists items',
   },
   {
     routeLink: 'time-entry',
-    icon: 'fas fa-clock',
+    icon: 'more_time',
     label: 'Times entries',
   },
   {
     routeLink: 'notification',
-    icon: 'fa fa-bell',
+    icon: 'notifications_none',
     label: 'Notifications',
   },
   {
     routeLink: 'activity-log',
-    icon: 'fas fa-history',
+    icon: 'history',
     label: 'Activities log',
   },
   {
     routeLink: 'report-snapshot',
-    icon: 'fas fa-chart-pie',
+    icon: 'insights',
     label: 'Reports snapshots',
   },
   {
     routeLink: 'dashboard',
-    icon: 'fas fa-tachometer-alt',
+    icon: 'dashboard',
     label: 'Dashboards',
   },
 ];

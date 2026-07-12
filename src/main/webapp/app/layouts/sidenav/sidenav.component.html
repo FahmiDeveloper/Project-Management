@@ -22,7 +22,7 @@
           [ngClass]="getActiveClass(navbarDataHome)"
           [ngStyle]="{ width: collapsed == false ? '3rem' : '' }"
         >
-          <i class="sidenav-link-icon" [class]="navbarDataHome.icon"></i>
+          <mat-icon class="sidenav-link-icon">{{ navbarDataHome.icon }}</mat-icon>
           <span class="sidenav-link-text text-application" @fadeInOut *ngIf="collapsed">
             {{ navbarDataHome.label }}
           </span>
@@ -40,7 +40,7 @@
           [routerLink]="[navbarDataHome.routeLink]"
           (click)="shrinkItems(navbarDataHome, $event)"
         >
-          <i class="sidenav-link-icon" [class]="navbarDataHome.icon"></i>
+          <mat-icon class="sidenav-link-icon">{{ navbarDataHome.icon }}</mat-icon>
           <span class="sidenav-link-text text-application" @fadeInOut *ngIf="collapsed">
             {{ navbarDataHome.label }}
           </span>
@@ -66,7 +66,7 @@
           [ngClass]="getActiveClass(data)"
           [ngStyle]="{ width: collapsed == false ? '3rem' : '' }"
         >
-          <i class="sidenav-link-icon" [class]="data.icon"></i>
+          <mat-icon class="sidenav-link-icon">{{ data.icon }}</mat-icon>
           <span class="sidenav-link-text text-application" @fadeInOut *ngIf="collapsed">
             {{ data.label }}
           </span>
@@ -83,7 +83,7 @@
           [ngStyle]="{ width: collapsed == false ? '3rem' : '' }"
           (click)="shrinkItems(data, $event)"
         >
-          <i class="sidenav-link-icon" [class]="data.icon"></i>
+          <mat-icon class="sidenav-link-icon">{{ data.icon }}</mat-icon>
           <span class="sidenav-link-text text-application" @fadeInOut *ngIf="collapsed">
             {{ data.label }}
           </span>
