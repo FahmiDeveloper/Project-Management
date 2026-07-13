@@ -1,15 +1,207 @@
-<div [ngClass]="getBodyClass()">
-  <!-- If connected, use the internal dashboard layout container -->
-  <ng-container *ngIf="isConnected">
-    <div class="body-content">
-      <jhi-page-ribbon />
-      <router-outlet />
+<!-- Modern Toolbar -->
+<mat-toolbar *ngIf="isConnected" class="modern-toolbar">
+  <div class="toolbar-container">
+    <div class="brand-section">
+      <button mat-icon-button (click)="sidenav.toggle()" class="hamburger-btn" matTooltip="Toggle navigation">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <div class="brand-logo">
+        <div class="logo-icon">
+          <mat-icon>rocket_launch</mat-icon>
+        </div>
+        <span class="brand-text">Proj<span>Manage</span></span>
+      </div>
     </div>
-    <jhi-footer />
-  </ng-container>
 
-  <!-- If NOT connected (Login Page), display just the router-outlet without dashboard cards/side-paddings -->
-  <ng-container *ngIf="!isConnected">
-    <router-outlet />
-  </ng-container>
-</div>
+    <div class="actions-section">
+      <!-- Notifications -->
+      <button mat-icon-button [matMenuTriggerFor]="notifMenu" class="action-btn notification-btn" matTooltip="Notifications">
+        <mat-icon>notifications</mat-icon>
+        <span class="notification-dot" *ngIf="allNotifNotDone && allNotifNotDone.length > 0"></span>
+      </button>
+
+      <!-- User -->
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn" matTooltip="User profile">
+        <img src="./../../content/images/user-picture.png" class="user-avatar" />
+      </button>
+    </div>
+  </div>
+</mat-toolbar>
+
+<!-- Notification Menu -->
+<mat-menu #notifMenu="matMenu" class="modern-notif-menu">
+  <div class="menu-header">
+    <h4>Notifications</h4>
+    <button
+      mat-button
+      color="primary"
+      *ngIf="allNotifNotDone && allNotifNotDone.length > 0"
+      (click)="markAllAsRead()"
+      class="mark-read-btn"
+    >
+      Mark all read
+    </button>
+  </div>
+  <div class="notif-list">
+    <div *ngIf="!allNotifNotDone || allNotifNotDone.length === 0" class="empty-state">
+      <mat-icon>notifications_off</mat-icon>
+      <p>All caught up!</p>
+      <span>No new notifications</span>
+    </div>
+    <div *ngFor="let notif of allNotifNotDone" class="notif-item" [class.unread]="!notif.read" (click)="markAsRead(notif)">
+      <div class="notif-avatar" [style.background]="getColor(notif)">
+        <mat-icon>{{ getIcon(notif) }}</mat-icon>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title">{{ notif.subject }}</div>
+        <div class="notif-message">{{ notif.message }}</div>
+        <div class="notif-time">{{ getTimeAgo(notif.createdAt) }}</div>
+      </div>
+      <div class="notif-indicator" *ngIf="!notif.read"></div>
+    </div>
+  </div>
+  <div class="menu-footer">
+    <button mat-button routerLink="/notifications" class="view-all-btn">View all notifications <mat-icon>arrow_forward</mat-icon></button>
+  </div>
+</mat-menu>
+
+<!-- User Menu -->
+<mat-menu #userMenu="matMenu" class="modern-user-menu">
+  <div class="user-profile">
+    <img src="./../../content/images/user-picture.png" class="profile-avatar" />
+    <div class="profile-info">
+      <h4>Fahmi Bouabidi</h4>
+      <p>Developer • Project Management</p>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <button mat-menu-item>
+    <mat-icon>person_outline</mat-icon>
+    <span>My Profile</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>settings_outline</mat-icon>
+    <span>Settings</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>help_outline</mat-icon>
+    <span>Help & Support</span>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="logout()" class="logout-item">
+    <mat-icon>logout</mat-icon>
+    <span>Logout</span>
+  </button>
+</mat-menu>
+
+<!-- Sidenav Container -->
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #sidenav="matSidenav"
+    class="modern-sidenav"
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="isConnected ? false : false"
+    [fixedInViewport]="true"
+    [fixedTopGap]="64"
+    *ngIf="isConnected"
+  >
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <div class="user-card">
+        <div class="user-avatar-wrapper">
+          <img src="./../../content/images/user-picture.png" class="sidebar-avatar" />
+          <div class="status-indicator online"></div>
+        </div>
+        <h3 class="user-fullname">Fahmi Bouabidi</h3>
+        <p class="user-role">Senior Developer</p>
+        <div class="user-stats">
+          <div class="stat-item">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Projects</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">8</span>
+            <span class="stat-label">Tasks</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">4</span>
+            <span class="stat-label">Teams</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-label">Main</span>
+        <button
+          *ngFor="let item of getMainNav()"
+          mat-button
+          class="nav-item"
+          [class.active]="isActiveRoute(item.link)"
+          (click)="redirectToSideNavContext(item)"
+        >
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+          <span class="nav-text">{{ item.text }}</span>
+          <span class="nav-badge" *ngIf="getBadgeCount(item) > 0">{{ getBadgeCount(item) }}</span>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-label">Management</span>
+        <button
+          *ngFor="let item of getManagementNav()"
+          mat-button
+          class="nav-item"
+          [class.active]="isActiveRoute(item.link)"
+          (click)="redirectToSideNavContext(item)"
+        >
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+          <span class="nav-text">{{ item.text }}</span>
+          <span class="nav-badge" *ngIf="getBadgeCount(item) > 0">{{ getBadgeCount(item) }}</span>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-label">Analytics</span>
+        <button
+          *ngFor="let item of getAnalyticsNav()"
+          mat-button
+          class="nav-item"
+          [class.active]="isActiveRoute(item.link)"
+          (click)="redirectToSideNavContext(item)"
+        >
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+          <span class="nav-text">{{ item.text }}</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="progress-card">
+        <div class="progress-info">
+          <span>Storage Usage</span>
+          <span>75%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 75%"></div>
+        </div>
+      </div>
+      <button mat-button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="sidenav-content">
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

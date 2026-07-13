@@ -1,62 +1,899 @@
-.body-dashboard {
-  width: calc(100% - 5rem);
-  margin-left: 5rem;
-  z-index: 1;
-  background: #f4f7fa;
-  padding: 1rem 1.5rem 0 1.5rem;
-  position: fixed;
-  top: 5.25rem;
-  height: calc(100vh - 5.25rem);
-  overflow-y: auto;
+// Variables
+$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$sidebar-bg: #ffffff;
+$text-primary: #2d3748;
+$text-secondary: #718096;
+$border-color: #e2e8f0;
+$hover-bg: #f7fafc;
+$active-color: #667eea;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+$radius: 12px;
 
-  // This handles smooth animations when opening/closing the sidebar drawer
-  transition:
-    width 0.5s ease,
-    margin-left 0.5s ease;
+// Animations
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 
-  .body-content {
-    background-color: #fff;
-    border-radius: 0.625rem;
-    box-shadow: 0px 0px 10px 0 rgb(34 41 47 / 10%);
-    padding: 0.813rem 1.563rem;
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 
-    // --- CHANGE THESE LINES ---
-    display: flex;
-    flex-direction: column; /* <-- Forces child components to stack vertically */
-    align-items: stretch; /* <-- Forces child elements to span the full width */
-    justify-content: flex-start; /* <-- Aligns everything to the top naturally */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Toolbar
+.modern-toolbar {
+  background: #ffffff;
+  color: $text-primary;
+  height: 64px;
+  padding: 0 24px;
+  box-shadow: $shadow-sm;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .toolbar-container {
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+
+    .hamburger-btn {
+      color: $text-secondary;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      transition: none;
+
+      &:hover {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.08);
+      }
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .logo-icon {
+        width: 36px;
+        height: 36px;
+        background: $primary-gradient;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: none;
+
+        mat-icon {
+          font-size: 22px;
+          width: 22px;
+          height: 22px;
+        }
+      }
+
+      .brand-text {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: $text-primary;
+        white-space: nowrap;
+
+        span {
+          color: #667eea;
+        }
+      }
+    }
+  }
+
+  .actions-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+
+    // Notification Button
+    .action-btn {
+      color: $text-secondary;
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: none;
+
+      &:hover {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.08);
+      }
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+
+      .notification-dot {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 8px;
+        height: 8px;
+        background: #f56565;
+        border-radius: 50%;
+        border: 2px solid white;
+        animation: pulse 2s infinite;
+        box-shadow: 0 0 0 2px rgba(245, 101, 101, 0.3);
+      }
+    }
+
+    // User Button - Same size as notification button
+    .user-btn {
+      padding: 2px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: none;
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid transparent;
+        transition: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      &:hover .user-avatar {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      }
+    }
   }
 }
 
-// CRITICAL FIX: Overrides and strips out all transitions on initialization jump
-.no-transition {
-  transition: none !important;
+// Sidenav
+.modern-sidenav {
+  width: 280px;
+  background: $sidebar-bg;
+  border: none;
+  box-shadow: $shadow-md;
+  animation: slideIn 0.3s ease;
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+
+    .user-card {
+      text-align: center;
+
+      .user-avatar-wrapper {
+        position: relative;
+        display: inline-block;
+
+        .sidebar-avatar {
+          width: 72px;
+          height: 72px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid #e2e8f0;
+          transition: none;
+
+          &:hover {
+            border-color: #667eea;
+          }
+        }
+
+        .status-indicator {
+          position: absolute;
+          bottom: 2px;
+          right: 2px;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          border: 3px solid white;
+
+          &.online {
+            background: #48bb78;
+          }
+        }
+      }
+
+      .user-fullname {
+        margin: 12px 0 4px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      .user-role {
+        font-size: 0.8rem;
+        color: $text-secondary;
+        margin: 0 0 12px;
+      }
+
+      .user-stats {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+
+        .stat-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: $text-primary;
+          }
+
+          .stat-label {
+            font-size: 0.65rem;
+            color: $text-secondary;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+        }
+
+        .stat-divider {
+          width: 1px;
+          height: 24px;
+          background: $border-color;
+        }
+      }
+    }
+  }
+
+  mat-divider {
+    background: $border-color;
+    margin: 0 20px;
+  }
+
+  .sidebar-nav {
+    padding: 16px 12px;
+    flex: 1;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e0;
+      border-radius: 2px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+
+      .nav-label {
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 600;
+        color: $text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0 12px 8px;
+      }
+
+      .nav-item {
+        width: 100%;
+        display: flex !important;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        margin: 2px 0;
+        border-radius: 8px;
+        color: $text-secondary;
+        font-size: 0.9rem;
+        font-weight: 400;
+        transition: none;
+        position: relative;
+
+        .nav-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          color: $text-secondary;
+          transition: none;
+        }
+
+        .nav-text {
+          flex: 1;
+          text-align: left;
+        }
+
+        .nav-badge {
+          background: $primary-gradient;
+          color: white;
+          font-size: 0.6rem;
+          padding: 2px 8px;
+          border-radius: 12px;
+          min-width: 18px;
+          text-align: center;
+        }
+
+        &:hover {
+          background: $hover-bg;
+          color: $text-primary;
+
+          .nav-icon {
+            color: #667eea;
+          }
+        }
+
+        &.active {
+          background: rgba(102, 126, 234, 0.08);
+          color: #667eea;
+          font-weight: 500;
+
+          .nav-icon {
+            color: #667eea;
+          }
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 30px;
+            background: $primary-gradient;
+            border-radius: 0 3px 3px 0;
+          }
+        }
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+
+    .progress-card {
+      background: $hover-bg;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: $text-secondary;
+        margin-bottom: 6px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 2px;
+        overflow: hidden;
+
+        .progress-fill {
+          height: 100%;
+          background: $primary-gradient;
+          border-radius: 2px;
+          transition: width 0.6s ease;
+        }
+      }
+    }
+
+    .logout-btn {
+      width: 100%;
+      display: flex !important;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      color: #f56565;
+      font-weight: 500;
+      transition: none;
+
+      &:hover {
+        background: rgba(245, 101, 101, 0.08);
+      }
+    }
+  }
+}
+
+// Content
+.sidenav-container {
+  height: calc(100vh - 64px);
+}
+
+.sidenav-content {
+  background: #f7fafc;
+
+  .content-area {
+    padding: 24px;
+    min-height: calc(100vh - 112px);
+
+    > * {
+      animation: fadeIn 0.4s ease;
+    }
+  }
+}
+
+// Notification Menu
+::ng-deep .modern-notif-menu {
+  min-width: 360px;
+  max-height: 500px;
+  border-radius: $radius;
+  box-shadow: $shadow-lg;
+
+  .menu-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h4 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .mark-read-btn {
+      font-size: 0.8rem;
+      text-transform: none;
+    }
+  }
+
+  .notif-list {
+    max-height: 320px;
+    overflow-y: auto;
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: #cbd5e0;
+        margin-bottom: 8px;
+      }
+
+      p {
+        margin: 0;
+        font-weight: 500;
+        color: $text-primary;
+      }
+
+      span {
+        font-size: 0.85rem;
+        color: $text-secondary;
+      }
+    }
+
+    .notif-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: none;
+      position: relative;
+
+      &:hover {
+        background: $hover-bg;
+      }
+
+      &.unread {
+        background: rgba(102, 126, 234, 0.04);
+      }
+
+      .notif-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        mat-icon {
+          color: white;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .notif-content {
+        flex: 1;
+        min-width: 0;
+
+        .notif-title {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: $text-primary;
+        }
+
+        .notif-message {
+          font-size: 0.85rem;
+          color: $text-secondary;
+          margin: 2px 0 4px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .notif-time {
+          font-size: 0.7rem;
+          color: #a0aec0;
+        }
+      }
+
+      .notif-indicator {
+        width: 6px;
+        height: 6px;
+        background: #667eea;
+        border-radius: 50%;
+        align-self: center;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  .menu-footer {
+    padding: 12px 20px;
+    border-top: 1px solid $border-color;
+
+    .view-all-btn {
+      width: 100%;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: #667eea;
+    }
+  }
+}
+
+// User Menu
+::ng-deep .modern-user-menu {
+  min-width: 240px;
+  border-radius: $radius;
+  box-shadow: $shadow-lg;
+
+  .user-profile {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .profile-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-info {
+      h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      p {
+        margin: 2px 0 0;
+        font-size: 0.8rem;
+        color: $text-secondary;
+      }
+    }
+  }
+
+  .logout-item {
+    color: #f56565;
+
+    mat-icon {
+      color: #f56565;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .modern-toolbar {
+    .search-container {
+      max-width: 280px !important;
+    }
+
+    .brand-text {
+      font-size: 1rem !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-toolbar {
+    padding: 0 16px;
+
+    .hamburger-btn {
+      width: 36px !important;
+      height: 36px !important;
+
+      mat-icon {
+        font-size: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+      }
+    }
+
+    .action-btn {
+      width: 36px !important;
+      height: 36px !important;
+
+      mat-icon {
+        font-size: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+      }
+    }
+
+    .user-btn {
+      width: 36px !important;
+      height: 36px !important;
+
+      .user-avatar {
+        width: 32px !important;
+        height: 32px !important;
+      }
+    }
+
+    .brand-text {
+      font-size: 0.9rem !important;
+    }
+
+    .search-container {
+      max-width: 180px !important;
+      min-width: 100px !important;
+
+      .search-shortcut {
+        display: none !important;
+      }
+    }
+  }
+
+  .modern-sidenav {
+    width: 260px;
+  }
+
+  .sidenav-content {
+    .content-area {
+      padding: 16px;
+    }
+  }
+
+  ::ng-deep .modern-notif-menu {
+    min-width: 300px !important;
+    max-width: 320px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-toolbar {
+    padding: 0 12px;
+
+    .hamburger-btn {
+      width: 32px !important;
+      height: 32px !important;
+
+      mat-icon {
+        font-size: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+      }
+    }
+
+    .action-btn {
+      width: 32px !important;
+      height: 32px !important;
+
+      mat-icon {
+        font-size: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+      }
+    }
+
+    .user-btn {
+      width: 32px !important;
+      height: 32px !important;
+
+      .user-avatar {
+        width: 28px !important;
+        height: 28px !important;
+      }
+    }
+
+    // Keep brand text visible on mobile
+    .brand-text {
+      display: inline !important; /* Show on mobile */
+      font-size: 0.85rem !important;
+    }
+
+    .logo-icon {
+      width: 30px !important;
+      height: 30px !important;
+
+      mat-icon {
+        font-size: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+      }
+    }
+
+    .search-container {
+      max-width: 120px !important;
+      min-width: 60px !important;
+      padding: 4px 8px !important;
+
+      .search-icon {
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+      }
+    }
+
+    .actions-section {
+      gap: 4px !important;
+    }
+  }
+
+  .modern-sidenav {
+    width: 240px;
+  }
+
+  .sidenav-content {
+    .content-area {
+      padding: 12px;
+    }
+  }
+
+  ::ng-deep .modern-notif-menu {
+    min-width: 260px !important;
+    max-width: 280px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .modern-toolbar {
+    padding: 0 8px;
+
+    .brand-text {
+      font-size: 0.75rem !important;
+    }
+
+    .logo-icon {
+      width: 26px !important;
+      height: 26px !important;
+
+      mat-icon {
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+      }
+    }
+
+    .hamburger-btn {
+      width: 28px !important;
+      height: 28px !important;
+
+      mat-icon {
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+      }
+    }
+
+    .action-btn {
+      width: 28px !important;
+      height: 28px !important;
+
+      mat-icon {
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+      }
+    }
+
+    .user-btn {
+      width: 28px !important;
+      height: 28px !important;
+
+      .user-avatar {
+        width: 24px !important;
+        height: 24px !important;
+      }
+    }
+
+    .search-container {
+      max-width: 80px !important;
+      min-width: 40px !important;
+      padding: 4px 6px !important;
+
+      .search-icon {
+        font-size: 14px !important;
+        width: 14px !important;
+        height: 14px !important;
+      }
+    }
+
+    .actions-section {
+      gap: 2px !important;
+    }
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
   * {
-    transition: none !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-// Sidebar position modifiers
-.body-trimmed {
-  width: calc(100% - 16.5625rem);
-  margin-left: 16.5625rem;
-}
-
-.body-md-screen {
-  width: calc(100% - 5rem);
-  margin-left: 5rem;
-}
-
-// Login styles
-.body-login {
-  width: 100%;
-  min-height: 100vh;
-  background: #f4f7fa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  box-sizing: border-box;
-  transition: none !important; // Prevent login screen from inheriting or initializing animations
+// Focus States
+.nav-item:focus-visible,
+.mat-menu-item:focus-visible,
+button:focus-visible,
+.search-input:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
 }

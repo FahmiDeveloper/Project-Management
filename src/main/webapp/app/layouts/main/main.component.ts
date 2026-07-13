@@ -11,10 +11,7 @@ import { PushSubscriptionService } from '../../core/service-worker/push-subscrip
 import { PushNotificationService } from '../../core/service-worker/push-notification.service';
 import { CommonModule } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { SidenavComponent } from '../sidenav/sidenav.component';
-import { HeaderComponent } from 'app/core/header';
 import { BodyComponent } from 'app/body/body.component';
-import { AppMobileComponent } from 'app/app-mobile/app-mobile.component';
 
 interface SideNavToggle {
   screenWidth: number;
@@ -25,7 +22,7 @@ interface SideNavToggle {
   selector: 'jhi-main',
   templateUrl: './main.component.html',
   providers: [AppPageTitleStrategy],
-  imports: [CommonModule, SidenavComponent, HeaderComponent, BodyComponent, AppMobileComponent],
+  imports: [CommonModule, BodyComponent],
 })
 export default class MainComponent implements OnInit {
   private readonly renderer: Renderer2;
@@ -69,11 +66,7 @@ export default class MainComponent implements OnInit {
     // try to log in automatically
     this.accountService.identity().subscribe(account => {
       if (!account) {
-        // If not logged in, force open the login interface/modal or navigate to the route
         this.router.navigate(['/login']);
-
-        // Note: If you are using JHipster's default LoginService modal instead of a route,
-        // you would call this.loginService.login() here instead.
       }
     });
 
