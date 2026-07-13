@@ -8,27 +8,39 @@
     <meta name="google" content="notranslate" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="theme-color" content="#000000" />
-    <script src="https://kit.fontawesome.com/2a5bcf36a9.js" crossorigin="anonymous"></script>
+
+    <!-- Content Security Policy - Material Icons Only -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' data: https://fonts.gstatic.com;
+      img-src 'self' data: https:;
+      connect-src 'self' https://storage.googleapis.com;
+      frame-src 'self';
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+    "
+    />
+
     <base href="/" />
     <link rel="icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webapp" />
     <link rel="stylesheet" href="content/css/loading.css" />
-    <!-- Add Material Icons -->
+
+    <!-- Material Icons - All Styles -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Sharp" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Two+Tone" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
-      crossorigin="anonymous"
-    />
-    <head>
-      <!-- Add this line to load Material Icons -->
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    </head>
+
+    <!-- Google Fonts - Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
     <!-- jhipster-needle-add-resources-to-root - JHipster will add new resources here -->
   </head>
   <body>
