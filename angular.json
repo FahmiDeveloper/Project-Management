@@ -84,7 +84,7 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "buildTarget": "project-management:build:development",
-            "port": 9060
+            "port": 4200
           },
           "configurations": {
             "production": {
