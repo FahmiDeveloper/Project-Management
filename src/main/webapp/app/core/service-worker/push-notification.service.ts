@@ -30,22 +30,9 @@ export class PushNotificationService {
     });
 
     PushNotifications.addListener('pushNotificationReceived', notification => {
-      const bodyText = notification.body ?? '';
-
-      (async () => {
-        await LocalNotifications.schedule({
-          notifications: [
-            {
-              id: Math.floor(Math.random() * 10000),
-              title: notification.title ?? 'Notification',
-              body: bodyText,
-              largeBody: bodyText,
-              smallIcon: 'small_icon',
-              largeIcon: 'large_icon',
-            },
-          ],
-        });
-      })().catch(console.error);
+      console.log('Push received in foreground:', notification);
+      // Do NOT call LocalNotifications.schedule here.
+      // Android/iOS already handles showing the notification banner.
     });
 
     PushNotifications.addListener('pushNotificationActionPerformed', () => {
