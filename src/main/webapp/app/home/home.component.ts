@@ -7,7 +7,6 @@ import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { HttpClient } from '@angular/common/http';
-import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'jhi-home',
@@ -26,13 +25,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
   notificationSent = false;
 
   private readonly http = inject(HttpClient);
-  private readonly deviceService = inject(DeviceDetectorService);
-  isDesktop: boolean = false;
-  isMobile: boolean = true;
 
   ngOnInit(): void {
-    this.isDesktop = this.deviceService.isDesktop();
-    this.isMobile = this.deviceService.isMobile();
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))

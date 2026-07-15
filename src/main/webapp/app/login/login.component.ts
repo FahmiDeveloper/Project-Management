@@ -52,7 +52,7 @@ export default class LoginComponent implements OnInit, AfterViewInit {
           next: account => {
             if (account) {
               // Now that identity is fully authenticated and established, fire off FCM initialization
-              this.pushNotificationService.init();
+              // this.pushNotificationService.init();
 
               // Navigate after a microtask to avoid ExpressionChangedAfterItHasBeenCheckedError
               if (!this.router.getCurrentNavigation()) {
