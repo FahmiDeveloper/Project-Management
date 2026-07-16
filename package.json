@@ -98,6 +98,7 @@
     "@ngx-translate/http-loader": "16.0.1",
     "@popperjs/core": "2.11.8",
     "bootstrap": "5.3.6",
+    "chart.js": "^4.5.1",
     "dayjs": "1.11.13",
     "ngx-device-detector": "^9.0.0",
     "ngx-infinite-scroll": "19.0.0",
