@@ -39,7 +39,7 @@
     }
   }
 
-  // Stats Grid - Fixed alignment with larger fonts
+  // Stats Grid
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -185,7 +185,7 @@
     }
   }
 
-  // Activity & Tasks Row - Fixed for mobile
+  // Activity & Tasks Row
   .activity-tasks-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -360,12 +360,13 @@
           flex-shrink: 0;
 
           img {
-            width: 40px; /* Increased from 36px */
+            width: 40px;
             height: 40px;
             min-width: 40px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #e2e8f0;
+            display: block; /* Ensure image displays */
           }
         }
       }
@@ -499,13 +500,14 @@
             align-items: center;
 
             .member-avatar {
-              width: 40px; /* Increased from 32px */
+              width: 40px;
               height: 40px;
               min-width: 40px;
               border-radius: 50%;
               object-fit: cover;
               border: 2px solid white;
-              margin-right: -10px; /* Adjusted for larger avatars */
+              margin-right: -10px;
+              display: block; /* Ensure image displays */
 
               &:last-child {
                 margin-right: 0;
@@ -513,7 +515,7 @@
             }
 
             .member-count {
-              width: 36px; /* Increased from 32px */
+              width: 36px;
               height: 36px;
               min-width: 36px;
               border-radius: 50%;
@@ -521,7 +523,7 @@
               display: flex;
               align-items: center;
               justify-content: center;
-              font-size: 0.75rem; /* Increased from 0.7rem */
+              font-size: 0.75rem;
               font-weight: 700;
               color: #718096;
               margin-left: 4px;
@@ -612,7 +614,6 @@
       }
     }
 
-    // Fix for activity and tasks cards on tablet
     .activity-tasks-row {
       .activity-card,
       .tasks-card {
@@ -658,7 +659,6 @@
       grid-template-columns: 1fr !important;
     }
 
-    // Project avatars on tablet
     .projects-section {
       .project-members {
         .member-avatar {
@@ -751,7 +751,6 @@
       }
     }
 
-    // Fix for activity and tasks cards on mobile
     .activity-tasks-row {
       gap: 12px;
 
@@ -843,15 +842,14 @@
           }
 
           .task-avatar img {
-            width: 32px !important;
-            height: 32px !important;
-            min-width: 32px !important;
+            width: 38px !important; /* Increased for mobile */
+            height: 38px !important;
+            min-width: 38px !important;
           }
         }
       }
     }
 
-    // Charts on mobile
     .charts-row {
       gap: 12px;
 
@@ -874,7 +872,6 @@
       }
     }
 
-    // Projects on mobile
     .projects-section {
       .section-header {
         h3 {
@@ -922,15 +919,15 @@
 
           .project-members {
             .member-avatar {
-              width: 34px !important;
-              height: 34px !important;
-              min-width: 34px !important;
+              width: 38px !important; /* Increased for mobile */
+              height: 38px !important;
+              min-width: 38px !important;
             }
 
             .member-count {
-              width: 30px !important;
-              height: 30px !important;
-              min-width: 30px !important;
+              width: 32px !important;
+              height: 32px !important;
+              min-width: 32px !important;
               font-size: 0.7rem !important;
             }
 
@@ -1024,9 +1021,9 @@
           }
 
           .task-avatar img {
-            width: 28px !important;
-            height: 28px !important;
-            min-width: 28px !important;
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
           }
         }
       }
@@ -1041,15 +1038,15 @@
 
       .project-members {
         .member-avatar {
-          width: 30px !important;
-          height: 30px !important;
-          min-width: 30px !important;
+          width: 32px !important;
+          height: 32px !important;
+          min-width: 32px !important;
         }
 
         .member-count {
-          width: 26px !important;
-          height: 26px !important;
-          min-width: 26px !important;
+          width: 28px !important;
+          height: 28px !important;
+          min-width: 28px !important;
         }
       }
     }
