@@ -142,9 +142,17 @@ public class EmployeeResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of employees in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of Employees");
-        Page<EmployeeDTO> page = employeeService.findAll(pageable);
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
+        LOG.debug("REST request to get a page of Projects");
+        Page<EmployeeDTO> page;
+        if (eagerload) {
+            page = employeeService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = employeeService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

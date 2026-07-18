@@ -8,8 +8,8 @@ export interface IProjectMember {
   role?: keyof typeof MemberRole | null;
   joinedDate?: dayjs.Dayjs | null;
   active?: boolean | null;
-  project?: Pick<IProject, 'id'> | null;
-  employee?: Pick<IEmployee, 'id'> | null;
+  project?: Pick<IProject, 'id' | 'name'> | null;
+  employee?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
 }
 
 export type NewProjectMember = Omit<IProjectMember, 'id'> & { id: null };
