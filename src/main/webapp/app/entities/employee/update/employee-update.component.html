@@ -160,7 +160,7 @@
           <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
             <option [ngValue]="null"></option>
             @for (userOption of usersSharedCollection; track $index) {
-              <option [ngValue]="userOption">{{ userOption.id }}</option>
+              <option [ngValue]="userOption">{{ userOption.login }}</option>
             }
           </select>
         </div>
@@ -177,7 +177,7 @@
           >
             <option [ngValue]="null"></option>
             @for (departmentOption of departmentsSharedCollection; track $index) {
-              <option [ngValue]="departmentOption">{{ departmentOption.id }}</option>
+              <option [ngValue]="departmentOption">{{ departmentOption.name }}</option>
             }
           </select>
         </div>
