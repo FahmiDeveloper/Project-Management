@@ -32,7 +32,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
   notificationSent = false;
 
   private readonly http = inject(HttpClient);
-
   @ViewChild('projectChart') projectChartCanvas!: ElementRef;
   @ViewChild('taskChart') taskChartCanvas!: ElementRef;
 
@@ -61,28 +60,28 @@ export default class HomeComponent implements OnInit, OnDestroy {
       project: 'E-commerce Platform',
       dueDate: 'Today, 5:00 PM',
       priority: 'high',
-      assigneeAvatar: 'https://i.pravatar.cc/150?img=1',
+      assigneeAvatar: 'https://ui-avatars.com/api/?name=John+Doe&background=667eea&color=fff&size=40',
     },
     {
       title: 'Design system architecture',
       project: 'Mobile App',
       dueDate: 'Tomorrow, 10:00 AM',
       priority: 'medium',
-      assigneeAvatar: 'https://i.pravatar.cc/150?img=2',
+      assigneeAvatar: 'https://ui-avatars.com/api/?name=Jane+Smith&background=48bb78&color=fff&size=40',
     },
     {
       title: 'Client meeting preparation',
       project: 'Marketing Website',
       dueDate: 'Jun 25, 2:00 PM',
       priority: 'high',
-      assigneeAvatar: 'https://i.pravatar.cc/150?img=3',
+      assigneeAvatar: 'https://ui-avatars.com/api/?name=Mike+Johnson&background=ed8936&color=fff&size=40',
     },
     {
       title: 'Update documentation',
       project: 'API Gateway',
       dueDate: 'Jun 26, 11:00 AM',
       priority: 'low',
-      assigneeAvatar: 'https://i.pravatar.cc/150?img=4',
+      assigneeAvatar: 'https://ui-avatars.com/api/?name=Sarah+Wilson&background=4299e1&color=fff&size=40',
     },
   ];
 
@@ -94,11 +93,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
       color: '#667eea',
       tasks: 24,
       members: [
-        'https://i.pravatar.cc/150?img=1',
-        'https://i.pravatar.cc/150?img=2',
-        'https://i.pravatar.cc/150?img=3',
-        'https://i.pravatar.cc/150?img=4',
-        'https://i.pravatar.cc/150?img=5',
+        'https://ui-avatars.com/api/?name=John+Doe&background=667eea&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Jane+Smith&background=48bb78&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Mike+Johnson&background=ed8936&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Sarah+Wilson&background=4299e1&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Tom+Brown&background=9f7aea&color=fff&size=40',
       ],
     },
     {
@@ -107,7 +106,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
       progress: 45,
       color: '#48bb78',
       tasks: 18,
-      members: ['https://i.pravatar.cc/150?img=6', 'https://i.pravatar.cc/150?img=7', 'https://i.pravatar.cc/150?img=8'],
+      members: [
+        'https://ui-avatars.com/api/?name=Alice+Davis&background=48bb78&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Bob+Miller&background=667eea&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Carol+White&background=ed8936&color=fff&size=40',
+      ],
     },
     {
       name: 'API Gateway',
@@ -116,10 +119,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
       color: '#ed8936',
       tasks: 12,
       members: [
-        'https://i.pravatar.cc/150?img=9',
-        'https://i.pravatar.cc/150?img=10',
-        'https://i.pravatar.cc/150?img=11',
-        'https://i.pravatar.cc/150?img=12',
+        'https://ui-avatars.com/api/?name=David+Lee&background=ed8936&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Emma+Taylor&background=4299e1&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Frank+Martin&background=48bb78&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Grace+Anderson&background=9f7aea&color=fff&size=40',
       ],
     },
     {
@@ -128,7 +131,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
       progress: 30,
       color: '#4299e1',
       tasks: 8,
-      members: ['https://i.pravatar.cc/150?img=13', 'https://i.pravatar.cc/150?img=14'],
+      members: [
+        'https://ui-avatars.com/api/?name=Henry+Wilson&background=4299e1&color=fff&size=40',
+        'https://ui-avatars.com/api/?name=Ivy+Brown&background=667eea&color=fff&size=40',
+      ],
     },
   ];
 
@@ -260,12 +266,12 @@ export default class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  createNewProject(): void {
-    this.router.navigate(['/project/new']);
-  }
-
   viewAllProjects(): void {
     this.router.navigate(['/project']);
+  }
+
+  viewAllTasks(): void {
+    this.router.navigate(['/task']);
   }
 
   ngOnDestroy(): void {

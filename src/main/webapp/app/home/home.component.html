@@ -87,7 +87,7 @@
     <div class="tasks-card">
       <div class="card-header">
         <h3>Upcoming Tasks</h3>
-        <button mat-button color="primary" class="view-all-btn">View All</button>
+        <button mat-button color="primary" class="view-all-btn" (click)="viewAllTasks()">View All</button>
       </div>
       <div class="tasks-list">
         <div class="task-item" *ngFor="let task of upcomingTasks">

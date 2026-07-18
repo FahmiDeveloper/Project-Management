@@ -496,34 +496,75 @@ $radius: 12px;
   }
 }
 
-// Notification Menu
+// Notification Menu - Updated with fixed button styles
 ::ng-deep .modern-notif-menu {
   min-width: 360px;
   max-height: 500px;
   border-radius: $radius;
   box-shadow: $shadow-lg;
+  overflow: hidden;
 
   .menu-header {
     padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid $border-color;
 
     h4 {
       margin: 0;
       font-weight: 600;
       font-size: 1rem;
+      color: $text-primary;
     }
 
     .mark-read-btn {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       text-transform: none;
+      color: #667eea;
+      font-weight: 500;
+      padding: 4px 12px;
+      min-height: 32px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(102, 126, 234, 0.08);
+        border-color: #667eea;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+      }
     }
   }
 
   .notif-list {
     max-height: 320px;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e0;
+      border-radius: 2px;
+    }
 
     .empty-state {
       text-align: center;
@@ -554,8 +595,9 @@ $radius: 12px;
       gap: 12px;
       padding: 12px 20px;
       cursor: pointer;
-      transition: none;
+      transition: background 0.2s ease;
       position: relative;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 
       &:hover {
         background: $hover-bg;
@@ -563,11 +605,16 @@ $radius: 12px;
 
       &.unread {
         background: rgba(102, 126, 234, 0.04);
+
+        .notif-title {
+          font-weight: 600;
+        }
       }
 
       .notif-avatar {
         width: 40px;
         height: 40px;
+        min-width: 40px;
         border-radius: 10px;
         display: flex;
         align-items: center;
@@ -597,7 +644,7 @@ $radius: 12px;
         }
 
         .notif-message {
-          font-size: 0.85rem;
+          font-size: 0.8rem;
           color: $text-secondary;
           margin: 2px 0 4px;
           white-space: nowrap;
@@ -608,12 +655,21 @@ $radius: 12px;
         .notif-time {
           font-size: 0.7rem;
           color: #a0aec0;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+
+          &::before {
+            content: '•';
+            margin-right: 4px;
+          }
         }
       }
 
       .notif-indicator {
         width: 6px;
         height: 6px;
+        min-width: 6px;
         background: #667eea;
         border-radius: 50%;
         align-self: center;
@@ -625,14 +681,38 @@ $radius: 12px;
   .menu-footer {
     padding: 12px 20px;
     border-top: 1px solid $border-color;
+    background: #f7fafc;
 
     .view-all-btn {
       width: 100%;
       display: flex !important;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
       color: #667eea;
+      font-weight: 500;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid rgba(102, 126, 234, 0.15);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(102, 126, 234, 0.08);
+        border-color: #667eea;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
     }
   }
 }
@@ -766,9 +846,64 @@ $radius: 12px;
     }
   }
 
+  // Notification menu responsive
   ::ng-deep .modern-notif-menu {
     min-width: 300px !important;
     max-width: 320px !important;
+
+    .menu-header {
+      padding: 14px 16px;
+
+      h4 {
+        font-size: 0.95rem !important;
+      }
+
+      .mark-read-btn {
+        font-size: 0.7rem !important;
+        padding: 2px 10px !important;
+        min-height: 28px !important;
+      }
+    }
+
+    .notif-item {
+      padding: 10px 16px !important;
+      gap: 10px !important;
+
+      .notif-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+
+        mat-icon {
+          font-size: 16px !important;
+          width: 16px !important;
+          height: 16px !important;
+        }
+      }
+
+      .notif-content {
+        .notif-title {
+          font-size: 0.85rem !important;
+        }
+
+        .notif-message {
+          font-size: 0.75rem !important;
+        }
+
+        .notif-time {
+          font-size: 0.65rem !important;
+        }
+      }
+    }
+
+    .menu-footer {
+      padding: 10px 16px !important;
+
+      .view-all-btn {
+        font-size: 0.8rem !important;
+        padding: 6px 12px !important;
+      }
+    }
   }
 }
 
@@ -862,9 +997,66 @@ $radius: 12px;
     }
   }
 
+  // Notification menu responsive - mobile
   ::ng-deep .modern-notif-menu {
     min-width: 260px !important;
     max-width: 280px !important;
+
+    .menu-header {
+      padding: 12px 14px;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      h4 {
+        font-size: 0.9rem !important;
+      }
+
+      .mark-read-btn {
+        font-size: 0.65rem !important;
+        padding: 2px 8px !important;
+        min-height: 24px !important;
+      }
+    }
+
+    .notif-item {
+      padding: 8px 14px !important;
+      gap: 8px !important;
+
+      .notif-avatar {
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+
+        mat-icon {
+          font-size: 14px !important;
+          width: 14px !important;
+          height: 14px !important;
+        }
+      }
+
+      .notif-content {
+        .notif-title {
+          font-size: 0.8rem !important;
+        }
+
+        .notif-message {
+          font-size: 0.7rem !important;
+        }
+
+        .notif-time {
+          font-size: 0.6rem !important;
+        }
+      }
+    }
+
+    .menu-footer {
+      padding: 8px 14px !important;
+
+      .view-all-btn {
+        font-size: 0.75rem !important;
+        padding: 4px 10px !important;
+      }
+    }
   }
 }
 
@@ -940,6 +1132,66 @@ $radius: 12px;
 
   .sidenav-container {
     height: calc(100vh - 50px) !important;
+  }
+
+  // Notification menu responsive - extra small
+  ::ng-deep .modern-notif-menu {
+    min-width: 240px !important;
+    max-width: 260px !important;
+
+    .menu-header {
+      padding: 10px 12px;
+
+      h4 {
+        font-size: 0.85rem !important;
+      }
+
+      .mark-read-btn {
+        font-size: 0.6rem !important;
+        padding: 2px 6px !important;
+        min-height: 22px !important;
+      }
+    }
+
+    .notif-item {
+      padding: 6px 12px !important;
+      gap: 6px !important;
+
+      .notif-avatar {
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px !important;
+
+        mat-icon {
+          font-size: 12px !important;
+          width: 12px !important;
+          height: 12px !important;
+        }
+      }
+
+      .notif-content {
+        .notif-title {
+          font-size: 0.75rem !important;
+        }
+
+        .notif-message {
+          font-size: 0.65rem !important;
+        }
+
+        .notif-time {
+          font-size: 0.55rem !important;
+        }
+      }
+    }
+
+    .menu-footer {
+      padding: 6px 12px !important;
+
+      .view-all-btn {
+        font-size: 0.7rem !important;
+        padding: 4px 8px !important;
+      }
+    }
   }
 }
 
