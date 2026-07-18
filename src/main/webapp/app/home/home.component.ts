@@ -60,28 +60,28 @@ export default class HomeComponent implements OnInit, OnDestroy {
       project: 'E-commerce Platform',
       dueDate: 'Today, 5:00 PM',
       priority: 'high',
-      assigneeAvatar: 'https://ui-avatars.com/api/?name=John+Doe&background=667eea&color=fff&size=40',
+      assigneeAvatar: 'content/images/avatars/user1.png',
     },
     {
       title: 'Design system architecture',
       project: 'Mobile App',
       dueDate: 'Tomorrow, 10:00 AM',
       priority: 'medium',
-      assigneeAvatar: 'https://ui-avatars.com/api/?name=Jane+Smith&background=48bb78&color=fff&size=40',
+      assigneeAvatar: 'content/images/avatars/user2.png',
     },
     {
       title: 'Client meeting preparation',
       project: 'Marketing Website',
       dueDate: 'Jun 25, 2:00 PM',
       priority: 'high',
-      assigneeAvatar: 'https://ui-avatars.com/api/?name=Mike+Johnson&background=ed8936&color=fff&size=40',
+      assigneeAvatar: 'content/images/avatars/user3.png',
     },
     {
       title: 'Update documentation',
       project: 'API Gateway',
       dueDate: 'Jun 26, 11:00 AM',
       priority: 'low',
-      assigneeAvatar: 'https://ui-avatars.com/api/?name=Sarah+Wilson&background=4299e1&color=fff&size=40',
+      assigneeAvatar: 'content/images/avatars/user4.png',
     },
   ];
 
@@ -93,11 +93,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
       color: '#667eea',
       tasks: 24,
       members: [
-        'https://ui-avatars.com/api/?name=John+Doe&background=667eea&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Jane+Smith&background=48bb78&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Mike+Johnson&background=ed8936&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Sarah+Wilson&background=4299e1&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Tom+Brown&background=9f7aea&color=fff&size=40',
+        'content/images/avatars/user1.png',
+        'content/images/avatars/user2.png',
+        'content/images/avatars/user3.png',
+        'content/images/avatars/user4.png',
+        'content/images/avatars/user5.png',
       ],
     },
     {
@@ -106,11 +106,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       progress: 45,
       color: '#48bb78',
       tasks: 18,
-      members: [
-        'https://ui-avatars.com/api/?name=Alice+Davis&background=48bb78&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Bob+Miller&background=667eea&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Carol+White&background=ed8936&color=fff&size=40',
-      ],
+      members: ['content/images/avatars/user6.png', 'content/images/avatars/user7.png', 'content/images/avatars/user8.png'],
     },
     {
       name: 'API Gateway',
@@ -119,10 +115,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
       color: '#ed8936',
       tasks: 12,
       members: [
-        'https://ui-avatars.com/api/?name=David+Lee&background=ed8936&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Emma+Taylor&background=4299e1&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Frank+Martin&background=48bb78&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Grace+Anderson&background=9f7aea&color=fff&size=40',
+        'content/images/avatars/user9.png',
+        'content/images/avatars/user10.png',
+        'content/images/avatars/user11.png',
+        'content/images/avatars/user12.png',
       ],
     },
     {
@@ -131,10 +127,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       progress: 30,
       color: '#4299e1',
       tasks: 8,
-      members: [
-        'https://ui-avatars.com/api/?name=Henry+Wilson&background=4299e1&color=fff&size=40',
-        'https://ui-avatars.com/api/?name=Ivy+Brown&background=667eea&color=fff&size=40',
-      ],
+      members: ['content/images/avatars/user13.png', 'content/images/avatars/user14.png'],
     },
   ];
 
