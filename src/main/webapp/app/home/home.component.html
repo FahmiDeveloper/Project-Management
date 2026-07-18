@@ -1,5 +1,4 @@
-<div class="dashboard-container">
-  <!-- Welcome Section -->
+<!-- <div class="dashboard-container">
   <div class="welcome-section">
     <div class="welcome-text">
       <h1>Welcome back, {{ userName }}! 👋</h1>
@@ -12,144 +11,149 @@
       </div>
     </div>
   </div>
+</div> -->
 
-  <!-- Stats Cards -->
-  <div class="stats-grid">
-    <div class="stat-card" *ngFor="let stat of stats">
-      <div class="stat-icon" [style.background]="stat.color">
-        <mat-icon>{{ stat.icon }}</mat-icon>
+<div class="home-container">
+  <!-- Welcome Banner -->
+  <section class="welcome-banner">
+    <div class="banner-content">
+      <div class="banner-text">
+        <div class="greeting">
+          <span class="greeting-icon">👋</span>
+          <span class="greeting-text">Good {{ getTimeOfDay() }}, {{ userName }}!</span>
+        </div>
+        <h1>Let's make today productive</h1>
+        <p>You have {{ getTodayTasksCount() }} tasks due today. Stay focused and get things done!</p>
+        <div class="banner-actions">
+          <button mat-raised-button color="primary" (click)="startFocusMode()">
+            <mat-icon>timer</mat-icon>
+            Focus Mode
+          </button>
+          <button mat-stroked-button (click)="viewTodayTasks()">
+            <mat-icon>today</mat-icon>
+            Today's Tasks
+          </button>
+        </div>
       </div>
-      <div class="stat-info">
-        <span class="stat-value">{{ stat.value }}</span>
-        <span class="stat-label">{{ stat.label }}</span>
-        <span class="stat-change" [class.positive]="stat.change > 0" [class.negative]="stat.change < 0">
-          {{ stat.change > 0 ? '+' : '' }}{{ stat.change }}%
-          <mat-icon>{{ stat.change > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Charts Row -->
-  <div class="charts-row">
-    <!-- Project Progress Chart -->
-    <div class="chart-card">
-      <div class="chart-header">
-        <h3>Project Progress</h3>
-        <button mat-icon-button [matMenuTriggerFor]="chartMenu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #chartMenu="matMenu">
-          <button mat-menu-item>Last 7 days</button>
-          <button mat-menu-item>Last 30 days</button>
-          <button mat-menu-item>Last 90 days</button>
-        </mat-menu>
-      </div>
-      <div class="chart-body">
-        <canvas #projectChart></canvas>
-      </div>
-    </div>
-
-    <!-- Task Distribution -->
-    <div class="chart-card">
-      <div class="chart-header">
-        <h3>Task Distribution</h3>
-        <span class="chart-badge">By Status</span>
-      </div>
-      <div class="chart-body">
-        <canvas #taskChart></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- Recent Activity & Upcoming Tasks -->
-  <div class="activity-tasks-row">
-    <!-- Recent Activity -->
-    <div class="activity-card">
-      <div class="card-header">
-        <h3>Recent Activity</h3>
-        <button mat-button color="primary" class="view-all-btn">View All</button>
-      </div>
-      <div class="activity-list">
-        <div class="activity-item" *ngFor="let activity of recentActivities">
-          <div class="activity-icon" [style.background]="activity.color">
-            <mat-icon>{{ activity.icon }}</mat-icon>
-          </div>
-          <div class="activity-content">
-            <div class="activity-text">{{ activity.text }}</div>
-            <div class="activity-time">{{ activity.time }}</div>
-          </div>
+      <div class="banner-illustration">
+        <div class="motivational-quote">
+          <span class="quote-mark">"</span>
+          <p class="quote-text">The secret of getting ahead is getting started.</p>
+          <p class="quote-author">— Mark Twain</p>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Upcoming Tasks -->
-    <div class="tasks-card">
-      <div class="card-header">
-        <h3>Upcoming Tasks</h3>
-        <button mat-button color="primary" class="view-all-btn" (click)="viewAllTasks()">View All</button>
+  <!-- Daily Summary Cards -->
+  <section class="daily-summary">
+    <div class="summary-card" *ngFor="let item of dailySummary">
+      <div class="summary-icon" [style.background]="item.color">
+        <mat-icon>{{ item.icon }}</mat-icon>
       </div>
-      <div class="tasks-list">
-        <div class="task-item" *ngFor="let task of upcomingTasks">
-          <div class="task-priority" [class]="task.priority"></div>
-          <div class="task-content">
-            <div class="task-title">{{ task.title }}</div>
-            <div class="task-meta">
-              <span class="task-project">{{ task.project }}</span>
-              <span class="task-due-date">
-                <mat-icon>schedule</mat-icon>
-                {{ task.dueDate }}
-              </span>
-            </div>
-          </div>
-          <div class="task-avatar">
-            <img [src]="task.assigneeAvatar" alt="Assignee" />
-          </div>
-        </div>
+      <div class="summary-info">
+        <span class="summary-value">{{ item.value }}</span>
+        <span class="summary-label">{{ item.label }}</span>
+      </div>
+      <div class="summary-trend" [class.positive]="item.trend > 0" [class.negative]="item.trend < 0">
+        {{ item.trend > 0 ? '+' : '' }}{{ item.trend }}%
+        <mat-icon>{{ item.trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Projects Overview -->
-  <div class="projects-section">
-    <div class="section-header">
-      <h3>Your Projects</h3>
-      <div class="section-actions">
+  <!-- Three Column Layout -->
+  <div class="three-column-grid">
+    <!-- Column 1: Projects Overview -->
+    <div class="column-card projects-overview">
+      <div class="card-header">
+        <h3><mat-icon>folder_open</mat-icon> Projects Overview</h3>
         <button mat-button color="primary" (click)="viewAllProjects()">View All</button>
       </div>
+      <div class="project-stats-list">
+        <div class="project-stat-item" *ngFor="let project of projectStatus">
+          <div class="project-stat-info">
+            <span class="project-stat-name">{{ project.name }}</span>
+            <span class="project-stat-count">{{ project.count }}</span>
+          </div>
+          <div class="project-stat-bar">
+            <div class="project-stat-fill" [style.width]="project.percentage + '%'" [style.background]="project.color"></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="projects-grid">
-      <div class="project-card" *ngFor="let project of projects">
-        <div class="project-header">
-          <div class="project-color" [style.background]="project.color"></div>
-          <h4 class="project-title">{{ project.name }}</h4>
-          <button mat-icon-button [matMenuTriggerFor]="projectMenu" class="project-menu-btn">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #projectMenu="matMenu">
-            <button mat-menu-item>Edit</button>
-            <button mat-menu-item>Archive</button>
-            <button mat-menu-item color="warn">Delete</button>
-          </mat-menu>
-        </div>
-        <p class="project-description">{{ project.description }}</p>
-        <div class="project-progress">
-          <div class="progress-info">
-            <span>Progress</span>
-            <span>{{ project.progress }}%</span>
+
+    <!-- Column 2: Team Members -->
+    <div class="column-card team-members">
+      <div class="card-header">
+        <h3><mat-icon>people</mat-icon> Team Members</h3>
+        <button mat-button color="primary" (click)="viewAllMembers()">View All</button>
+      </div>
+      <div class="team-list">
+        <div class="team-item" *ngFor="let member of teamMembers">
+          <div class="team-avatar">
+            <img [src]="member.avatar" alt="{{ member.name }}" />
+            <span class="online-status" [class.online]="member.online" [class.offline]="!member.online"></span>
           </div>
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width]="project.progress + '%'" [style.background]="project.color"></div>
+          <div class="team-info">
+            <span class="team-name">{{ member.name }}</span>
+            <span class="team-role">{{ member.role }}</span>
+          </div>
+          <div class="team-tasks">
+            <span class="task-count">{{ member.tasks }} tasks</span>
           </div>
         </div>
-        <div class="project-members">
-          <div class="member-avatars">
-            <img *ngFor="let member of project.members.slice(0, 3)" [src]="member" alt="Member" class="member-avatar" />
-            <span *ngIf="project.members.length > 3" class="member-count">+{{ project.members.length - 3 }}</span>
+      </div>
+    </div>
+
+    <!-- Column 3: Upcoming Deadlines -->
+    <div class="column-card upcoming-deadlines">
+      <div class="card-header">
+        <h3><mat-icon>event</mat-icon> Upcoming Deadlines</h3>
+        <button mat-button color="primary" (click)="viewAllDeadlines()">View All</button>
+      </div>
+      <div class="deadline-list">
+        <div class="deadline-item" *ngFor="let deadline of upcomingDeadlines">
+          <div class="deadline-date" [class.urgent]="deadline.days <= 2">
+            <span class="deadline-day">{{ deadline.day }}</span>
+            <span class="deadline-month">{{ deadline.month }}</span>
           </div>
-          <span class="project-tasks">{{ project.tasks }} tasks</span>
+          <div class="deadline-info">
+            <span class="deadline-title">{{ deadline.title }}</span>
+            <span class="deadline-project">{{ deadline.project }}</span>
+          </div>
+          <div class="deadline-days" [class.urgent]="deadline.days <= 2">{{ deadline.days }}d</div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Achievement & Recognition Section -->
+  <section class="achievement-section">
+    <div class="achievement-header">
+      <h2><mat-icon>emoji_events</mat-icon> Achievements & Recognition</h2>
+      <button mat-button color="primary" (click)="viewAllAchievements()">View All <mat-icon>arrow_forward</mat-icon></button>
+    </div>
+    <div class="achievement-grid">
+      <div class="achievement-card" *ngFor="let achievement of achievements">
+        <div class="achievement-icon" [style.background]="achievement.color">
+          <mat-icon>{{ achievement.icon }}</mat-icon>
+        </div>
+        <div class="achievement-info">
+          <h4>{{ achievement.title }}</h4>
+          <p>{{ achievement.description }}</p>
+          <span class="achievement-date">{{ achievement.date }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Stats Footer -->
+  <section class="quick-stats-footer">
+    <div class="stat-item" *ngFor="let stat of footerStats">
+      <mat-icon>{{ stat.icon }}</mat-icon>
+      <span class="stat-number">{{ stat.value }}</span>
+      <span class="stat-label">{{ stat.label }}</span>
+    </div>
+  </section>
 </div>
