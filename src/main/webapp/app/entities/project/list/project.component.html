@@ -134,14 +134,16 @@
               <td>
                 @if (project.client) {
                   <div>
-                    <a [routerLink]="['/client', project.client.id, 'view']">{{ project.client.id }}</a>
+                    <a [routerLink]="['/client', project.client.id, 'view']">{{ project.client.companyName }}</a>
                   </div>
                 }
               </td>
               <td>
                 @if (project.manager) {
                   <div>
-                    <a [routerLink]="['/employee', project.manager.id, 'view']">{{ project.manager.id }}</a>
+                    <a [routerLink]="['/employee', project.manager.id, 'view']"
+                      >{{ project.manager.firstName }}&nbsp;{{ project.manager.lastName }}</a
+                    >
                   </div>
                 }
               </td>

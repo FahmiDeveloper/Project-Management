@@ -13,8 +13,8 @@ export interface IProject {
   budget?: number | null;
   progress?: number | null;
   status?: keyof typeof ProjectStatus | null;
-  client?: Pick<IClient, 'id'> | null;
-  manager?: Pick<IEmployee, 'id'> | null;
+  client?: Pick<IClient, 'id' | 'companyName'> | null;
+  manager?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
 }
 
 export type NewProject = Omit<IProject, 'id'> & { id: null };

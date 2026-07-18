@@ -20,10 +20,13 @@ public interface ProjectMapper extends EntityMapper<ProjectDTO, Project> {
     @Named("clientId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "companyName", source = "companyName")
     ClientDTO toDtoClientId(Client client);
 
     @Named("employeeId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "firstName", source = "firstName")
+    @Mapping(target = "lastName", source = "lastName")
     EmployeeDTO toDtoEmployeeId(Employee employee);
 }

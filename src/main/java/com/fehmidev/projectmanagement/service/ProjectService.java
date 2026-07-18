@@ -89,6 +89,15 @@ public class ProjectService {
     }
 
     /**
+     * Get all the projects with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<ProjectDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return projectRepository.findAllWithEagerRelationships(pageable).map(projectMapper::toDto);
+    }
+
+    /**
      * Get one project by id.
      *
      * @param id the id of the entity.

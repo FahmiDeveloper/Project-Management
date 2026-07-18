@@ -87,7 +87,7 @@ export class BodyComponent implements OnInit, OnDestroy {
   ];
 
   sideNavList: SideNavList[] = [
-    { icon: 'dashboard', text: 'Dashboard', link: '/home' },
+    { icon: 'home', text: 'Home', link: '/home' },
     { icon: 'folder_open', text: 'Projects', link: '/project' },
     { icon: 'people', text: 'Employees', link: '/employee' },
     { icon: 'task', text: 'Tasks', link: '/task' },
@@ -102,6 +102,7 @@ export class BodyComponent implements OnInit, OnDestroy {
     { icon: 'check_box', text: 'Checklists Items', link: '/checklist-item' },
     { icon: 'schedule', text: 'Times Entries', link: '/time-entry' },
     { icon: 'notifications', text: 'Notifications', link: '/notification' },
+    { icon: 'dashboard', text: 'Dashboard', link: '/dashboard' },
     { icon: 'history', text: 'Activities Logs', link: '/activity-log' },
     { icon: 'analytics', text: 'Reports', link: '/report-snapshot' },
   ];

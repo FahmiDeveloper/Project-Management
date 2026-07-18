@@ -110,12 +110,12 @@
               <td>{{ employee.jobTitle }}</td>
               <td>{{ employee.hireDate | formatMediumDate }}</td>
               <td>
-                {{ employee.user?.id }}
+                {{ employee.user?.login }}
               </td>
               <td>
                 @if (employee.department) {
                   <div>
-                    <a [routerLink]="['/department', employee.department.id, 'view']">{{ employee.department.id }}</a>
+                    <a [routerLink]="['/department', employee.department.id, 'view']">{{ employee.department.name }}</a>
                   </div>
                 }
               </td>
