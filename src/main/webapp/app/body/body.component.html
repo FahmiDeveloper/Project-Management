@@ -39,6 +39,7 @@
       (click)="markAllAsRead()"
       class="mark-read-btn"
     >
+      <mat-icon>done_all</mat-icon>
       Mark all read
     </button>
   </div>
@@ -61,7 +62,9 @@
     </div>
   </div>
   <div class="menu-footer">
-    <button mat-button routerLink="/notifications" class="view-all-btn">View all notifications <mat-icon>arrow_forward</mat-icon></button>
+    <button mat-button class="view-all-btn" (click)="viewAllNotifications()">
+      View all notifications <mat-icon>arrow_forward</mat-icon>
+    </button>
   </div>
 </mat-menu>
 

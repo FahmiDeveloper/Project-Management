@@ -255,6 +255,10 @@ export class BodyComponent implements OnInit, OnDestroy {
     notification.read = true;
     this.cdr.detectChanges();
   }
+
+  viewAllNotifications(): void {
+    this.router.navigate(['/notification']);
+  }
 }
 
 export interface SideNavList {
