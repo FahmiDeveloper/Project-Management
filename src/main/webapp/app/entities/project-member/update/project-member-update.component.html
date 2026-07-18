@@ -87,7 +87,7 @@
           >
             <option [ngValue]="null"></option>
             @for (projectOption of projectsSharedCollection; track $index) {
-              <option [ngValue]="projectOption">{{ projectOption.id }}</option>
+              <option [ngValue]="projectOption">{{ projectOption.name }}</option>
             }
           </select>
         </div>
@@ -104,7 +104,7 @@
           >
             <option [ngValue]="null"></option>
             @for (employeeOption of employeesSharedCollection; track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
+              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</option>
             }
           </select>
         </div>

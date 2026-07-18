@@ -100,14 +100,16 @@
               <td>
                 @if (projectMember.project) {
                   <div>
-                    <a [routerLink]="['/project', projectMember.project.id, 'view']">{{ projectMember.project.id }}</a>
+                    <a [routerLink]="['/project', projectMember.project.id, 'view']">{{ projectMember.project.name }}</a>
                   </div>
                 }
               </td>
               <td>
                 @if (projectMember.employee) {
                   <div>
-                    <a [routerLink]="['/employee', projectMember.employee.id, 'view']">{{ projectMember.employee.id }}</a>
+                    <a [routerLink]="['/employee', projectMember.employee.id, 'view']"
+                      >{{ projectMember.employee.firstName }}&nbsp;{{ projectMember.employee.lastName }}</a
+                    >
                   </div>
                 }
               </td>

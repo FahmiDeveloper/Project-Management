@@ -89,6 +89,15 @@ public class ProjectMemberService {
     }
 
     /**
+     * Get all the employees with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<ProjectMemberDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return projectMemberRepository.findAllWithEagerRelationships(pageable).map(projectMemberMapper::toDto);
+    }
+
+    /**
      * Get one projectMember by id.
      *
      * @param id the id of the entity.
