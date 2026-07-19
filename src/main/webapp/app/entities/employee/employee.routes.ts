@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import EmployeeResolve from './route/employee-routing-resolve.service';
 
 const employeeRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/employee.component').then(m => m.EmployeeComponent),
+    title: 'projectManagementApp.employee.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import TimeEntryResolve from './route/time-entry-routing-resolve.service';
 
 const timeEntryRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/time-entry.component').then(m => m.TimeEntryComponent),
+    title: 'projectManagementApp.timeEntry.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

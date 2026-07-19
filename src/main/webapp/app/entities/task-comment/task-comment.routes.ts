@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import TaskCommentResolve from './route/task-comment-routing-resolve.service';
 
 const taskCommentRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/task-comment.component').then(m => m.TaskCommentComponent),
+    title: 'projectManagementApp.taskComment.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

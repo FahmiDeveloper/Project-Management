@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import ChecklistItemResolve from './route/checklist-item-routing-resolve.service';
 
 const checklistItemRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/checklist-item.component').then(m => m.ChecklistItemComponent),
+    title: 'projectManagementApp.checklistItem.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

@@ -112,7 +112,7 @@ export class BodyComponent implements OnInit, OnDestroy {
     { icon: 'notifications', text: 'Notifications', link: '/notification' },
     { icon: 'dashboard', text: 'Dashboard', link: '/dashboard' },
     { icon: 'history', text: 'Activities Logs', link: '/activity-log' },
-    { icon: 'analytics', text: 'Reports', link: '/report-snapshot' },
+    { icon: 'analytics', text: 'Reports snapshots', link: '/report-snapshot' },
     { icon: 'gavel', text: 'Authority', link: '/authority' },
     { icon: 'admin_panel_settings', text: 'User management', link: '/admin/user-management' },
     { icon: 'analytics', text: 'Metrics', link: '/admin/metrics' },

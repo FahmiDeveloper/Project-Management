@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import NotificationResolve from './route/notification-routing-resolve.service';
 
 const notificationRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/notification.component').then(m => m.NotificationComponent),
+    title: 'projectManagementApp.notification.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

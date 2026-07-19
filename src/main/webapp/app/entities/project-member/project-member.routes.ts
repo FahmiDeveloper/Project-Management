@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import ProjectMemberResolve from './route/project-member-routing-resolve.service';
 
 const projectMemberRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/project-member.component').then(m => m.ProjectMemberComponent),
+    title: 'projectManagementApp.projectMember.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },
