@@ -5,7 +5,15 @@
       <div class="banner-text">
         <div class="greeting">
           <span class="greeting-icon">👋</span>
-          <span class="greeting-text">Good {{ getTimeOfDay() }}, {{ userName }}!</span>
+          <span class="greeting-text"
+            >Good {{ getTimeOfDay() }},
+            @if (account() !== null) {
+              @if (account(); as accountRef) {
+                {{ accountRef.firstName }}
+              }
+            }
+            !
+          </span>
         </div>
         <h1>Let's make today productive</h1>
         <p>You have {{ getTodayTasksCount() }} tasks due today. Stay focused and get things done!</p>

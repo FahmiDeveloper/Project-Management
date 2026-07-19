@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, Input, OnInit, ViewChild, HostListener, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnInit, ViewChild, HostListener, OnDestroy, signal } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
@@ -11,8 +11,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
 import { LoginService } from 'app/login/login.service';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
+import { Account } from 'app/core/auth/account.model';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'app-body',
@@ -29,15 +32,20 @@ import { filter } from 'rxjs/operators';
     MatMenuModule,
     MatTooltipModule,
     RouterOutlet,
+    HasAnyAuthorityDirective,
   ],
 })
 export class BodyComponent implements OnInit, OnDestroy {
+  account = signal<Account | null>(null);
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
   @Input() isConnected = false;
+
+  private readonly destroy$ = new Subject<void>();
 
   private readonly loginService = inject(LoginService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly accountService = inject(AccountService);
 
   isMobile = false;
   private breakpointSubscription: Subscription | null = null;
@@ -105,11 +113,23 @@ export class BodyComponent implements OnInit, OnDestroy {
     { icon: 'dashboard', text: 'Dashboard', link: '/dashboard' },
     { icon: 'history', text: 'Activities Logs', link: '/activity-log' },
     { icon: 'analytics', text: 'Reports', link: '/report-snapshot' },
+    { icon: 'gavel', text: 'Authority', link: '/authority' },
+    { icon: 'admin_panel_settings', text: 'User management', link: '/admin/user-management' },
+    { icon: 'analytics', text: 'Metrics', link: '/admin/metrics' },
+    { icon: 'monitor_heart', text: 'Health', link: '/admin/health' },
+    { icon: 'manage_accounts', text: 'Configuration', link: '/admin/configuration' },
+    { icon: 'receipt_long', text: 'Logs', link: '/admin/logs' },
+    { icon: 'api', text: 'API', link: '/admin/docs' },
   ];
 
   constructor(private router: Router) {}
 
   ngOnInit() {
+    this.accountService
+      .getAuthenticationState()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(account => this.account.set(account));
+
     this.breakpointSubscription = this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.Tablet]).subscribe(result => {
       this.isMobile = result.matches;
       if (this.sidenav && this.isConnected) {
@@ -186,7 +206,11 @@ export class BodyComponent implements OnInit, OnDestroy {
   }
 
   getAnalyticsNav(): SideNavList[] {
-    return this.sideNavList.slice(15);
+    return this.sideNavList.slice(15, 18);
+  }
+
+  getAdministrationNav(): SideNavList[] {
+    return this.sideNavList.slice(18);
   }
 
   logout() {
