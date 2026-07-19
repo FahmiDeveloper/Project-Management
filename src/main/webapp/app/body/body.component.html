@@ -73,7 +73,13 @@
   <div class="user-profile">
     <img src="./../../content/images/user-picture.png" class="profile-avatar" />
     <div class="profile-info">
-      <h4>Fahmi Bouabidi</h4>
+      <h4>
+        @if (account() !== null) {
+          @if (account(); as accountRef) {
+            {{ accountRef.firstName }}&nbsp;{{ accountRef.lastName }}
+          }
+        }
+      </h4>
       <p>Developer • Project Management</p>
     </div>
   </div>
@@ -115,7 +121,13 @@
           <img src="./../../content/images/user-picture.png" class="sidebar-avatar" />
           <div class="status-indicator online"></div>
         </div>
-        <h3 class="user-fullname">Fahmi Bouabidi</h3>
+        <h3 class="user-fullname">
+          @if (account() !== null) {
+            @if (account(); as accountRef) {
+              {{ accountRef.firstName }}&nbsp;{{ accountRef.lastName }}
+            }
+          }
+        </h3>
         <p class="user-role">Senior Developer</p>
         <div class="user-stats">
           <div class="stat-item">
@@ -174,6 +186,20 @@
         <span class="nav-label">Analytics</span>
         <button
           *ngFor="let item of getAnalyticsNav()"
+          mat-button
+          class="nav-item"
+          [class.active]="isActiveRoute(item.link)"
+          (click)="redirectToSideNavContext(item)"
+        >
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+          <span class="nav-text">{{ item.text }}</span>
+        </button>
+      </div>
+
+      <div class="nav-section" *jhiHasAnyAuthority="'ROLE_ADMIN'">
+        <span class="nav-label" jhiTranslate="global.menu.admin.main">Administration</span>
+        <button
+          *ngFor="let item of getAdministrationNav()"
           mat-button
           class="nav-item"
           [class.active]="isActiveRoute(item.link)"
