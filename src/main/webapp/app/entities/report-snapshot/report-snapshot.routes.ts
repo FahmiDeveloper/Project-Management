@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import ReportSnapshotResolve from './route/report-snapshot-routing-resolve.service';
 
 const reportSnapshotRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/report-snapshot.component').then(m => m.ReportSnapshotComponent),
+    title: 'projectManagementApp.reportSnapshot.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

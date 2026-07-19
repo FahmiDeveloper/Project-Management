@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import SprintResolve from './route/sprint-routing-resolve.service';
 
 const sprintRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/sprint.component').then(m => m.SprintComponent),
+    title: 'projectManagementApp.sprint.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
+import { DESC } from 'app/config/navigation.constants';
 import AttachmentResolve from './route/attachment-routing-resolve.service';
 
 const attachmentRoute: Routes = [
   {
     path: '',
     loadComponent: () => import('./list/attachment.component').then(m => m.AttachmentComponent),
+    title: 'projectManagementApp.attachment.home.title',
     data: {
-      defaultSort: `id,${ASC}`,
+      defaultSort: `id,${DESC}`,
     },
     canActivate: [UserRouteAccessService],
   },

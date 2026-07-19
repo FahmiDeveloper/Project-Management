@@ -2,7 +2,7 @@
   "projectManagementApp": {
     "dashboard": {
       "home": {
-        "title": "Dashboards",
+        "title": "Dashboard",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Dashboard",
         "createOrEditLabel": "Create or edit a Dashboard",
