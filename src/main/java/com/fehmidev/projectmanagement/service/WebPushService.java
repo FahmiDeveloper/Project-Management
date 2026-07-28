@@ -1,5 +1,6 @@
 package com.fehmidev.projectmanagement.service;
 
+import com.fehmidev.projectmanagement.service.NotificationService;
 import com.fehmidev.projectmanagement.service.dto.PushSubscriptionDTO;
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidNotification;
@@ -22,19 +23,31 @@ public class WebPushService {
 
     private final PushSubscriptionService subscriptionService;
     private final PushService pushService;
+    private final NotificationService notificationService;
 
     public WebPushService(
         @Value("${webpush.public-key}") String publicKey,
         @Value("${webpush.private-key}") String privateKey,
         @Value("${webpush.subject}") String subject,
-        PushSubscriptionService subscriptionService
+        PushSubscriptionService subscriptionService,
+        NotificationService notificationService
     ) throws Exception {
         this.subscriptionService = subscriptionService;
+        this.notificationService = notificationService;
         this.pushService = new PushService(publicKey, privateKey, subject);
     }
 
-    // ← Sends to desktop browsers (Web Push)
-    public void send(String title, String body, String url, String imageUrl) {
+    // NEW: Send to ALL devices (both desktop and mobile)
+    public void sendToAllDevices(String title, String body, String url, String imageUrl) {
+        // Send to desktop browsers (Web Push)
+        sendToDesktop(title, body, url, imageUrl);
+
+        // Send to mobile devices (FCM)
+        sendToMobile(title, body, imageUrl, url);
+    }
+
+    // Send to desktop browsers only
+    private void sendToDesktop(String title, String body, String url, String imageUrl) {
         subscriptionService
             .findAll()
             .forEach(sub -> {
@@ -46,48 +59,47 @@ public class WebPushService {
                         String.format("{\"title\":\"%s\",\"body\":\"%s\",\"url\":\"%s\"}", title, body, url)
                     );
                     pushService.send(notification);
+                    System.out.println("✅ Desktop notification sent to: " + sub.getEndpoint());
                 } catch (Exception e) {
+                    System.err.println("❌ Failed to send desktop notification: " + e.getMessage());
                     e.printStackTrace();
                 }
             });
-
-        // ← Also send to all mobile devices via FCM
-        sendToMobile(title, body, imageUrl);
     }
 
-    // ← Sends to all registered mobile devices (FCM)
-    public void sendToMobile(String title, String body, String imageUrl) {
+    // Send to mobile devices only
+    private void sendToMobile(String title, String body, String imageUrl, String url) {
         subscriptionService
             .findAllFcmTokens()
             .forEach(token -> {
                 try {
-                    // 1. Build the Android-specific notification settings (e.g., Image)
                     AndroidNotification androidNotification = AndroidNotification.builder().setImage(imageUrl).build();
 
-                    // 2. Combine the notification settings AND the HIGH priority flag into one AndroidConfig
                     AndroidConfig androidConfig = AndroidConfig.builder()
                         .setNotification(androidNotification)
-                        .setPriority(AndroidConfig.Priority.HIGH) // Forces delivery in Doze/Background mode
+                        .setPriority(AndroidConfig.Priority.HIGH)
                         .build();
 
-                    // 3. Build APNs config for iOS devices with required aps payload
-                    Aps aps = Aps.builder().build(); // Creates the mandatory empty placeholder object
+                    Aps aps = Aps.builder().build();
+                    ApnsConfig apnsConfig = ApnsConfig.builder().setAps(aps).putHeader("apns-priority", "10").build();
 
-                    ApnsConfig apnsConfig = ApnsConfig.builder()
-                        .setAps(aps) // Resolves "aps must be specified" exception
-                        .putHeader("apns-priority", "10")
+                    com.google.firebase.messaging.Notification firebaseNotification = com.google.firebase.messaging.Notification.builder()
+                        .setTitle(title)
+                        .setBody(body)
+                        .setImage(imageUrl)
                         .build();
 
-                    // 4. Construct the final unified message
                     Message message = Message.builder()
                         .setToken(token)
-                        .setNotification(Notification.builder().setTitle(title).setBody(body).setImage(imageUrl).build())
-                        .setAndroidConfig(androidConfig) // Pass the combined config here
-                        .setApnsConfig(apnsConfig) // Ensures iOS background reliability
+                        .setNotification(firebaseNotification)
+                        .setAndroidConfig(androidConfig)
+                        .setApnsConfig(apnsConfig)
                         .build();
 
                     FirebaseMessaging.getInstance().send(message);
+                    System.out.println("✅ Mobile notification sent to: " + token);
                 } catch (Exception e) {
+                    System.err.println("❌ Failed to send mobile notification: " + e.getMessage());
                     e.printStackTrace();
                 }
             });

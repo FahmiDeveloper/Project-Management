@@ -1,24 +1,38 @@
-import { Component, OnDestroy, OnInit, inject, signal, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
-import SharedModule from 'app/shared/shared.module';
-import { AccountService } from 'app/core/auth/account.service';
-import { Account } from 'app/core/auth/account.model';
 import { HttpClient } from '@angular/common/http';
-
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 
+import { Capacitor } from '@capacitor/core';
+
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+import SharedModule from 'app/shared/shared.module';
+import { AccountService } from 'app/core/auth/account.service';
+import { Account } from 'app/core/auth/account.model';
+import { INotification } from 'app/entities/notification/notification.model';
+
+import FormatMediumDatetimePipe from '../shared/date/format-medium-datetime.pipe';
+
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule, CommonModule, MatIconModule, MatButtonModule, MatMenuModule, MatCardModule],
+  imports: [
+    SharedModule,
+    RouterModule,
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatCardModule,
+    FormatMediumDatetimePipe,
+  ],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
@@ -27,12 +41,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
-
-  notificationSent = false;
-
   private readonly http = inject(HttpClient);
 
-  userName = 'Fahmi';
+  notificationSent = false;
+  isMobileDevice = false;
+  notifications: INotification[] = [];
 
   // Daily Summary Data
   dailySummary = [
@@ -143,6 +156,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => this.account.set(account));
+    this.isMobileDevice = Capacitor.isNativePlatform();
   }
 
   login(): void {
@@ -150,21 +164,57 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   testNotification(): void {
-    this.http
-      .post(SERVER_API_URL + 'api/push/send', {
-        title: 'Hello 👋',
-        body: 'This is a test notification from your app! Tap the expand button on the right to read the rest of this extra long message safely inside your status tray.',
-        icon: '/content/icons/icon-192x192.png',
-        image: 'https://outburst-rocket-provoke.ngrok-free.dev/content/icons/icon-192x192.png',
-        url: '/',
-      })
-      .subscribe({
-        next: () => {
-          this.notificationSent = true;
-          setTimeout(() => (this.notificationSent = false), 3000); // reset after 3s
-        },
-        error: err => console.error('Notification error:', err),
-      });
+    if (this.isMobileDevice) {
+      this.sendNotificationFromMobile();
+    } else {
+      this.sendNotificationFromDesktop();
+    }
+  }
+
+  sendNotificationFromDesktop(): void {
+    const payload = {
+      title: 'Hello 👋',
+      body: 'This is a test notification from your app! Tap the expand button on the right to read the rest of this extra long message safely inside your status tray.',
+      icon: '/content/icons/icon-192x192.png',
+      image: 'https://outburst-rocket-provoke.ngrok-free.dev/content/icons/icon-192x192.png',
+      url: '/',
+    };
+
+    this.http.post(SERVER_API_URL + 'api/push/send-from-desktop', payload).subscribe({
+      next: () => {
+        this.notificationSent = true;
+        setTimeout(() => {
+          this.notificationSent = false;
+        }, 3000);
+      },
+      error: err => {
+        console.error('Notification error:', err);
+        this.notificationSent = false;
+      },
+    });
+  }
+
+  sendNotificationFromMobile(): void {
+    const payload = {
+      title: 'Hello 👋',
+      body: 'This is a test notification from your app! Tap the expand button on the right to read the rest of this extra long message safely inside your status tray.',
+      icon: '/content/icons/icon-192x192.png',
+      image: 'https://outburst-rocket-provoke.ngrok-free.dev/content/icons/icon-192x192.png',
+      url: '/',
+    };
+
+    this.http.post(SERVER_API_URL + 'api/push/send-from-mobile', payload).subscribe({
+      next: () => {
+        this.notificationSent = true;
+        setTimeout(() => {
+          this.notificationSent = false;
+        }, 3000);
+      },
+      error: err => {
+        console.error('Notification error:', err);
+        this.notificationSent = false;
+      },
+    });
   }
 
   getTimeOfDay(): string {
