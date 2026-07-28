@@ -17,22 +17,11 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { INotification } from 'app/entities/notification/notification.model';
 
-import FormatMediumDatetimePipe from '../shared/date/format-medium-datetime.pipe';
-
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [
-    SharedModule,
-    RouterModule,
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatCardModule,
-    FormatMediumDatetimePipe,
-  ],
+  imports: [SharedModule, RouterModule, CommonModule, MatIconModule, MatButtonModule, MatMenuModule, MatCardModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
