@@ -164,7 +164,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
     const payload = {
       title: 'Hello 👋',
       body: 'This is a test notification from your app! Tap the expand button on the right to read the rest of this extra long message safely inside your status tray.',
-      icon: '/content/icons/icon-192x192.png',
+      icon: '/content/images/logo-proj-manag.png',
       image: 'https://outburst-rocket-provoke.ngrok-free.dev/content/icons/icon-192x192.png',
       url: '/',
     };
@@ -187,7 +187,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
     const payload = {
       title: 'Hello 👋',
       body: 'This is a test notification from your app! Tap the expand button on the right to read the rest of this extra long message safely inside your status tray.',
-      icon: '/content/icons/icon-192x192.png',
+      icon: '/content/images/logo-proj-manag.png',
       image: 'https://outburst-rocket-provoke.ngrok-free.dev/content/icons/icon-192x192.png',
       url: '/',
     };
