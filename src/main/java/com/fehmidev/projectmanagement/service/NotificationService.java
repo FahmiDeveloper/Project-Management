@@ -1,14 +1,21 @@
 package com.fehmidev.projectmanagement.service;
 
+import com.fehmidev.projectmanagement.domain.Employee;
 import com.fehmidev.projectmanagement.domain.Notification;
 import com.fehmidev.projectmanagement.repository.NotificationRepository;
 import com.fehmidev.projectmanagement.service.dto.NotificationDTO;
 import com.fehmidev.projectmanagement.service.mapper.NotificationMapper;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,5 +124,83 @@ public class NotificationService {
     public void delete(Long id) {
         LOG.debug("Request to delete Notification : {}", id);
         notificationRepository.deleteById(id);
+    }
+
+    /**
+     * Save a notification with simple parameters (convenience method)
+     *
+     * @param title the notification title
+     * @param message the notification message/body
+     * @param type the notification type (WEB_PUSH, FCM, LOCAL)
+     * @param employee the employee to associate with (can be null)
+     * @return the persisted entity
+     */
+    public Notification saveNotification(String title, String message, String type, Employee employee) {
+        LOG.debug("Request to save Notification : title={}, type={}", title, type);
+
+        Notification notification = new Notification();
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notification.setType(type);
+        notification.setIsRead(false);
+        notification.setCreatedDate(Instant.now());
+
+        if (employee != null) {
+            notification.setEmployee(employee);
+        }
+
+        notification = notificationRepository.save(notification);
+        return notification;
+    }
+
+    /**
+     * Save a notification for the current user
+     */
+    public Notification saveNotificationForCurrentUser(String title, String message, String type) {
+        // You'll need to get the current user's employee
+        // This is a placeholder - implement based on your security context
+        Employee currentEmployee = getCurrentEmployee(); // You need to implement this
+        return saveNotification(title, message, type, currentEmployee);
+    }
+
+    /**
+     * Get current employee - implement this based on your authentication
+     */
+    private Employee getCurrentEmployee() {
+        // Using Spring Security
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        // Get current user
+        String username = authentication.getName();
+        // Fetch Employee by username - you'll need to inject UserService or similar
+        // return employeeRepository.findByUserLogin(username).orElse(null);
+        return null; // Placeholder
+    }
+
+    /**
+     * Get all notifications for the current user
+     */
+    @Transactional(readOnly = true)
+    public List<NotificationDTO> getNotificationsForCurrentUser() {
+        Employee currentEmployee = getCurrentEmployee();
+        if (currentEmployee == null) {
+            return new ArrayList<>();
+        }
+        return notificationRepository.findByEmployee(currentEmployee).stream().map(notificationMapper::toDto).collect(Collectors.toList());
+    }
+
+    /**
+     * Mark a notification as read
+     */
+    public void markAsRead(Long notificationId) {
+        Notification notification = notificationRepository
+            .findById(notificationId)
+            .orElseThrow(() -> new RuntimeException("Notification not found with id: " + notificationId));
+
+        notification.setIsRead(true);
+        notificationRepository.save(notification);
     }
 }

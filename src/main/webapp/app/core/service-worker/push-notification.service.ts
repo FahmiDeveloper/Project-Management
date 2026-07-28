@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
 import { Capacitor } from '@capacitor/core';
 import { PushNotifications, Token } from '@capacitor/push-notifications';
 import { LocalNotifications } from '@capacitor/local-notifications';
+
 import { environment } from 'environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -25,7 +27,6 @@ export class PushNotificationService {
 
     PushNotifications.addListener('registration', (token: Token) => {
       console.log('tttttttttoooookkkkeeeennn', token.value);
-
       this.sendFcmTokenToServer(token.value);
     });
 
