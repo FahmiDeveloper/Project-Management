@@ -1,5 +1,6 @@
 package com.fehmidev.projectmanagement.repository;
 
+import com.fehmidev.projectmanagement.domain.Employee;
 import com.fehmidev.projectmanagement.domain.Notification;
 import java.util.List;
 import java.util.Optional;
@@ -37,4 +38,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     @Query("select notification from Notification notification left join fetch notification.employee where notification.id =:id")
     Optional<Notification> findOneWithToOneRelationships(@Param("id") Long id);
+
+    List<Notification> findByEmployee(Employee employee);
+
+    Page<Notification> findByEmployee(Employee employee, Pageable pageable);
 }
