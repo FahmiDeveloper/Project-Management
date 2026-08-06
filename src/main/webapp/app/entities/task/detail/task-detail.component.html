@@ -87,7 +87,9 @@
           <dd>
             @if (task()!.assignedTo) {
               <div>
-                <a [routerLink]="['/employee', task()!.assignedTo?.id, 'view']">{{ taskRef.assignedTo?.employeeNumber }}</a>
+                <a [routerLink]="['/employee', task()!.assignedTo?.id, 'view']"
+                  >{{ taskRef.assignedTo?.firstName }}&nbsp;{{ taskRef.assignedTo?.lastName }}</a
+                >
               </div>
             }
           </dd>
@@ -95,7 +97,9 @@
           <dd>
             @if (task()!.createdBy) {
               <div>
-                <a [routerLink]="['/employee', task()!.createdBy?.id, 'view']">{{ taskRef.createdBy?.employeeNumber }}</a>
+                <a [routerLink]="['/employee', task()!.createdBy?.id, 'view']"
+                  >{{ taskRef.createdBy?.firstName }}&nbsp;{{ taskRef.createdBy?.lastName }}</a
+                >
               </div>
             }
           </dd>

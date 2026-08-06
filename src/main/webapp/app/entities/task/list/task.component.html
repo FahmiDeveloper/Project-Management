@@ -20,6 +20,70 @@
     </div>
   </h2>
 
+  <div class="task-filter-container">
+    <mat-form-field appearance="outline" class="task-status-field" subscriptSizing="dynamic">
+      <mat-label>Status</mat-label>
+      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.TaskStatus.' + status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="task-priority-field" subscriptSizing="dynamic">
+      <mat-label>Priority</mat-label>
+      <mat-select [ngModel]="filterPriority()" (ngModelChange)="onPriorityChange($event)">
+        @for (priority of priorityOptions; track priority) {
+          <mat-option [value]="priority" [jhiTranslate]="'projectManagementApp.TaskPriority.' + priority">{{ priority }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="task-assigned-field" subscriptSizing="dynamic">
+      <mat-label>Assigned To</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="assignedToAuto"
+        [value]="assignedToSearchTerm()"
+        (input)="onAssignedToInput($event)"
+        placeholder="Search employee"
+      />
+      <mat-autocomplete
+        #assignedToAuto="matAutocomplete"
+        [displayWith]="displayEmployeeName"
+        (optionSelected)="onAssignedToSelected($event)"
+      >
+        @for (employee of filteredEmployees(); track employee.id) {
+          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="task-sprint-field" subscriptSizing="dynamic">
+      <mat-label>Sprint</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="sprintAuto"
+        [value]="sprintSearchTerm()"
+        (input)="onSprintInput($event)"
+        placeholder="Search sprint"
+      />
+      <mat-autocomplete #sprintAuto="matAutocomplete" [displayWith]="displaySprintName" (optionSelected)="onSprintSelected($event)">
+        @for (sprint of filteredSprints(); track sprint.id) {
+          <mat-option [value]="sprint">{{ sprint.name }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterStatus() || filterPriority() || filterAssignedToId() || filterSprintId()) {
+      <button mat-icon-button aria-label="Clear filters" class="task-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />
@@ -33,13 +97,6 @@
       <table class="table table-striped" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col" jhiSortBy="title">
               <div class="d-flex">
                 <span jhiTranslate="projectManagementApp.task.title">Title</span>
@@ -140,9 +197,6 @@
         <tbody>
           @for (task of tasks(); track trackId(task)) {
             <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/task', task.id, 'view']">{{ task.id }}</a>
-              </td>
               <td>{{ task.title }}</td>
               <td>{{ task.description }}</td>
               <td [jhiTranslate]="'projectManagementApp.TaskPriority.' + (task.priority ?? 'null')">
@@ -184,14 +238,18 @@
               <td>
                 @if (task.assignedTo) {
                   <div>
-                    <a [routerLink]="['/employee', task.assignedTo.id, 'view']">{{ task.assignedTo.employeeNumber }}</a>
+                    <a [routerLink]="['/employee', task.assignedTo.id, 'view']"
+                      >{{ task.assignedTo.firstName }}&nbsp;{{ task.assignedTo.lastName }}</a
+                    >
                   </div>
                 }
               </td>
               <td>
                 @if (task.createdBy) {
                   <div>
-                    <a [routerLink]="['/employee', task.createdBy.id, 'view']">{{ task.createdBy.employeeNumber }}</a>
+                    <a [routerLink]="['/employee', task.createdBy.id, 'view']"
+                      >{{ task.createdBy.firstName }}&nbsp;{{ task.createdBy.lastName }}</a
+                    >
                   </div>
                 }
               </td>
