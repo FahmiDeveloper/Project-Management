@@ -1,5 +1,7 @@
 package com.fehmidev.projectmanagement.web.rest;
 
+import com.fehmidev.projectmanagement.domain.enumeration.TaskPriority;
+import com.fehmidev.projectmanagement.domain.enumeration.TaskStatus;
 import com.fehmidev.projectmanagement.repository.TaskRepository;
 import com.fehmidev.projectmanagement.service.TaskService;
 import com.fehmidev.projectmanagement.service.dto.TaskDTO;
@@ -140,19 +142,27 @@ public class TaskResource {
      *
      * @param pageable the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param status optional filter on task status.
+     * @param priority optional filter on task priority.
+     * @param assignedToId optional filter on assigned employee id.
+     * @param sprintId optional filter on sprint id.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tasks in body.
      */
     @GetMapping("")
     public ResponseEntity<List<TaskDTO>> getAllTasks(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "status", required = false) TaskStatus status,
+        @RequestParam(name = "priority", required = false) TaskPriority priority,
+        @RequestParam(name = "assignedToId", required = false) Long assignedToId,
+        @RequestParam(name = "sprintId", required = false) Long sprintId
     ) {
         LOG.debug("REST request to get a page of Tasks");
         Page<TaskDTO> page;
         if (eagerload) {
-            page = taskService.findAllWithEagerRelationships(pageable);
+            page = taskService.findAllWithEagerRelationships(status, priority, assignedToId, sprintId, pageable);
         } else {
-            page = taskService.findAll(pageable);
+            page = taskService.findAll(status, priority, assignedToId, sprintId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

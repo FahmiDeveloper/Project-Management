@@ -48,7 +48,6 @@ export default class MainComponent implements OnInit {
   ngOnInit(): void {
     this.isMobile = this.deviceService.isMobile();
 
-    // 1. Listen to the continuous authentication state stream
     this.accountService.getAuthenticationState().subscribe(account => {
       if (account) {
         this.isConnected = true;
@@ -58,9 +57,6 @@ export default class MainComponent implements OnInit {
       } else {
         this.isConnected = false;
       }
-      // setInterval(() => {
-      //   this.pushNotificationService.sendNotification();
-      // }, 10000);
     });
 
     // try to log in automatically

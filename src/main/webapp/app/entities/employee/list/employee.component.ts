@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, filter, tap, debounceTime, distinctUntilChanged } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -16,15 +16,60 @@ import { IEmployee } from '../employee.model';
 import { EmployeeService, EntityArrayResponseType } from '../service/employee.service';
 import { EmployeeDeleteDialogComponent } from '../delete/employee-delete-dialog.component';
 
+import { IDepartment } from 'app/entities/department/department.model';
+import { DepartmentService } from 'app/entities/department/service/department.service';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+
 @Component({
   selector: 'jhi-employee',
   templateUrl: './employee.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatePipe, ItemCountComponent],
+  styleUrls: ['./employee.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    FormatMediumDatePipe,
+    ItemCountComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    MatAutocompleteModule,
+  ],
 })
-export class EmployeeComponent implements OnInit {
+export class EmployeeComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   employees = signal<IEmployee[]>([]);
   isLoading = false;
+
+  // ---- Name filter (debounced, matches first + last name) ----
+  filterName = signal<string>('');
+  private readonly nameInput$ = new Subject<string>();
+  private nameSubscription: Subscription | null = null;
+
+  // ---- Job Title filter (debounced) ----
+  filterJobTitle = signal<string>('');
+  private readonly jobTitleInput$ = new Subject<string>();
+  private jobTitleSubscription: Subscription | null = null;
+
+  // ---- Department filter (searchable autocomplete) ----
+  filterDepartmentId = signal<number | null>(null);
+  departmentSearchTerm = signal<string>('');
+  departments = signal<IDepartment[]>([]);
+  filteredDepartments = computed(() => {
+    const term = this.departmentSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.departments();
+    }
+    return this.departments().filter(d => (d.name ?? '').toLowerCase().includes(term));
+  });
 
   sortState = sortStateSignal({});
 
@@ -38,6 +83,7 @@ export class EmployeeComponent implements OnInit {
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected readonly departmentService = inject(DepartmentService);
 
   trackId = (item: IEmployee): number => this.employeeService.getEmployeeIdentifier(item);
 
@@ -48,12 +94,61 @@ export class EmployeeComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.nameSubscription = this.nameInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterName.set(value);
+      this.page = 1;
+      this.load();
+    });
+
+    this.jobTitleSubscription = this.jobTitleInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterJobTitle.set(value);
+      this.page = 1;
+      this.load();
+    });
+
+    this.departmentService.query().subscribe(res => this.departments.set(res.body ?? []));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.nameSubscription?.unsubscribe();
+    this.jobTitleSubscription?.unsubscribe();
+  }
+
+  onNameInput(value: string): void {
+    this.nameInput$.next(value);
+  }
+
+  onJobTitleInput(value: string): void {
+    this.jobTitleInput$.next(value);
+  }
+
+  displayDepartmentName = (department: IDepartment | null): string => (department ? (department.name ?? '') : '');
+
+  onDepartmentSelected(event: MatAutocompleteSelectedEvent): void {
+    const department: IDepartment | null = event.option.value;
+    this.filterDepartmentId.set(department ? department.id : null);
+    this.page = 1;
+    this.load();
+  }
+
+  clearDepartmentFilter(): void {
+    this.filterDepartmentId.set(null);
+    this.departmentSearchTerm.set('');
+    this.page = 1;
+    this.load();
+  }
+
+  clearSearch(): void {
+    this.filterName.set('');
+    this.filterJobTitle.set('');
+    this.clearDepartmentFilter();
   }
 
   delete(employee: IEmployee): void {
     const modalRef = this.modalService.open(EmployeeDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.employee = employee;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
@@ -108,6 +203,22 @@ export class EmployeeComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const name = this.filterName().trim();
+    if (name) {
+      queryObject['name'] = name;
+    }
+
+    const jobTitle = this.filterJobTitle().trim();
+    if (jobTitle) {
+      queryObject['jobTitle'] = jobTitle;
+    }
+
+    const departmentId = this.filterDepartmentId();
+    if (departmentId) {
+      queryObject['departmentId'] = departmentId;
+    }
+
     return this.employeeService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
@@ -124,5 +235,10 @@ export class EmployeeComponent implements OnInit {
         queryParams: queryParamsObj,
       });
     });
+  }
+
+  onDepartmentInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.departmentSearchTerm.set(value);
   }
 }

@@ -1,7 +1,10 @@
 package com.fehmidev.projectmanagement.service;
 
 import com.fehmidev.projectmanagement.domain.Task;
+import com.fehmidev.projectmanagement.domain.enumeration.TaskPriority;
+import com.fehmidev.projectmanagement.domain.enumeration.TaskStatus;
 import com.fehmidev.projectmanagement.repository.TaskRepository;
+import com.fehmidev.projectmanagement.repository.TaskSpecification;
 import com.fehmidev.projectmanagement.service.dto.TaskDTO;
 import com.fehmidev.projectmanagement.service.mapper.TaskMapper;
 import java.util.Optional;
@@ -9,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +34,6 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
-    /**
-     * Save a task.
-     *
-     * @param taskDTO the entity to save.
-     * @return the persisted entity.
-     */
     public TaskDTO save(TaskDTO taskDTO) {
         LOG.debug("Request to save Task : {}", taskDTO);
         Task task = taskMapper.toEntity(taskDTO);
@@ -43,12 +41,6 @@ public class TaskService {
         return taskMapper.toDto(task);
     }
 
-    /**
-     * Update a task.
-     *
-     * @param taskDTO the entity to save.
-     * @return the persisted entity.
-     */
     public TaskDTO update(TaskDTO taskDTO) {
         LOG.debug("Request to update Task : {}", taskDTO);
         Task task = taskMapper.toEntity(taskDTO);
@@ -56,12 +48,6 @@ public class TaskService {
         return taskMapper.toDto(task);
     }
 
-    /**
-     * Partially update a task.
-     *
-     * @param taskDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<TaskDTO> partialUpdate(TaskDTO taskDTO) {
         LOG.debug("Request to partially update Task : {}", taskDTO);
 
@@ -76,44 +62,54 @@ public class TaskService {
             .map(taskMapper::toDto);
     }
 
-    /**
-     * Get all the tasks.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<TaskDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Tasks");
         return taskRepository.findAll(pageable).map(taskMapper::toDto);
     }
 
-    /**
-     * Get all the tasks with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
-    public Page<TaskDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return taskRepository.findAllWithEagerRelationships(pageable).map(taskMapper::toDto);
+    // NEW: filtered
+    @Transactional(readOnly = true)
+    public Page<TaskDTO> findAll(TaskStatus status, TaskPriority priority, Long assignedToId, Long sprintId, Pageable pageable) {
+        LOG.debug(
+            "Request to get all Tasks filtered by status: {}, priority: {}, assignedToId: {}, sprintId: {}",
+            status,
+            priority,
+            assignedToId,
+            sprintId
+        );
+        Specification<Task> spec = TaskSpecification.withFilters(status, priority, assignedToId, sprintId);
+        return taskRepository.findAll(spec, pageable).map(taskMapper::toDto);
     }
 
-    /**
-     * Get one task by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
+    public Page<TaskDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return findAll(null, null, null, null, pageable);
+    }
+
+    // NEW: eager, filtered
+    public Page<TaskDTO> findAllWithEagerRelationships(
+        TaskStatus status,
+        TaskPriority priority,
+        Long assignedToId,
+        Long sprintId,
+        Pageable pageable
+    ) {
+        LOG.debug(
+            "Request to get all Tasks (eager) filtered by status: {}, priority: {}, assignedToId: {}, sprintId: {}",
+            status,
+            priority,
+            assignedToId,
+            sprintId
+        );
+        return findAll(status, priority, assignedToId, sprintId, pageable);
+    }
+
     @Transactional(readOnly = true)
     public Optional<TaskDTO> findOne(Long id) {
         LOG.debug("Request to get Task : {}", id);
         return taskRepository.findOneWithEagerRelationships(id).map(taskMapper::toDto);
     }
 
-    /**
-     * Delete the task by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         LOG.debug("Request to delete Task : {}", id);
         taskRepository.deleteById(id);

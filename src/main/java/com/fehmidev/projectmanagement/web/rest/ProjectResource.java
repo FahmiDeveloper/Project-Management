@@ -1,5 +1,6 @@
 package com.fehmidev.projectmanagement.web.rest;
 
+import com.fehmidev.projectmanagement.domain.enumeration.ProjectStatus;
 import com.fehmidev.projectmanagement.repository.ProjectRepository;
 import com.fehmidev.projectmanagement.service.ProjectService;
 import com.fehmidev.projectmanagement.service.dto.ProjectDTO;
@@ -136,28 +137,6 @@ public class ProjectResource {
     }
 
     /**
-     * {@code GET  /projects} : get all the projects.
-     *
-     * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of projects in body.
-     */
-    @GetMapping("")
-    public ResponseEntity<List<ProjectDTO>> getAllProjects(
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
-    ) {
-        LOG.debug("REST request to get a page of Projects");
-        Page<ProjectDTO> page;
-        if (eagerload) {
-            page = projectService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = projectService.findAll(pageable);
-        }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
-    /**
      * {@code GET  /projects/:id} : get the "id" project.
      *
      * @param id the id of the projectDTO to retrieve.
@@ -183,5 +162,25 @@ public class ProjectResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<ProjectDTO>> getAllProjects(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "name", required = false) String name,
+        @RequestParam(name = "status", required = false) ProjectStatus status,
+        @RequestParam(name = "clientId", required = false) Long clientId,
+        @RequestParam(name = "managerId", required = false) Long managerId
+    ) {
+        LOG.debug("REST request to get a page of Projects");
+        Page<ProjectDTO> page;
+        if (eagerload) {
+            page = projectService.findAllWithEagerRelationships(name, status, clientId, managerId, pageable);
+        } else {
+            page = projectService.findAll(name, status, clientId, managerId, pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 }
