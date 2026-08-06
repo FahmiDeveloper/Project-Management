@@ -20,6 +20,46 @@
     </div>
   </h2>
 
+  <div class="project-filter-container">
+    <mat-form-field appearance="outline" class="project-filter-field" subscriptSizing="dynamic">
+      <mat-label>Filter by name</mat-label>
+      <input matInput type="text" name="filterName" [ngModel]="filterName()" (ngModelChange)="onFilterInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="project-status-field" subscriptSizing="dynamic">
+      <mat-label>Status</mat-label>
+      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.ProjectStatus.' + status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="project-client-field" subscriptSizing="dynamic">
+      <mat-label>Client</mat-label>
+      <mat-select [ngModel]="filterClientId()" (ngModelChange)="onClientChange($event)">
+        @for (client of clients(); track client.id) {
+          <mat-option [value]="client.id">{{ client.companyName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="project-manager-field" subscriptSizing="dynamic">
+      <mat-label>Manager</mat-label>
+      <mat-select [ngModel]="filterManagerId()" (ngModelChange)="onManagerChange($event)">
+        @for (manager of managers(); track manager.id) {
+          <mat-option [value]="manager.id">{{ manager.firstName }} {{ manager.lastName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (filterName() || filterStatus() || filterClientId() || filterManagerId()) {
+      <button mat-icon-button aria-label="Clear filters" class="project-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />
@@ -33,13 +73,6 @@
       <table class="table table-striped" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col" jhiSortBy="code">
               <div class="d-flex">
                 <span jhiTranslate="projectManagementApp.project.code">Code</span>
@@ -114,9 +147,6 @@
         <tbody>
           @for (project of projects(); track trackId(project)) {
             <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/project', project.id, 'view']">{{ project.id }}</a>
-              </td>
               <td>{{ project.code }}</td>
               <td>{{ project.name }}</td>
               <td>{{ project.description }}</td>

@@ -1,0 +1,22 @@
+.project-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.project-filter-field {
+  width: 260px;
+}
+
+.project-status-field,
+.project-client-field,
+.project-manager-field {
+  width: 200px;
+}
+
+.project-filter-clear-btn {
+  height: 56px;
+  width: 56px;
+}

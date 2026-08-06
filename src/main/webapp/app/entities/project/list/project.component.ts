@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, filter, tap, debounceTime, distinctUntilChanged } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -13,6 +13,20 @@ import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/co
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
 import { DataUtils } from 'app/core/util/data-util.service';
 import { IProject } from '../project.model';
+import { ProjectStatus } from 'app/entities/enumerations/project-status.model';
+
+import { IClient } from 'app/entities/client/client.model';
+import { ClientService } from 'app/entities/client/service/client.service';
+import { IEmployee } from 'app/entities/employee/employee.model';
+import { EmployeeService } from 'app/entities/employee/service/employee.service';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { EntityArrayResponseType, ProjectService } from '../service/project.service';
 import { ProjectDeleteDialogComponent } from '../delete/project-delete-dialog.component';
@@ -20,12 +34,46 @@ import { ProjectDeleteDialogComponent } from '../delete/project-delete-dialog.co
 @Component({
   selector: 'jhi-project',
   templateUrl: './project.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatePipe, ItemCountComponent],
+  styleUrls: ['./project.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    FormatMediumDatePipe,
+    ItemCountComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatAutocompleteModule,
+  ],
 })
-export class ProjectComponent implements OnInit {
+export class ProjectComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   projects = signal<IProject[]>([]);
   isLoading = false;
+
+  filterName = signal<string>('');
+  filterStatus = signal<string>('');
+  filterClientId = signal<number | null>(null);
+  filterManagerId = signal<number | null>(null);
+
+  readonly statusOptions: ProjectStatus[] = [
+    ProjectStatus.PLANNED,
+    ProjectStatus.ACTIVE,
+    ProjectStatus.ON_HOLD,
+    ProjectStatus.COMPLETED,
+    ProjectStatus.CANCELLED,
+  ];
+
+  clients = signal<IClient[]>([]);
+  managers = signal<IEmployee[]>([]);
+
+  private readonly filterInput$ = new Subject<string>();
+  private filterSubscription: Subscription | null = null;
 
   sortState = sortStateSignal({});
 
@@ -40,6 +88,8 @@ export class ProjectComponent implements OnInit {
   protected dataUtils = inject(DataUtils);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected readonly clientService = inject(ClientService);
+  protected readonly employeeService = inject(EmployeeService);
 
   trackId = (item: IProject): number => this.projectService.getProjectIdentifier(item);
 
@@ -50,6 +100,51 @@ export class ProjectComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.filterSubscription = this.filterInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterName.set(value);
+      this.page = 1;
+      this.load();
+    });
+
+    this.clientService.query().subscribe(res => this.clients.set(res.body ?? []));
+    this.employeeService.query().subscribe(res => this.managers.set(res.body ?? []));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.filterSubscription?.unsubscribe();
+  }
+
+  onFilterInput(value: string): void {
+    this.filterInput$.next(value);
+  }
+
+  onStatusChange(value: string): void {
+    this.filterStatus.set(value);
+    this.page = 1;
+    this.load();
+  }
+
+  onClientChange(value: number | null): void {
+    this.filterClientId.set(value);
+    this.page = 1;
+    this.load();
+  }
+
+  onManagerChange(value: number | null): void {
+    this.filterManagerId.set(value);
+    this.page = 1;
+    this.load();
+  }
+
+  clearSearch(): void {
+    this.filterName.set('');
+    this.filterStatus.set('');
+    this.filterClientId.set(null);
+    this.filterManagerId.set(null);
+    this.page = 1;
+    this.load();
   }
 
   byteSize(base64String: string): string {
@@ -63,7 +158,6 @@ export class ProjectComponent implements OnInit {
   delete(project: IProject): void {
     const modalRef = this.modalService.open(ProjectDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.project = project;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
@@ -118,6 +212,27 @@ export class ProjectComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const name = this.filterName().trim();
+    if (name) {
+      queryObject['name'] = name;
+    }
+
+    const status = this.filterStatus();
+    if (status) {
+      queryObject['status'] = status;
+    }
+
+    const clientId = this.filterClientId();
+    if (clientId) {
+      queryObject['clientId'] = clientId;
+    }
+
+    const managerId = this.filterManagerId();
+    if (managerId) {
+      queryObject['managerId'] = managerId;
+    }
+
     return this.projectService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
