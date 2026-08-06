@@ -3,18 +3,20 @@
     <span jhiTranslate="projectManagementApp.project.home.title">Projects</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.project.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-project"
+        mat-flat-button
+        color="primary"
+        class="jh-create-entity create-project"
         [routerLink]="['/project/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
+        <mat-icon>add</mat-icon>
         <span jhiTranslate="projectManagementApp.project.home.createLabel">Create a new Project</span>
       </button>
     </div>
@@ -85,155 +87,151 @@
       <span jhiTranslate="projectManagementApp.project.home.notFound">No Projects found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="code">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.code">Code</span>
+    <div class="mat-elevation-z1 project-table-container">
+      <table
+        mat-table
+        [dataSource]="projects()"
+        jhiSort
+        [(sortState)]="sortState"
+        (sortChange)="navigateToWithComponentValues($event)"
+        class="project-mat-table"
+      >
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="code">
+            <span jhiTranslate="projectManagementApp.project.code">Code</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">{{ project.code }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="name">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.name">Name</span>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="name">
+            <span jhiTranslate="projectManagementApp.project.name">Name</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">{{ project.name }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="description">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.description">Description</span>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="description">
+            <span jhiTranslate="projectManagementApp.project.description">Description</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project" class="description-cell">{{ project.description }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="startDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.startDate">Start Date</span>
+        <ng-container matColumnDef="startDate">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="startDate">
+            <span jhiTranslate="projectManagementApp.project.startDate">Start Date</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">{{ project.startDate | formatMediumDate }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="endDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.endDate">End Date</span>
+        <ng-container matColumnDef="endDate">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="endDate">
+            <span jhiTranslate="projectManagementApp.project.endDate">End Date</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">{{ project.endDate | formatMediumDate }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="budget">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.budget">Budget</span>
+        <ng-container matColumnDef="budget">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="budget">
+            <span jhiTranslate="projectManagementApp.project.budget">Budget</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">{{ project.budget }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="progress">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.progress">Progress</span>
+        <ng-container matColumnDef="progress">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="progress">
+            <span jhiTranslate="projectManagementApp.project.progress">Progress</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">{{ project.progress }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="status">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.status">Status</span>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="status">
+            <span jhiTranslate="projectManagementApp.project.status">Status</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">
+            <span
+              class="status-chip"
+              [class]="'status-' + (project.status ?? 'null')"
+              [jhiTranslate]="'projectManagementApp.ProjectStatus.' + (project.status ?? 'null')"
+            >
+              {{ statusLabel(project.status) }}
+            </span>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="client.id">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.client">Client</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="manager.id">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.project.manager">Manager</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (project of projects(); track trackId(project)) {
-            <tr data-cy="entityTable">
-              <td>{{ project.code }}</td>
-              <td>{{ project.name }}</td>
-              <td>{{ project.description }}</td>
-              <td>{{ project.startDate | formatMediumDate }}</td>
-              <td>{{ project.endDate | formatMediumDate }}</td>
-              <td>{{ project.budget }}</td>
-              <td>{{ project.progress }}</td>
-              <td [jhiTranslate]="'projectManagementApp.ProjectStatus.' + (project.status ?? 'null')">
-                {{
-                  { null: '', PLANNED: 'PLANNED', ACTIVE: 'ACTIVE', ON_HOLD: 'ON_HOLD', COMPLETED: 'COMPLETED', CANCELLED: 'CANCELLED' }[
-                    project.status ?? 'null'
-                  ]
-                }}
-              </td>
-              <td>
-                @if (project.client) {
-                  <div>
-                    <a [routerLink]="['/client', project.client.id, 'view']">{{ project.client.companyName }}</a>
-                  </div>
-                }
-              </td>
-              <td>
-                @if (project.manager) {
-                  <div>
-                    <a [routerLink]="['/employee', project.manager.id, 'view']"
-                      >{{ project.manager.firstName }}&nbsp;{{ project.manager.lastName }}</a
-                    >
-                  </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/project', project.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                  </a>
+        <ng-container matColumnDef="client">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="client.id">
+            <span jhiTranslate="projectManagementApp.project.client">Client</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">
+            @if (project.client) {
+              <a [routerLink]="['/client', project.client.id, 'view']">
+                {{ project.client.companyName }}
+              </a>
+            }
+          </td>
+        </ng-container>
 
-                  <a [routerLink]="['/project', project.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                  </a>
+        <ng-container matColumnDef="manager">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="manager.id">
+            <span jhiTranslate="projectManagementApp.project.manager">Manager</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let project">
+            @if (project.manager) {
+              <a [routerLink]="['/employee', project.manager.id, 'view']">
+                {{ project.manager.firstName }}&nbsp;{{ project.manager.lastName }}
+              </a>
+            }
+          </td>
+        </ng-container>
 
-                  <button type="submit" (click)="delete(project)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let project" class="text-end actions-cell">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/project', project.id, 'view']"
+              data-cy="entityDetailsButton"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a mat-icon-button color="accent" [routerLink]="['/project', project.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="delete(project)" data-cy="entityDeleteButton" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
       </table>
     </div>
   }
-  @if (projects().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
-    </div>
+  @if (projects().length > 0) {
+    <mat-paginator
+      class="project-paginator"
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="page - 1"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   }
 </div>

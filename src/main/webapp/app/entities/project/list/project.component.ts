@@ -26,6 +26,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityArrayResponseType, ProjectService } from '../service/project.service';
 import { ProjectDeleteDialogComponent } from '../delete/project-delete-dialog.component';
@@ -41,13 +44,15 @@ import { ProjectDeleteDialogComponent } from '../delete/project-delete-dialog.co
     SortDirective,
     SortByDirective,
     FormatMediumDatePipe,
-    ItemCountComponent,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
   ],
 })
 export class ProjectComponent implements OnInit, OnDestroy {
@@ -99,6 +104,29 @@ export class ProjectComponent implements OnInit, OnDestroy {
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+
+  displayedColumns: string[] = [
+    'code',
+    'name',
+    'description',
+    'startDate',
+    'endDate',
+    'budget',
+    'progress',
+    'status',
+    'client',
+    'manager',
+    'actions',
+  ];
+
+  private readonly statusLabels: Record<string, string> = {
+    null: '',
+    PLANNED: 'PLANNED',
+    ACTIVE: 'ACTIVE',
+    ON_HOLD: 'ON_HOLD',
+    COMPLETED: 'COMPLETED',
+    CANCELLED: 'CANCELLED',
+  };
 
   public readonly router = inject(Router);
   protected readonly projectService = inject(ProjectService);
@@ -299,5 +327,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
         queryParams: queryParamsObj,
       });
     });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
+  }
+
+  statusLabel(status: string | null | undefined): string {
+    return this.statusLabels[status ?? 'null'];
   }
 }
