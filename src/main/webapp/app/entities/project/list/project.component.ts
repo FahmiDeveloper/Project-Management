@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subject, Subscription, combineLatest, filter, tap, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -25,7 +25,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { EntityArrayResponseType, ProjectService } from '../service/project.service';
@@ -56,11 +55,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
   projects = signal<IProject[]>([]);
   isLoading = false;
 
+  // ---- Name filter (debounced text input) ----
   filterName = signal<string>('');
-  filterStatus = signal<string>('');
-  filterClientId = signal<number | null>(null);
-  filterManagerId = signal<number | null>(null);
+  private readonly filterInput$ = new Subject<string>();
+  private filterSubscription: Subscription | null = null;
 
+  // ---- Status filter (dropdown, fixed options) ----
+  filterStatus = signal<string>('');
   readonly statusOptions: ProjectStatus[] = [
     ProjectStatus.PLANNED,
     ProjectStatus.ACTIVE,
@@ -69,11 +70,29 @@ export class ProjectComponent implements OnInit, OnDestroy {
     ProjectStatus.CANCELLED,
   ];
 
+  // ---- Client filter (searchable autocomplete) ----
+  filterClientId = signal<number | null>(null);
+  clientSearchTerm = signal<string>('');
   clients = signal<IClient[]>([]);
-  managers = signal<IEmployee[]>([]);
+  filteredClients = computed(() => {
+    const term = this.clientSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.clients();
+    }
+    return this.clients().filter(c => (c.companyName ?? '').toLowerCase().includes(term));
+  });
 
-  private readonly filterInput$ = new Subject<string>();
-  private filterSubscription: Subscription | null = null;
+  // ---- Manager filter (searchable autocomplete) ----
+  filterManagerId = signal<number | null>(null);
+  managerSearchTerm = signal<string>('');
+  managers = signal<IEmployee[]>([]);
+  filteredManagers = computed(() => {
+    const term = this.managerSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.managers();
+    }
+    return this.managers().filter(m => `${m.firstName ?? ''} ${m.lastName ?? ''}`.toLowerCase().includes(term));
+  });
 
   sortState = sortStateSignal({});
 
@@ -126,14 +145,47 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.load();
   }
 
-  onClientChange(value: number | null): void {
-    this.filterClientId.set(value);
+  // ---- Client autocomplete handlers ----
+  displayClientName = (client: IClient | null): string => (client ? (client.companyName ?? '') : '');
+
+  onClientInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.clientSearchTerm.set(value);
+  }
+
+  onClientSelected(event: MatAutocompleteSelectedEvent): void {
+    const client: IClient | null = event.option.value;
+    this.filterClientId.set(client ? client.id : null);
     this.page = 1;
     this.load();
   }
 
-  onManagerChange(value: number | null): void {
-    this.filterManagerId.set(value);
+  clearClientFilter(): void {
+    this.filterClientId.set(null);
+    this.clientSearchTerm.set('');
+    this.page = 1;
+    this.load();
+  }
+
+  // ---- Manager autocomplete handlers ----
+  displayManagerName = (manager: IEmployee | null): string =>
+    manager ? `${manager.firstName ?? ''} ${manager.lastName ?? ''}`.trim() : '';
+
+  onManagerInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.managerSearchTerm.set(value);
+  }
+
+  onManagerSelected(event: MatAutocompleteSelectedEvent): void {
+    const manager: IEmployee | null = event.option.value;
+    this.filterManagerId.set(manager ? manager.id : null);
+    this.page = 1;
+    this.load();
+  }
+
+  clearManagerFilter(): void {
+    this.filterManagerId.set(null);
+    this.managerSearchTerm.set('');
     this.page = 1;
     this.load();
   }
@@ -141,10 +193,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
   clearSearch(): void {
     this.filterName.set('');
     this.filterStatus.set('');
-    this.filterClientId.set(null);
-    this.filterManagerId.set(null);
-    this.page = 1;
-    this.load();
+    this.clearClientFilter();
+    this.clearManagerFilter();
   }
 
   byteSize(base64String: string): string {

@@ -20,6 +20,45 @@
     </div>
   </h2>
 
+  <div class="employee-filter-container">
+    <mat-form-field appearance="outline" class="employee-filter-field" subscriptSizing="dynamic">
+      <mat-label>Filter by first name</mat-label>
+      <input matInput type="text" [ngModel]="filterName()" (ngModelChange)="onNameInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="employee-filter-field" subscriptSizing="dynamic">
+      <mat-label>Job Title</mat-label>
+      <input matInput type="text" [ngModel]="filterJobTitle()" (ngModelChange)="onJobTitleInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="employee-department-field" subscriptSizing="dynamic">
+      <mat-label>Department</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="departmentAuto"
+        [value]="departmentSearchTerm()"
+        (input)="onDepartmentInput($event)"
+        placeholder="Search department"
+      />
+      <mat-autocomplete
+        #departmentAuto="matAutocomplete"
+        [displayWith]="displayDepartmentName"
+        (optionSelected)="onDepartmentSelected($event)"
+      >
+        @for (department of filteredDepartments(); track department.id) {
+          <mat-option [value]="department">{{ department.name }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterName() || filterJobTitle() || filterDepartmentId()) {
+      <button mat-icon-button aria-label="Clear filters" class="employee-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />
@@ -33,13 +72,6 @@
       <table class="table table-striped" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col" jhiSortBy="employeeNumber">
               <div class="d-flex">
                 <span jhiTranslate="projectManagementApp.employee.employeeNumber">Employee Number</span>
@@ -100,9 +132,6 @@
         <tbody>
           @for (employee of employees(); track trackId(employee)) {
             <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/employee', employee.id, 'view']">{{ employee.id }}</a>
-              </td>
               <td>{{ employee.employeeNumber }}</td>
               <td>{{ employee.firstName }}</td>
               <td>{{ employee.lastName }}</td>

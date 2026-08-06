@@ -37,20 +37,36 @@
 
     <mat-form-field appearance="outline" class="project-client-field" subscriptSizing="dynamic">
       <mat-label>Client</mat-label>
-      <mat-select [ngModel]="filterClientId()" (ngModelChange)="onClientChange($event)">
-        @for (client of clients(); track client.id) {
-          <mat-option [value]="client.id">{{ client.companyName }}</mat-option>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="clientAuto"
+        [value]="clientSearchTerm()"
+        (input)="onClientInput($event)"
+        placeholder="Search client"
+      />
+      <mat-autocomplete #clientAuto="matAutocomplete" [displayWith]="displayClientName" (optionSelected)="onClientSelected($event)">
+        @for (client of filteredClients(); track client.id) {
+          <mat-option [value]="client">{{ client.companyName }}</mat-option>
         }
-      </mat-select>
+      </mat-autocomplete>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="project-manager-field" subscriptSizing="dynamic">
       <mat-label>Manager</mat-label>
-      <mat-select [ngModel]="filterManagerId()" (ngModelChange)="onManagerChange($event)">
-        @for (manager of managers(); track manager.id) {
-          <mat-option [value]="manager.id">{{ manager.firstName }} {{ manager.lastName }}</mat-option>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="managerAuto"
+        [value]="managerSearchTerm()"
+        (input)="onManagerInput($event)"
+        placeholder="Search manager"
+      />
+      <mat-autocomplete #managerAuto="matAutocomplete" [displayWith]="displayManagerName" (optionSelected)="onManagerSelected($event)">
+        @for (manager of filteredManagers(); track manager.id) {
+          <mat-option [value]="manager">{{ manager.firstName }} {{ manager.lastName }}</mat-option>
         }
-      </mat-select>
+      </mat-autocomplete>
     </mat-form-field>
 
     @if (filterName() || filterStatus() || filterClientId() || filterManagerId()) {
