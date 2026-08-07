@@ -3,18 +3,20 @@
     <span jhiTranslate="projectManagementApp.milestone.home.title">Milestones</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.milestone.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-milestone"
+        mat-flat-button
+        color="primary"
+        class="jh-create-entity create-milestone"
         [routerLink]="['/milestone/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
+        <mat-icon>add</mat-icon>
         <span jhiTranslate="projectManagementApp.milestone.home.createLabel">Create a new Milestone</span>
       </button>
     </div>
@@ -29,126 +31,113 @@
       <span jhiTranslate="projectManagementApp.milestone.home.notFound">No Milestones found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
+    <div class="mat-elevation-z1 milestone-table-container">
+      <table
+        mat-table
+        [dataSource]="milestones()"
+        jhiSort
+        [(sortState)]="sortState"
+        (sortChange)="navigateToWithComponentValues($event)"
+        class="milestone-mat-table"
+      >
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="title">
+            <span jhiTranslate="projectManagementApp.milestone.title">Title</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let milestone">{{ milestone.title }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="title">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.milestone.title">Title</span>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="description">
+            <span jhiTranslate="projectManagementApp.milestone.description">Description</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let milestone" class="description-cell">{{ milestone.description }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="description">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.milestone.description">Description</span>
+        <ng-container matColumnDef="startDate">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="startDate">
+            <span jhiTranslate="projectManagementApp.milestone.startDate">Start Date</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let milestone">{{ milestone.startDate | formatMediumDate }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="startDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.milestone.startDate">Start Date</span>
+        <ng-container matColumnDef="dueDate">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="dueDate">
+            <span jhiTranslate="projectManagementApp.milestone.dueDate">Due Date</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let milestone">{{ milestone.dueDate | formatMediumDate }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="dueDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.milestone.dueDate">Due Date</span>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="status">
+            <span jhiTranslate="projectManagementApp.milestone.status">Status</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let milestone">
+            <span class="status-chip" [class]="'status-' + (milestone.status ?? 'null')">
+              {{ statusLabel(milestone.status) }}
+            </span>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="status">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.milestone.status">Status</span>
+        <ng-container matColumnDef="project">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="project.name">
+            <span jhiTranslate="projectManagementApp.milestone.project">Project</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let milestone">
+            @if (milestone.project) {
+              <a [routerLink]="['/project', milestone.project.id, 'view']">{{ milestone.project.name }}</a>
+            }
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="project.name">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.milestone.project">Project</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (milestone of milestones(); track trackId(milestone)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/milestone', milestone.id, 'view']">{{ milestone.id }}</a>
-              </td>
-              <td>{{ milestone.title }}</td>
-              <td>{{ milestone.description }}</td>
-              <td>{{ milestone.startDate | formatMediumDate }}</td>
-              <td>{{ milestone.dueDate | formatMediumDate }}</td>
-              <td [jhiTranslate]="'projectManagementApp.MilestoneStatus.' + (milestone.status ?? 'null')">
-                {{
-                  { null: '', PLANNED: 'PLANNED', IN_PROGRESS: 'IN_PROGRESS', COMPLETED: 'COMPLETED', CANCELLED: 'CANCELLED' }[
-                    milestone.status ?? 'null'
-                  ]
-                }}
-              </td>
-              <td>
-                @if (milestone.project) {
-                  <div>
-                    <a [routerLink]="['/project', milestone.project.id, 'view']">{{ milestone.project.name }}</a>
-                  </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/milestone', milestone.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                  </a>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let milestone" class="text-end actions-cell">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/milestone', milestone.id, 'view']"
+              data-cy="entityDetailsButton"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              color="accent"
+              [routerLink]="['/milestone', milestone.id, 'edit']"
+              data-cy="entityEditButton"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="delete(milestone)" data-cy="entityDeleteButton" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-                  <a [routerLink]="['/milestone', milestone.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(milestone)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
       </table>
     </div>
   }
-  @if (milestones().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
-    </div>
+  @if (milestones().length > 0) {
+    <mat-paginator
+      class="milestone-paginator"
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="page - 1"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   }
 </div>

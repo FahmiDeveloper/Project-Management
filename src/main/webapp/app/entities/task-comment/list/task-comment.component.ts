@@ -7,7 +7,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
@@ -17,21 +16,36 @@ import { ITaskComment } from '../task-comment.model';
 import { EntityArrayResponseType, TaskCommentService } from '../service/task-comment.service';
 import { TaskCommentDeleteDialogComponent } from '../delete/task-comment-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-task-comment',
   templateUrl: './task-comment.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatetimePipe, ItemCountComponent],
+  styleUrls: ['./task-comment.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    FormatMediumDatetimePipe,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+  ],
 })
 export class TaskCommentComponent implements OnInit {
   subscription: Subscription | null = null;
   taskComments = signal<ITaskComment[]>([]);
   isLoading = false;
 
-  sortState = sortStateSignal({});
-
-  itemsPerPage = ITEMS_PER_PAGE;
-  totalItems = 0;
-  page = 1;
+  displayedColumns: string[] = ['content', 'createdDate', 'task', 'employee', 'actions'];
 
   public readonly router = inject(Router);
   protected readonly taskCommentService = inject(TaskCommentService);
@@ -40,6 +54,12 @@ export class TaskCommentComponent implements OnInit {
   protected dataUtils = inject(DataUtils);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+
+  sortState = sortStateSignal({});
+
+  itemsPerPage = ITEMS_PER_PAGE;
+  totalItems = 0;
+  page = 1;
 
   trackId = (item: ITaskComment): number => this.taskCommentService.getTaskCommentIdentifier(item);
 
@@ -86,6 +106,10 @@ export class TaskCommentComponent implements OnInit {
 
   navigateToPage(page: number): void {
     this.handleNavigation(page, this.sortState());
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {

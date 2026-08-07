@@ -7,7 +7,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -16,15 +15,36 @@ import { IAttachment } from '../attachment.model';
 import { AttachmentService, EntityArrayResponseType } from '../service/attachment.service';
 import { AttachmentDeleteDialogComponent } from '../delete/attachment-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-attachment',
   templateUrl: './attachment.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatetimePipe, ItemCountComponent],
+  styleUrls: ['./attachment.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    FormatMediumDatetimePipe,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+  ],
 })
 export class AttachmentComponent implements OnInit {
   subscription: Subscription | null = null;
   attachments = signal<IAttachment[]>([]);
   isLoading = false;
+
+  displayedColumns: string[] = ['fileName', 'fileUrl', 'fileType', 'fileSize', 'uploadedDate', 'task', 'employee', 'actions'];
 
   sortState = sortStateSignal({});
 
@@ -76,6 +96,10 @@ export class AttachmentComponent implements OnInit {
 
   navigateToPage(page: number): void {
     this.handleNavigation(page, this.sortState());
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {

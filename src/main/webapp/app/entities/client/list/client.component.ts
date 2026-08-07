@@ -6,7 +6,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -15,15 +14,35 @@ import { IClient } from '../client.model';
 import { ClientService, EntityArrayResponseType } from '../service/client.service';
 import { ClientDeleteDialogComponent } from '../delete/client-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-client',
   templateUrl: './client.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, ItemCountComponent],
+  styleUrls: ['./client.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+  ],
 })
 export class ClientComponent implements OnInit {
   subscription: Subscription | null = null;
   clients = signal<IClient[]>([]);
   isLoading = false;
+
+  displayedColumns: string[] = ['companyName', 'contactName', 'email', 'phone', 'address', 'city', 'country', 'website', 'actions'];
 
   sortState = sortStateSignal({});
 
@@ -75,6 +94,10 @@ export class ClientComponent implements OnInit {
 
   navigateToPage(page: number): void {
     this.handleNavigation(page, this.sortState());
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {

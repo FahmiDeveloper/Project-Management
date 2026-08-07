@@ -3,18 +3,20 @@
     <span jhiTranslate="projectManagementApp.projectMember.home.title">Projects Members</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.projectMember.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-project-member"
+        mat-flat-button
+        color="primary"
+        class="jh-create-entity create-project-member"
         [routerLink]="['/project-member/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
+        <mat-icon>add</mat-icon>
         <span jhiTranslate="projectManagementApp.projectMember.home.createLabel">Create a new Project Member</span>
       </button>
     </div>
@@ -29,131 +31,115 @@
       <span jhiTranslate="projectManagementApp.projectMember.home.notFound">No Project Members found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
+    <div class="mat-elevation-z1 project-member-table-container">
+      <table
+        mat-table
+        [dataSource]="projectMembers()"
+        jhiSort
+        [(sortState)]="sortState"
+        (sortChange)="navigateToWithComponentValues($event)"
+        class="project-member-mat-table"
+      >
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="role">
+            <span jhiTranslate="projectManagementApp.projectMember.role">Role</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let projectMember">
+            <span class="role-chip" [class]="'role-' + (projectMember.role ?? 'null')">
+              {{ roleLabel(projectMember.role) }}
+            </span>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="role">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.projectMember.role">Role</span>
+        <ng-container matColumnDef="joinedDate">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="joinedDate">
+            <span jhiTranslate="projectManagementApp.projectMember.joinedDate">Joined Date</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let projectMember">{{ projectMember.joinedDate | formatMediumDate }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="joinedDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.projectMember.joinedDate">Joined Date</span>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="active">
+            <span jhiTranslate="projectManagementApp.projectMember.active">Active</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let projectMember">
+            <mat-icon class="active-icon" [class.active-true]="projectMember.active" [class.active-false]="!projectMember.active">
+              {{ projectMember.active ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="active">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.projectMember.active">Active</span>
+        <ng-container matColumnDef="project">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="project.id">
+            <span jhiTranslate="projectManagementApp.projectMember.project">Project</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let projectMember">
+            @if (projectMember.project) {
+              <a [routerLink]="['/project', projectMember.project.id, 'view']">{{ projectMember.project.name }}</a>
+            }
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="project.id">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.projectMember.project">Project</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="employee.id">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.projectMember.employee">Employee</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (projectMember of projectMembers(); track trackId(projectMember)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/project-member', projectMember.id, 'view']">{{ projectMember.id }}</a>
-              </td>
-              <td [jhiTranslate]="'projectManagementApp.MemberRole.' + (projectMember.role ?? 'null')">
-                {{
-                  {
-                    null: '',
-                    PROJECT_MANAGER: 'PROJECT_MANAGER',
-                    TEAM_LEAD: 'TEAM_LEAD',
-                    DEVELOPER: 'DEVELOPER',
-                    TESTER: 'TESTER',
-                    DESIGNER: 'DESIGNER',
-                    BUSINESS_ANALYST: 'BUSINESS_ANALYST',
-                  }[projectMember.role ?? 'null']
-                }}
-              </td>
-              <td>{{ projectMember.joinedDate | formatMediumDate }}</td>
-              <td>{{ projectMember.active }}</td>
-              <td>
-                @if (projectMember.project) {
-                  <div>
-                    <a [routerLink]="['/project', projectMember.project.id, 'view']">{{ projectMember.project.name }}</a>
-                  </div>
-                }
-              </td>
-              <td>
-                @if (projectMember.employee) {
-                  <div>
-                    <a [routerLink]="['/employee', projectMember.employee.id, 'view']"
-                      >{{ projectMember.employee.firstName }}&nbsp;{{ projectMember.employee.lastName }}</a
-                    >
-                  </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/project-member', projectMember.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                  </a>
+        <ng-container matColumnDef="employee">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="employee.id">
+            <span jhiTranslate="projectManagementApp.projectMember.employee">Employee</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let projectMember">
+            @if (projectMember.employee) {
+              <a [routerLink]="['/employee', projectMember.employee.id, 'view']">
+                {{ projectMember.employee.firstName }}&nbsp;{{ projectMember.employee.lastName }}
+              </a>
+            }
+          </td>
+        </ng-container>
 
-                  <a [routerLink]="['/project-member', projectMember.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                  </a>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let projectMember" class="text-end actions-cell">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/project-member', projectMember.id, 'view']"
+              data-cy="entityDetailsButton"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              color="accent"
+              [routerLink]="['/project-member', projectMember.id, 'edit']"
+              data-cy="entityEditButton"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="delete(projectMember)" data-cy="entityDeleteButton" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-                  <button type="submit" (click)="delete(projectMember)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
       </table>
     </div>
   }
-  @if (projectMembers().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
-    </div>
+  @if (projectMembers().length > 0) {
+    <mat-paginator
+      class="project-member-paginator"
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="page - 1"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   }
 </div>

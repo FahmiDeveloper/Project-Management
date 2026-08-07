@@ -1,30 +1,9 @@
-.employee-filter-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.employee-filter-field {
-  width: 240px;
-}
-
-.employee-department-field {
-  width: 240px;
-}
-
-.employee-filter-clear-btn {
-  height: 56px;
-  width: 56px;
-}
-
-.employee-table-container {
+.attachment-table-container {
   overflow-x: auto;
   border-radius: 4px;
 }
 
-.employee-mat-table {
+.attachment-mat-table {
   width: 100%;
 
   th.mat-mdc-header-cell {
@@ -43,12 +22,19 @@
     opacity: 0.6;
   }
 
+  .url-cell {
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .actions-cell {
     white-space: nowrap;
   }
 }
 
-.employee-paginator {
+.attachment-paginator {
   margin-top: 0.5rem;
   background: transparent;
   display: flex;

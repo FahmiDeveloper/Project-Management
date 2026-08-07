@@ -7,7 +7,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormatMediumDatePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
@@ -17,15 +16,44 @@ import { IMilestone } from '../milestone.model';
 import { EntityArrayResponseType, MilestoneService } from '../service/milestone.service';
 import { MilestoneDeleteDialogComponent } from '../delete/milestone-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-milestone',
   templateUrl: './milestone.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatePipe, ItemCountComponent],
+  styleUrls: ['./milestone.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    FormatMediumDatePipe,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+  ],
 })
 export class MilestoneComponent implements OnInit {
   subscription: Subscription | null = null;
   milestones = signal<IMilestone[]>([]);
   isLoading = false;
+
+  displayedColumns: string[] = ['title', 'description', 'startDate', 'dueDate', 'status', 'project', 'actions'];
+
+  private readonly statusLabels: Record<string, string> = {
+    null: '',
+    PLANNED: 'PLANNED',
+    IN_PROGRESS: 'IN_PROGRESS',
+    COMPLETED: 'COMPLETED',
+    CANCELLED: 'CANCELLED',
+  };
 
   sortState = sortStateSignal({});
 
@@ -42,6 +70,10 @@ export class MilestoneComponent implements OnInit {
   protected ngZone = inject(NgZone);
 
   trackId = (item: IMilestone): number => this.milestoneService.getMilestoneIdentifier(item);
+
+  statusLabel(status: string | null | undefined): string {
+    return this.statusLabels[status ?? 'null'];
+  }
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -86,6 +118,10 @@ export class MilestoneComponent implements OnInit {
 
   navigateToPage(page: number): void {
     this.handleNavigation(page, this.sortState());
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {

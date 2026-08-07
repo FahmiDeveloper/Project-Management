@@ -7,7 +7,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -16,9 +15,16 @@ import { ITimeEntry } from '../time-entry.model';
 import { EntityArrayResponseType, TimeEntryService } from '../service/time-entry.service';
 import { TimeEntryDeleteDialogComponent } from '../delete/time-entry-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-time-entry',
   templateUrl: './time-entry.component.html',
+  styleUrls: ['./time-entry.component.scss'],
   imports: [
     RouterModule,
     FormsModule,
@@ -27,13 +33,19 @@ import { TimeEntryDeleteDialogComponent } from '../delete/time-entry-delete-dial
     SortByDirective,
     FormatMediumDatetimePipe,
     FormatMediumDatePipe,
-    ItemCountComponent,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
   ],
 })
 export class TimeEntryComponent implements OnInit {
   subscription: Subscription | null = null;
   timeEntries = signal<ITimeEntry[]>([]);
   isLoading = false;
+
+  displayedColumns: string[] = ['description', 'startTime', 'endTime', 'hours', 'entryDate', 'task', 'employee', 'actions'];
 
   sortState = sortStateSignal({});
 
@@ -85,6 +97,10 @@ export class TimeEntryComponent implements OnInit {
 
   navigateToPage(page: number): void {
     this.handleNavigation(page, this.sortState());
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
