@@ -5,25 +5,31 @@
         Create or edit a Project
       </h2>
 
-      <br />
-
       <div>
         <jhi-alert-error />
+
+        <!-- ID Field -->
+        @if (editForm.controls.id.value !== null) {
+          <mat-form-field appearance="outline" class="w-100 mb-2">
+            <mat-label jhiTranslate="projectManagementApp.project.id">ID</mat-label>
+            <input matInput type="number" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </mat-form-field>
+        }
 
         <!-- Code Field -->
         @let codeRef = editForm.get('code')!;
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label jhiTranslate="projectManagementApp.project.code">Code</mat-label>
           <input matInput type="text" name="code" id="field_code" data-cy="code" formControlName="code" />
-          @if (codeRef.errors?.required) {
+          @if (codeRef.invalid && (codeRef.touched || codeRef.dirty) && codeRef.errors?.required) {
             <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
           }
-          @if (codeRef.errors?.minlength) {
+          @if (codeRef.invalid && (codeRef.touched || codeRef.dirty) && codeRef.errors?.minlength) {
             <mat-error jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
               >This field is required to be at least 2 characters.</mat-error
             >
           }
-          @if (codeRef.errors?.maxlength) {
+          @if (codeRef.invalid && (codeRef.touched || codeRef.dirty) && codeRef.errors?.maxlength) {
             <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
               >This field cannot be longer than 20 characters.</mat-error
             >
@@ -35,15 +41,15 @@
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label jhiTranslate="projectManagementApp.project.name">Name</mat-label>
           <input matInput type="text" name="name" id="field_name" data-cy="name" formControlName="name" />
-          @if (nameRef.errors?.required) {
+          @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.required) {
             <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
           }
-          @if (nameRef.errors?.minlength) {
+          @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.minlength) {
             <mat-error jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
               >This field is required to be at least 2 characters.</mat-error
             >
           }
-          @if (nameRef.errors?.maxlength) {
+          @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.maxlength) {
             <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
               >This field cannot be longer than 150 characters.</mat-error
             >
@@ -77,7 +83,7 @@
           />
           <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
-          @if (startDateRef.errors?.required) {
+          @if (startDateRef.invalid && (startDateRef.touched || startDateRef.dirty) && startDateRef.errors?.required) {
             <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
           }
         </mat-form-field>
@@ -95,10 +101,10 @@
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label jhiTranslate="projectManagementApp.project.budget">Budget</mat-label>
           <input matInput type="number" name="budget" id="field_budget" data-cy="budget" formControlName="budget" />
-          @if (budgetRef.errors?.min) {
+          @if (budgetRef.invalid && (budgetRef.touched || budgetRef.dirty) && budgetRef.errors?.min) {
             <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
           }
-          @if (budgetRef.errors?.number) {
+          @if (budgetRef.invalid && (budgetRef.touched || budgetRef.dirty) && budgetRef.errors?.number) {
             <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
           }
         </mat-form-field>
@@ -108,18 +114,18 @@
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label jhiTranslate="projectManagementApp.project.progress">Progress</mat-label>
           <input matInput type="number" name="progress" id="field_progress" data-cy="progress" formControlName="progress" />
-          @if (progressRef.errors?.required) {
+          @if (progressRef.invalid && (progressRef.touched || progressRef.dirty) && progressRef.errors?.required) {
             <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
           }
-          @if (progressRef.errors?.min) {
+          @if (progressRef.invalid && (progressRef.touched || progressRef.dirty) && progressRef.errors?.min) {
             <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
           }
-          @if (progressRef.errors?.max) {
+          @if (progressRef.invalid && (progressRef.touched || progressRef.dirty) && progressRef.errors?.max) {
             <mat-error jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
               >This field cannot be more than 100.</mat-error
             >
           }
-          @if (progressRef.errors?.number) {
+          @if (progressRef.invalid && (progressRef.touched || progressRef.dirty) && progressRef.errors?.number) {
             <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
           }
         </mat-form-field>
@@ -134,7 +140,7 @@
               <mat-option [value]="projectStatus">{{ 'projectManagementApp.ProjectStatus.' + projectStatus | translate }}</mat-option>
             }
           </mat-select>
-          @if (statusRef.errors?.required) {
+          @if (statusRef.invalid && (statusRef.touched || statusRef.dirty) && statusRef.errors?.required) {
             <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
           }
         </mat-form-field>
