@@ -11,6 +11,8 @@
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
+    background-color: #3f51b5;
+    color: white;
   }
 
   .sort-icon {
@@ -19,7 +21,8 @@
     width: 16px;
     vertical-align: middle;
     margin-left: 4px;
-    opacity: 0.6;
+    color: inherit; /* Automatically inherits the header text color */
+    opacity: 1; /* Keeps full opacity to match the bold white text */
   }
 
   .message-cell {
