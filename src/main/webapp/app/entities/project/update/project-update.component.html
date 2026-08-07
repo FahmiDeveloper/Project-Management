@@ -8,14 +8,6 @@
       <div>
         <jhi-alert-error />
 
-        <!-- ID Field -->
-        @if (editForm.controls.id.value !== null) {
-          <mat-form-field appearance="outline" class="w-100 mb-2">
-            <mat-label jhiTranslate="projectManagementApp.project.id">ID</mat-label>
-            <input matInput type="number" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </mat-form-field>
-        }
-
         <!-- Code Field -->
         @let codeRef = editForm.get('code')!;
         <mat-form-field appearance="outline" class="w-100 mb-2">
