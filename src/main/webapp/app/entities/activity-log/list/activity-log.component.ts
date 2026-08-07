@@ -7,7 +7,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormatMediumDatetimePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -16,15 +15,36 @@ import { IActivityLog } from '../activity-log.model';
 import { ActivityLogService, EntityArrayResponseType } from '../service/activity-log.service';
 import { ActivityLogDeleteDialogComponent } from '../delete/activity-log-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-activity-log',
   templateUrl: './activity-log.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatetimePipe, ItemCountComponent],
+  styleUrls: ['./activity-log.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    FormatMediumDatetimePipe,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+  ],
 })
 export class ActivityLogComponent implements OnInit {
   subscription: Subscription | null = null;
   activityLogs = signal<IActivityLog[]>([]);
   isLoading = false;
+
+  displayedColumns: string[] = ['action', 'entityName', 'entityId', 'description', 'createdDate', 'employee', 'actions'];
 
   sortState = sortStateSignal({});
 
@@ -76,6 +96,10 @@ export class ActivityLogComponent implements OnInit {
 
   navigateToPage(page: number): void {
     this.handleNavigation(page, this.sortState());
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {

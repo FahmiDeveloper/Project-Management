@@ -7,7 +7,7 @@ export interface ITaskComment {
   content?: string | null;
   createdDate?: dayjs.Dayjs | null;
   task?: Pick<ITask, 'id' | 'title'> | null;
-  employee?: Pick<IEmployee, 'id' | 'firstName'> | null;
+  employee?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
 }
 
 export type NewTaskComment = Omit<ITaskComment, 'id'> & { id: null };

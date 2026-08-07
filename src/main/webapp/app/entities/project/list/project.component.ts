@@ -184,6 +184,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   onClientSelected(event: MatAutocompleteSelectedEvent): void {
     const client: IClient | null = event.option.value;
     this.filterClientId.set(client ? client.id : null);
+    this.clientSearchTerm.set(this.displayClientName(client));
     this.page = 1;
     this.load();
   }
@@ -207,6 +208,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   onManagerSelected(event: MatAutocompleteSelectedEvent): void {
     const manager: IEmployee | null = event.option.value;
     this.filterManagerId.set(manager ? manager.id : null);
+    this.managerSearchTerm.set(this.displayManagerName(manager));
     this.page = 1;
     this.load();
   }

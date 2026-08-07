@@ -7,7 +7,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormatMediumDatePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -24,6 +23,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'jhi-employee',
@@ -36,12 +38,14 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
     SortDirective,
     SortByDirective,
     FormatMediumDatePipe,
-    ItemCountComponent,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatAutocompleteModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
   ],
 })
 export class EmployeeComponent implements OnInit, OnDestroy {
@@ -76,6 +80,18 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+
+  displayedColumns: string[] = [
+    'employeeNumber',
+    'firstName',
+    'lastName',
+    'phone',
+    'jobTitle',
+    'hireDate',
+    'user',
+    'department',
+    'actions',
+  ];
 
   public readonly router = inject(Router);
   protected readonly employeeService = inject(EmployeeService);
@@ -129,6 +145,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   onDepartmentSelected(event: MatAutocompleteSelectedEvent): void {
     const department: IDepartment | null = event.option.value;
     this.filterDepartmentId.set(department ? department.id : null);
+    this.departmentSearchTerm.set(this.displayDepartmentName(department));
     this.page = 1;
     this.load();
   }
@@ -240,5 +257,9 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   onDepartmentInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.departmentSearchTerm.set(value);
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 }

@@ -1,32 +1,9 @@
-.project-filter-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.project-filter-field {
-  width: 260px;
-}
-
-.project-status-field,
-.project-client-field,
-.project-manager-field {
-  width: 200px;
-}
-
-.project-filter-clear-btn {
-  height: 56px;
-  width: 56px;
-}
-
-.project-table-container {
+.project-member-table-container {
   overflow-x: auto;
   border-radius: 4px;
 }
 
-.project-mat-table {
+.project-member-mat-table {
   width: 100%;
 
   th.mat-mdc-header-cell {
@@ -48,55 +25,60 @@
     opacity: 1; /* Keeps full opacity to match the bold white text */
   }
 
-  .description-cell {
-    max-width: 320px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   .actions-cell {
     white-space: nowrap;
   }
 
-  .status-chip {
+  .role-chip {
     display: inline-block;
     padding: 2px 10px;
     border-radius: 12px;
     font-size: 12px;
     font-weight: 500;
-    text-transform: uppercase;
+    white-space: nowrap;
     background-color: #eceff1;
     color: #37474f;
   }
 
-  .status-ACTIVE {
-    background-color: #e3f2e6;
-    color: #1e7e34;
-  }
-
-  .status-PLANNED {
+  .role-PROJECT_MANAGER {
     background-color: #e3edfa;
     color: #1a5fb4;
   }
-
-  .status-ON_HOLD {
+  .role-TEAM_LEAD {
+    background-color: #f3e8fd;
+    color: #7b2ff7;
+  }
+  .role-DEVELOPER {
+    background-color: #e3f2e6;
+    color: #1e7e34;
+  }
+  .role-TESTER {
     background-color: #fff4e0;
     color: #b9770e;
   }
-
-  .status-COMPLETED {
-    background-color: #e6f0ff;
-    color: #2c3e91;
+  .role-DESIGNER {
+    background-color: #fde4d0;
+    color: #c9540c;
+  }
+  .role-BUSINESS_ANALYST {
+    background-color: #eceff1;
+    color: #455a64;
   }
 
-  .status-CANCELLED {
-    background-color: #fbe4e4;
+  .active-icon {
+    vertical-align: middle;
+  }
+
+  .active-true {
+    color: #1e7e34;
+  }
+
+  .active-false {
     color: #b02a2a;
   }
 }
 
-.project-paginator {
+.project-member-paginator {
   margin-top: 0.5rem;
   background: transparent;
   display: flex;

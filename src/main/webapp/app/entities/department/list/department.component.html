@@ -3,18 +3,20 @@
     <span jhiTranslate="projectManagementApp.department.home.title">Departments</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.department.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-department"
+        mat-flat-button
+        color="primary"
+        class="jh-create-entity create-department"
         [routerLink]="['/department/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
+        <mat-icon>add</mat-icon>
         <span jhiTranslate="projectManagementApp.department.home.createLabel">Create a new Department</span>
       </button>
     </div>
@@ -29,83 +31,73 @@
       <span jhiTranslate="projectManagementApp.department.home.notFound">No Departments found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
+    <div class="mat-elevation-z1 department-table-container">
+      <table
+        mat-table
+        [dataSource]="departments()"
+        jhiSort
+        [(sortState)]="sortState"
+        (sortChange)="navigateToWithComponentValues($event)"
+        class="department-mat-table"
+      >
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="name">
+            <span jhiTranslate="projectManagementApp.department.name">Name</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let department">{{ department.name }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="name">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.department.name">Name</span>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="description">
+            <span jhiTranslate="projectManagementApp.department.description">Description</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let department">{{ department.description }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="description">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.department.description">Description</span>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let department" class="text-end actions-cell">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/department', department.id, 'view']"
+              data-cy="entityDetailsButton"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              color="accent"
+              [routerLink]="['/department', department.id, 'edit']"
+              data-cy="entityEditButton"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="delete(department)" data-cy="entityDeleteButton" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (department of departments(); track trackId(department)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/department', department.id, 'view']">{{ department.id }}</a>
-              </td>
-              <td>{{ department.name }}</td>
-              <td>{{ department.description }}</td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/department', department.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                  </a>
-
-                  <a [routerLink]="['/department', department.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(department)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
       </table>
     </div>
   }
-  @if (departments().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
-    </div>
+  @if (departments().length > 0) {
+    <mat-paginator
+      class="department-paginator"
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="page - 1"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   }
 </div>

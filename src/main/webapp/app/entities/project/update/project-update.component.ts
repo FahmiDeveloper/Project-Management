@@ -18,11 +18,30 @@ import { ProjectStatus } from 'app/entities/enumerations/project-status.model';
 import { ProjectService } from '../service/project.service';
 import { IProject } from '../project.model';
 import { ProjectFormGroup, ProjectFormService } from './project-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-project-update',
   templateUrl: './project-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./project-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
 })
 export class ProjectUpdateComponent implements OnInit {
   isSaving = false;

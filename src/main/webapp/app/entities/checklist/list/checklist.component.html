@@ -3,18 +3,20 @@
     <span jhiTranslate="projectManagementApp.checklist.home.title">Checklists</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.checklist.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-checklist"
+        mat-flat-button
+        color="primary"
+        class="jh-create-entity create-checklist"
         [routerLink]="['/checklist/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
+        <mat-icon>add</mat-icon>
         <span jhiTranslate="projectManagementApp.checklist.home.createLabel">Create a new Checklist</span>
       </button>
     </div>
@@ -29,96 +31,85 @@
       <span jhiTranslate="projectManagementApp.checklist.home.notFound">No Checklists found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
+    <div class="mat-elevation-z1 checklist-table-container">
+      <table
+        mat-table
+        [dataSource]="checklists()"
+        jhiSort
+        [(sortState)]="sortState"
+        (sortChange)="navigateToWithComponentValues($event)"
+        class="checklist-mat-table"
+      >
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="title">
+            <span jhiTranslate="projectManagementApp.checklist.title">Title</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let checklist">{{ checklist.title }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="title">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.checklist.title">Title</span>
+        <ng-container matColumnDef="createdDate">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="createdDate">
+            <span jhiTranslate="projectManagementApp.checklist.createdDate">Created Date</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let checklist">{{ checklist.createdDate | formatMediumDatetime }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="createdDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.checklist.createdDate">Created Date</span>
+        <ng-container matColumnDef="task">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="task.title">
+            <span jhiTranslate="projectManagementApp.checklist.task">Task</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let checklist">
+            @if (checklist.task) {
+              <a [routerLink]="['/task', checklist.task.id, 'view']">{{ checklist.task.title }}</a>
+            }
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="task.title">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.checklist.task">Task</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (checklist of checklists(); track trackId(checklist)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/checklist', checklist.id, 'view']">{{ checklist.id }}</a>
-              </td>
-              <td>{{ checklist.title }}</td>
-              <td>{{ checklist.createdDate | formatMediumDatetime }}</td>
-              <td>
-                @if (checklist.task) {
-                  <div>
-                    <a [routerLink]="['/task', checklist.task.id, 'view']">{{ checklist.task.title }}</a>
-                  </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/checklist', checklist.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                  </a>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let checklist" class="text-end actions-cell">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/checklist', checklist.id, 'view']"
+              data-cy="entityDetailsButton"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              color="accent"
+              [routerLink]="['/checklist', checklist.id, 'edit']"
+              data-cy="entityEditButton"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="delete(checklist)" data-cy="entityDeleteButton" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-                  <a [routerLink]="['/checklist', checklist.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(checklist)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
       </table>
     </div>
   }
-  @if (checklists().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
-    </div>
+  @if (checklists().length > 0) {
+    <mat-paginator
+      class="checklist-paginator"
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="page - 1"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   }
 </div>

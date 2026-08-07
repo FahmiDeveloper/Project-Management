@@ -31,6 +31,10 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { EntityArrayResponseType, TaskService } from '../service/task.service';
 import { TaskDeleteDialogComponent } from '../delete/task-delete-dialog.component';
 
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-task',
   templateUrl: './task.component.html',
@@ -42,13 +46,15 @@ import { TaskDeleteDialogComponent } from '../delete/task-delete-dialog.componen
     SortDirective,
     SortByDirective,
     FormatMediumDatePipe,
-    ItemCountComponent,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
   ],
 })
 export class TaskComponent implements OnInit, OnDestroy {
@@ -66,6 +72,39 @@ export class TaskComponent implements OnInit, OnDestroy {
     TaskStatus.DONE,
     TaskStatus.BLOCKED,
   ];
+
+  displayedColumns: string[] = [
+    'title',
+    'description',
+    'priority',
+    'status',
+    'effort',
+    'dates',
+    'completionPercentage',
+    'sprint',
+    'milestone',
+    'assignedTo',
+    'createdBy',
+    'actions',
+  ];
+
+  private readonly statusLabels: Record<string, string> = {
+    null: '',
+    TODO: 'TODO',
+    IN_PROGRESS: 'IN_PROGRESS',
+    IN_REVIEW: 'IN_REVIEW',
+    TESTING: 'TESTING',
+    DONE: 'DONE',
+    BLOCKED: 'BLOCKED',
+  };
+
+  private readonly priorityLabels: Record<string, string> = {
+    null: '',
+    LOW: 'LOW',
+    MEDIUM: 'MEDIUM',
+    HIGH: 'HIGH',
+    CRITICAL: 'CRITICAL',
+  };
 
   // ---- Priority filter (dropdown, fixed options) ----
   filterPriority = signal<string>('');
@@ -100,6 +139,14 @@ export class TaskComponent implements OnInit, OnDestroy {
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+
+  statusLabel(status: string | null | undefined): string {
+    return this.statusLabels[status ?? 'null'];
+  }
+
+  priorityLabel(priority: string | null | undefined): string {
+    return this.priorityLabels[priority ?? 'null'];
+  }
 
   public readonly router = inject(Router);
   protected readonly taskService = inject(TaskService);
@@ -161,6 +208,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   onAssignedToSelected(event: MatAutocompleteSelectedEvent): void {
     const employee: IEmployee | null = event.option.value;
     this.filterAssignedToId.set(employee ? employee.id : null);
+    this.assignedToSearchTerm.set(this.displayEmployeeName(employee));
     this.page = 1;
     this.load();
   }
@@ -183,6 +231,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   onSprintSelected(event: MatAutocompleteSelectedEvent): void {
     const sprint: ISprint | null = event.option.value;
     this.filterSprintId.set(sprint ? sprint.id : null);
+    this.sprintSearchTerm.set(this.displaySprintName(sprint));
     this.page = 1;
     this.load();
   }
@@ -296,5 +345,9 @@ export class TaskComponent implements OnInit, OnDestroy {
         queryParams: queryParamsObj,
       });
     });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 }

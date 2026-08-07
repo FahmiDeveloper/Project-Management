@@ -3,18 +3,20 @@
     <span jhiTranslate="projectManagementApp.task.home.title">Tasks</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.task.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-task"
+        mat-flat-button
+        color="primary"
+        class="jh-create-entity create-task"
         [routerLink]="['/task/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
+        <mat-icon>add</mat-icon>
         <span jhiTranslate="projectManagementApp.task.home.createLabel">Create a new Task</span>
       </button>
     </div>
@@ -93,207 +95,168 @@
       <span jhiTranslate="projectManagementApp.task.home.notFound">No Tasks found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="title">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.title">Title</span>
+    <div class="mat-elevation-z1 task-table-container">
+      <table
+        mat-table
+        [dataSource]="tasks()"
+        jhiSort
+        [(sortState)]="sortState"
+        (sortChange)="navigateToWithComponentValues($event)"
+        class="task-mat-table"
+      >
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="title">
+            <span jhiTranslate="projectManagementApp.task.title">Title</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task">{{ task.title }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="description">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.description">Description</span>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="description">
+            <span jhiTranslate="projectManagementApp.task.description">Description</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task" class="description-cell">{{ task.description }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="priority">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.priority">Priority</span>
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="priority">
+            <span jhiTranslate="projectManagementApp.task.priority">Priority</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task">
+            <span class="priority-chip" [class]="'priority-' + (task.priority ?? 'null')">
+              {{ priorityLabel(task.priority) }}
+            </span>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="status">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.status">Status</span>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="status">
+            <span jhiTranslate="projectManagementApp.task.status">Status</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task">
+            <span class="status-chip" [class]="'status-' + (task.status ?? 'null')">
+              {{ statusLabel(task.status) }}
+            </span>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="storyPoints">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.storyPoints">Story Points</span>
+        <ng-container matColumnDef="effort">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="storyPoints">
+            <span>Effort</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task" class="effort-cell">
+            <span class="effort-line"><strong>Story points:</strong> {{ task.storyPoints }}</span>
+            <span class="effort-line"><strong>Estimated:</strong> {{ task.estimatedHours }}h</span>
+            <span class="effort-line"><strong>Spent:</strong> {{ task.spentHours }}h</span>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="estimatedHours">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.estimatedHours">Estimated Hours</span>
+        <ng-container matColumnDef="dates">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="startDate">
+            <span>Dates</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task" class="dates-cell">
+            <span class="date-line"><strong>Start:</strong> {{ task.startDate | formatMediumDate }}</span>
+            <span class="date-line"><strong>Due:</strong> {{ task.dueDate | formatMediumDate }}</span>
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="spentHours">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.spentHours">Spent Hours</span>
+        <ng-container matColumnDef="completionPercentage">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="completionPercentage">
+            <span>Completion(%)</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task">{{ task.completionPercentage }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="startDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.startDate">Start Date</span>
+        <ng-container matColumnDef="sprint">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="sprint.name">
+            <span jhiTranslate="projectManagementApp.task.sprint">Sprint</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task">
+            @if (task.sprint) {
+              <a [routerLink]="['/sprint', task.sprint.id, 'view']">{{ task.sprint.name }}</a>
+            }
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="dueDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.dueDate">Due Date</span>
+        <ng-container matColumnDef="milestone">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="milestone.title">
+            <span jhiTranslate="projectManagementApp.task.milestone">Milestone</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task">
+            @if (task.milestone) {
+              <a [routerLink]="['/milestone', task.milestone.id, 'view']">{{ task.milestone.title }}</a>
+            }
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="completionPercentage">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.completionPercentage">Completion Percentage</span>
+        <ng-container matColumnDef="assignedTo">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="assignedTo.employeeNumber">
+            <span jhiTranslate="projectManagementApp.task.assignedTo">Assigned To</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task">
+            @if (task.assignedTo) {
+              <a [routerLink]="['/employee', task.assignedTo.id, 'view']">
+                {{ task.assignedTo.firstName }}&nbsp;{{ task.assignedTo.lastName }}
+              </a>
+            }
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="sprint.name">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.sprint">Sprint</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="milestone.title">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.milestone">Milestone</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="assignedTo.employeeNumber">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.assignedTo">Assigned To</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="createdBy.employeeNumber">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.task.createdBy">Created By</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (task of tasks(); track trackId(task)) {
-            <tr data-cy="entityTable">
-              <td>{{ task.title }}</td>
-              <td>{{ task.description }}</td>
-              <td [jhiTranslate]="'projectManagementApp.TaskPriority.' + (task.priority ?? 'null')">
-                {{ { null: '', LOW: 'LOW', MEDIUM: 'MEDIUM', HIGH: 'HIGH', CRITICAL: 'CRITICAL' }[task.priority ?? 'null'] }}
-              </td>
-              <td [jhiTranslate]="'projectManagementApp.TaskStatus.' + (task.status ?? 'null')">
-                {{
-                  {
-                    null: '',
-                    TODO: 'TODO',
-                    IN_PROGRESS: 'IN_PROGRESS',
-                    IN_REVIEW: 'IN_REVIEW',
-                    TESTING: 'TESTING',
-                    DONE: 'DONE',
-                    BLOCKED: 'BLOCKED',
-                  }[task.status ?? 'null']
-                }}
-              </td>
-              <td>{{ task.storyPoints }}</td>
-              <td>{{ task.estimatedHours }}</td>
-              <td>{{ task.spentHours }}</td>
-              <td>{{ task.startDate | formatMediumDate }}</td>
-              <td>{{ task.dueDate | formatMediumDate }}</td>
-              <td>{{ task.completionPercentage }}</td>
-              <td>
-                @if (task.sprint) {
-                  <div>
-                    <a [routerLink]="['/sprint', task.sprint.id, 'view']">{{ task.sprint.name }}</a>
-                  </div>
-                }
-              </td>
-              <td>
-                @if (task.milestone) {
-                  <div>
-                    <a [routerLink]="['/milestone', task.milestone.id, 'view']">{{ task.milestone.title }}</a>
-                  </div>
-                }
-              </td>
-              <td>
-                @if (task.assignedTo) {
-                  <div>
-                    <a [routerLink]="['/employee', task.assignedTo.id, 'view']"
-                      >{{ task.assignedTo.firstName }}&nbsp;{{ task.assignedTo.lastName }}</a
-                    >
-                  </div>
-                }
-              </td>
-              <td>
-                @if (task.createdBy) {
-                  <div>
-                    <a [routerLink]="['/employee', task.createdBy.id, 'view']"
-                      >{{ task.createdBy.firstName }}&nbsp;{{ task.createdBy.lastName }}</a
-                    >
-                  </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/task', task.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                  </a>
+        <ng-container matColumnDef="createdBy">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="createdBy.employeeNumber">
+            <span jhiTranslate="projectManagementApp.task.createdBy">Created By</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let task">
+            @if (task.createdBy) {
+              <a [routerLink]="['/employee', task.createdBy.id, 'view']">
+                {{ task.createdBy.firstName }}&nbsp;{{ task.createdBy.lastName }}
+              </a>
+            }
+          </td>
+        </ng-container>
 
-                  <a [routerLink]="['/task', task.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                  </a>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let task" class="text-end actions-cell">
+            <a mat-icon-button color="primary" [routerLink]="['/task', task.id, 'view']" data-cy="entityDetailsButton" matTooltip="View">
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a mat-icon-button color="accent" [routerLink]="['/task', task.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="delete(task)" data-cy="entityDeleteButton" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-                  <button type="submit" (click)="delete(task)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
       </table>
     </div>
   }
-  @if (tasks().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
-    </div>
+  @if (tasks().length > 0) {
+    <mat-paginator
+      class="task-paginator"
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="page - 1"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   }
 </div>

@@ -33,13 +33,6 @@
       <table class="table table-striped" aria-describedby="page-heading">
         <thead>
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col" jhiSortBy="name">
               <div class="d-flex">
                 <span jhiTranslate="projectManagementApp.reportSnapshot.name">Name</span>
@@ -80,9 +73,6 @@
         <tbody>
           @for (reportSnapshot of reportSnapshots(); track trackId(reportSnapshot)) {
             <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/report-snapshot', reportSnapshot.id, 'view']">{{ reportSnapshot.id }}</a>
-              </td>
               <td>{{ reportSnapshot.name }}</td>
               <td>{{ reportSnapshot.type }}</td>
               <td>{{ reportSnapshot.generatedDate | formatMediumDatetime }}</td>

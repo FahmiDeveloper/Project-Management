@@ -102,8 +102,8 @@ export class ProjectService {
   protected convertDateFromClient<T extends IProject | NewProject | PartialUpdateProject>(project: T): RestOf<T> {
     return {
       ...project,
-      startDate: project.startDate?.format(DATE_FORMAT) ?? null,
-      endDate: project.endDate?.format(DATE_FORMAT) ?? null,
+      startDate: project.startDate ? dayjs(project.startDate).format(DATE_FORMAT) : null,
+      endDate: project.endDate ? dayjs(project.endDate).format(DATE_FORMAT) : null,
     };
   }
 

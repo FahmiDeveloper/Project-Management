@@ -10,7 +10,7 @@ export interface IAttachment {
   fileSize?: number | null;
   uploadedDate?: dayjs.Dayjs | null;
   task?: Pick<ITask, 'id' | 'title'> | null;
-  employee?: Pick<IEmployee, 'id' | 'firstName'> | null;
+  employee?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
 }
 
 export type NewAttachment = Omit<IAttachment, 'id'> & { id: null };

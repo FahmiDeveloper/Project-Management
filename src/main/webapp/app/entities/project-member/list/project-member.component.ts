@@ -7,7 +7,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormatMediumDatePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -16,15 +15,46 @@ import { IProjectMember } from '../project-member.model';
 import { EntityArrayResponseType, ProjectMemberService } from '../service/project-member.service';
 import { ProjectMemberDeleteDialogComponent } from '../delete/project-member-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-project-member',
   templateUrl: './project-member.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective, FormatMediumDatePipe, ItemCountComponent],
+  styleUrls: ['./project-member.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    FormatMediumDatePipe,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+  ],
 })
 export class ProjectMemberComponent implements OnInit {
   subscription: Subscription | null = null;
   projectMembers = signal<IProjectMember[]>([]);
   isLoading = false;
+
+  displayedColumns: string[] = ['role', 'joinedDate', 'active', 'project', 'employee', 'actions'];
+
+  private readonly roleLabels: Record<string, string> = {
+    null: '',
+    PROJECT_MANAGER: 'PROJECT_MANAGER',
+    TEAM_LEAD: 'TEAM_LEAD',
+    DEVELOPER: 'DEVELOPER',
+    TESTER: 'TESTER',
+    DESIGNER: 'DESIGNER',
+    BUSINESS_ANALYST: 'BUSINESS_ANALYST',
+  };
 
   sortState = sortStateSignal({});
 
@@ -40,6 +70,10 @@ export class ProjectMemberComponent implements OnInit {
   protected ngZone = inject(NgZone);
 
   trackId = (item: IProjectMember): number => this.projectMemberService.getProjectMemberIdentifier(item);
+
+  roleLabel(role: string | null | undefined): string {
+    return this.roleLabels[role ?? 'null'];
+  }
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -76,6 +110,10 @@ export class ProjectMemberComponent implements OnInit {
 
   navigateToPage(page: number): void {
     this.handleNavigation(page, this.sortState());
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.navigateToPage(event.pageIndex + 1);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
