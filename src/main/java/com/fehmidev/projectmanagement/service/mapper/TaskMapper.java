@@ -17,8 +17,8 @@ import org.mapstruct.*;
 public interface TaskMapper extends EntityMapper<TaskDTO, Task> {
     @Mapping(target = "sprint", source = "sprint", qualifiedByName = "sprintName")
     @Mapping(target = "milestone", source = "milestone", qualifiedByName = "milestoneTitle")
-    @Mapping(target = "assignedTo", source = "assignedTo", qualifiedByName = "employeeEmployeeNumber")
-    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "employeeEmployeeNumber")
+    @Mapping(target = "assignedTo", source = "assignedTo", qualifiedByName = "employeeBasic")
+    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "employeeBasic")
     TaskDTO toDto(Task s);
 
     @Named("sprintName")
@@ -33,9 +33,11 @@ public interface TaskMapper extends EntityMapper<TaskDTO, Task> {
     @Mapping(target = "title", source = "title")
     MilestoneDTO toDtoMilestoneTitle(Milestone milestone);
 
-    @Named("employeeEmployeeNumber")
+    @Named("employeeBasic")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "employeeNumber", source = "employeeNumber")
-    EmployeeDTO toDtoEmployeeEmployeeNumber(Employee employee);
+    @Mapping(target = "firstName", source = "firstName")
+    @Mapping(target = "lastName", source = "lastName")
+    EmployeeDTO toDtoEmployeeBasic(Employee employee);
 }

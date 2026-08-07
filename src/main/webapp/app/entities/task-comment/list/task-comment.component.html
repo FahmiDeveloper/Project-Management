@@ -75,7 +75,9 @@
           </th>
           <td mat-cell *matCellDef="let taskComment">
             @if (taskComment.employee) {
-              <a [routerLink]="['/employee', taskComment.employee.id, 'view']">{{ taskComment.employee.firstName }}</a>
+              <a [routerLink]="['/employee', taskComment.employee.id, 'view']"
+                >{{ taskComment.employee.firstName }}&nbsp;{{ taskComment.employee.lastName }}</a
+              >
             }
           </td>
         </ng-container>

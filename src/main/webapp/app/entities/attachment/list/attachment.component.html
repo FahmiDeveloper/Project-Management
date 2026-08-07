@@ -99,7 +99,9 @@
           </th>
           <td mat-cell *matCellDef="let attachment">
             @if (attachment.employee) {
-              <a [routerLink]="['/employee', attachment.employee.id, 'view']">{{ attachment.employee.firstName }}</a>
+              <a [routerLink]="['/employee', attachment.employee.id, 'view']"
+                >{{ attachment.employee.firstName }}&nbsp;{{ attachment.employee.lastName }}</a
+              >
             }
           </td>
         </ng-container>
