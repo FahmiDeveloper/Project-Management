@@ -11,12 +11,13 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface ActivityLogMapper extends EntityMapper<ActivityLogDTO, ActivityLog> {
-    @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeFirstName")
+    @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")
     ActivityLogDTO toDto(ActivityLog s);
 
-    @Named("employeeFirstName")
+    @Named("employeeId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "firstName", source = "firstName")
-    EmployeeDTO toDtoEmployeeFirstName(Employee employee);
+    @Mapping(target = "lastName", source = "lastName")
+    EmployeeDTO toDtoEmployeeId(Employee employee);
 }

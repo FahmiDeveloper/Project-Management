@@ -3,18 +3,20 @@
     <span jhiTranslate="projectManagementApp.activityLog.home.title">Activities Logs</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.activityLog.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-activity-log"
+        mat-flat-button
+        color="primary"
+        class="jh-create-entity create-activity-log"
         [routerLink]="['/activity-log/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
+        <mat-icon>add</mat-icon>
         <span jhiTranslate="projectManagementApp.activityLog.home.createLabel">Create a new Activity Log</span>
       </button>
     </div>
@@ -29,120 +31,111 @@
       <span jhiTranslate="projectManagementApp.activityLog.home.notFound">No Activity Logs found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
+    <div class="mat-elevation-z1 activity-log-table-container">
+      <table
+        mat-table
+        [dataSource]="activityLogs()"
+        jhiSort
+        [(sortState)]="sortState"
+        (sortChange)="navigateToWithComponentValues($event)"
+        class="activity-log-mat-table"
+      >
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="action">
+            <span jhiTranslate="projectManagementApp.activityLog.action">Action</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let activityLog">{{ activityLog.action }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="action">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.activityLog.action">Action</span>
+        <ng-container matColumnDef="entityName">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="entityName">
+            <span jhiTranslate="projectManagementApp.activityLog.entityName">Entity Name</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let activityLog">{{ activityLog.entityName }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="entityName">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.activityLog.entityName">Entity Name</span>
+        <ng-container matColumnDef="entityId">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="entityId">
+            <span jhiTranslate="projectManagementApp.activityLog.entityId">Entity Id</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let activityLog">{{ activityLog.entityId }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="entityId">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.activityLog.entityId">Entity Id</span>
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="description">
+            <span jhiTranslate="projectManagementApp.activityLog.description">Description</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let activityLog" class="description-cell">{{ activityLog.description }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="description">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.activityLog.description">Description</span>
+        <ng-container matColumnDef="createdDate">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="createdDate">
+            <span jhiTranslate="projectManagementApp.activityLog.createdDate">Created Date</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let activityLog">{{ activityLog.createdDate | formatMediumDatetime }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="createdDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.activityLog.createdDate">Created Date</span>
+        <ng-container matColumnDef="employee">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="employee.firstName">
+            <span jhiTranslate="projectManagementApp.activityLog.employee">Employee</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let activityLog">
+            @if (activityLog.employee) {
+              <a [routerLink]="['/employee', activityLog.employee.id, 'view']"
+                >{{ activityLog.employee.firstName }}&nbsp;{{ activityLog.employee.lastName }}</a
+              >
+            }
+          </td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="employee.firstName">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.activityLog.employee">Employee</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (activityLog of activityLogs(); track trackId(activityLog)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/activity-log', activityLog.id, 'view']">{{ activityLog.id }}</a>
-              </td>
-              <td>{{ activityLog.action }}</td>
-              <td>{{ activityLog.entityName }}</td>
-              <td>{{ activityLog.entityId }}</td>
-              <td>{{ activityLog.description }}</td>
-              <td>{{ activityLog.createdDate | formatMediumDatetime }}</td>
-              <td>
-                @if (activityLog.employee) {
-                  <div>
-                    <a [routerLink]="['/employee', activityLog.employee.id, 'view']">{{ activityLog.employee.firstName }}</a>
-                  </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/activity-log', activityLog.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                  </a>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let activityLog" class="text-end actions-cell">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/activity-log', activityLog.id, 'view']"
+              data-cy="entityDetailsButton"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              color="accent"
+              [routerLink]="['/activity-log', activityLog.id, 'edit']"
+              data-cy="entityEditButton"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="delete(activityLog)" data-cy="entityDeleteButton" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-                  <a [routerLink]="['/activity-log', activityLog.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(activityLog)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
       </table>
     </div>
   }
-  @if (activityLogs().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
-    </div>
+  @if (activityLogs().length > 0) {
+    <mat-paginator
+      class="activity-log-paginator"
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="page - 1"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   }
 </div>

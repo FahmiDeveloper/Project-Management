@@ -78,11 +78,8 @@ export class TaskComponent implements OnInit, OnDestroy {
     'description',
     'priority',
     'status',
-    'storyPoints',
-    'estimatedHours',
-    'spentHours',
-    'startDate',
-    'dueDate',
+    'effort',
+    'dates',
     'completionPercentage',
     'sprint',
     'milestone',
@@ -211,6 +208,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   onAssignedToSelected(event: MatAutocompleteSelectedEvent): void {
     const employee: IEmployee | null = event.option.value;
     this.filterAssignedToId.set(employee ? employee.id : null);
+    this.assignedToSearchTerm.set(this.displayEmployeeName(employee));
     this.page = 1;
     this.load();
   }
@@ -233,6 +231,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   onSprintSelected(event: MatAutocompleteSelectedEvent): void {
     const sprint: ISprint | null = event.option.value;
     this.filterSprintId.set(sprint ? sprint.id : null);
+    this.sprintSearchTerm.set(this.displaySprintName(sprint));
     this.page = 1;
     this.load();
   }

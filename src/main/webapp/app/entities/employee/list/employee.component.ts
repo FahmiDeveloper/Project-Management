@@ -145,6 +145,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   onDepartmentSelected(event: MatAutocompleteSelectedEvent): void {
     const department: IDepartment | null = event.option.value;
     this.filterDepartmentId.set(department ? department.id : null);
+    this.departmentSearchTerm.set(this.displayDepartmentName(department));
     this.page = 1;
     this.load();
   }

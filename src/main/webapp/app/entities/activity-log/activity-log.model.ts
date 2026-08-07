@@ -8,7 +8,7 @@ export interface IActivityLog {
   entityId?: number | null;
   description?: string | null;
   createdDate?: dayjs.Dayjs | null;
-  employee?: Pick<IEmployee, 'id' | 'firstName'> | null;
+  employee?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
 }
 
 export type NewActivityLog = Omit<IActivityLog, 'id'> & { id: null };
