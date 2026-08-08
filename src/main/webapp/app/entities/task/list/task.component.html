@@ -23,13 +23,9 @@
   </h2>
 
   <div class="task-filter-container">
-    <mat-form-field appearance="outline" class="task-status-field" subscriptSizing="dynamic">
-      <mat-label>Status</mat-label>
-      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
-        @for (status of statusOptions; track status) {
-          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.TaskStatus.' + status">{{ status }}</mat-option>
-        }
-      </mat-select>
+    <mat-form-field appearance="outline" class="task-title-field" subscriptSizing="dynamic">
+      <mat-label>Title</mat-label>
+      <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="task-priority-field" subscriptSizing="dynamic">
@@ -39,6 +35,32 @@
           <mat-option [value]="priority" [jhiTranslate]="'projectManagementApp.TaskPriority.' + priority">{{ priority }}</mat-option>
         }
       </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="task-status-field" subscriptSizing="dynamic">
+      <mat-label>Status</mat-label>
+      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.TaskStatus.' + status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="task-sprint-field" subscriptSizing="dynamic">
+      <mat-label>Sprint</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="sprintAuto"
+        [value]="sprintSearchTerm()"
+        (input)="onSprintInput($event)"
+        placeholder="Search sprint"
+      />
+      <mat-autocomplete #sprintAuto="matAutocomplete" [displayWith]="displaySprintName" (optionSelected)="onSprintSelected($event)">
+        @for (sprint of filteredSprints(); track sprint.id) {
+          <mat-option [value]="sprint">{{ sprint.name }}</mat-option>
+        }
+      </mat-autocomplete>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="task-assigned-field" subscriptSizing="dynamic">
@@ -62,24 +84,24 @@
       </mat-autocomplete>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="task-sprint-field" subscriptSizing="dynamic">
-      <mat-label>Sprint</mat-label>
+    <mat-form-field appearance="outline" class="task-created-by-field" subscriptSizing="dynamic">
+      <mat-label>Created By</mat-label>
       <input
         matInput
         type="text"
-        [matAutocomplete]="sprintAuto"
-        [value]="sprintSearchTerm()"
-        (input)="onSprintInput($event)"
-        placeholder="Search sprint"
+        [matAutocomplete]="createdByAuto"
+        [value]="createdBySearchTerm()"
+        (input)="onCreatedByInput($event)"
+        placeholder="Search employee"
       />
-      <mat-autocomplete #sprintAuto="matAutocomplete" [displayWith]="displaySprintName" (optionSelected)="onSprintSelected($event)">
-        @for (sprint of filteredSprints(); track sprint.id) {
-          <mat-option [value]="sprint">{{ sprint.name }}</mat-option>
+      <mat-autocomplete #createdByAuto="matAutocomplete" [displayWith]="displayEmployeeName" (optionSelected)="onCreatedBySelected($event)">
+        @for (employee of filteredCreatedByEmployees(); track employee.id) {
+          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
 
-    @if (filterStatus() || filterPriority() || filterAssignedToId() || filterSprintId()) {
+    @if (filterTitle() || filterStatus() || filterPriority() || filterAssignedToId() || filterSprintId() || filterCreatedById()) {
       <button mat-icon-button aria-label="Clear filters" class="task-filter-clear-btn" (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>

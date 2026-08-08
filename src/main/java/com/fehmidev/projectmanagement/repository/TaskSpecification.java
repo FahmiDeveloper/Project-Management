@@ -10,10 +10,20 @@ public final class TaskSpecification {
 
     private TaskSpecification() {}
 
-    public static Specification<Task> withFilters(TaskStatus status, TaskPriority priority, Long assignedToId, Long sprintId) {
+    public static Specification<Task> withFilters(
+        String title,
+        TaskStatus status,
+        TaskPriority priority,
+        Long assignedToId,
+        Long sprintId,
+        Long createdById
+    ) {
         return (root, query, cb) -> {
             Predicate predicate = cb.conjunction();
 
+            if (title != null && !title.isBlank()) {
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
+            }
             if (status != null) {
                 predicate = cb.and(predicate, cb.equal(root.get("status"), status));
             }
@@ -25,6 +35,9 @@ public final class TaskSpecification {
             }
             if (sprintId != null) {
                 predicate = cb.and(predicate, cb.equal(root.get("sprint").get("id"), sprintId));
+            }
+            if (createdById != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("createdBy").get("id"), createdById));
             }
             return predicate;
         };
