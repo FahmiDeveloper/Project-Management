@@ -1,5 +1,6 @@
 package com.fehmidev.projectmanagement.web.rest;
 
+import com.fehmidev.projectmanagement.domain.enumeration.SprintStatus;
 import com.fehmidev.projectmanagement.repository.SprintRepository;
 import com.fehmidev.projectmanagement.service.SprintService;
 import com.fehmidev.projectmanagement.service.dto.SprintDTO;
@@ -135,24 +136,20 @@ public class SprintResource {
         );
     }
 
-    /**
-     * {@code GET  /sprints} : get all the sprints.
-     *
-     * @param pageable the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of sprints in body.
-     */
     @GetMapping("")
     public ResponseEntity<List<SprintDTO>> getAllSprints(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "name", required = false) String name,
+        @RequestParam(name = "status", required = false) SprintStatus status,
+        @RequestParam(name = "projectId", required = false) Long projectId
     ) {
         LOG.debug("REST request to get a page of Sprints");
         Page<SprintDTO> page;
         if (eagerload) {
-            page = sprintService.findAllWithEagerRelationships(pageable);
+            page = sprintService.findAllWithEagerRelationships(name, status, projectId, pageable);
         } else {
-            page = sprintService.findAll(pageable);
+            page = sprintService.findAll(name, status, projectId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

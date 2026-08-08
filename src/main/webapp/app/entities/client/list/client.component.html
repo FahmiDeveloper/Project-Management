@@ -22,6 +22,19 @@
     </div>
   </h2>
 
+  <div class="client-filter-container">
+    <mat-form-field appearance="outline" class="client-name-field" subscriptSizing="dynamic">
+      <mat-label>Filter by company name</mat-label>
+      <input matInput type="text" [ngModel]="filterCompanyName()" (ngModelChange)="onCompanyNameInput($event)" />
+    </mat-form-field>
+
+    @if (filterCompanyName()) {
+      <button mat-icon-button aria-label="Clear filters" class="client-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />

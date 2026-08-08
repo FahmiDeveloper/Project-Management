@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -14,6 +14,8 @@ import { IClient } from '../client.model';
 import { ClientService, EntityArrayResponseType } from '../service/client.service';
 import { ClientDeleteDialogComponent } from '../delete/client-delete-dialog.component';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
@@ -30,6 +32,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SharedModule,
     SortDirective,
     SortByDirective,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatTableModule,
@@ -37,12 +41,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule,
   ],
 })
-export class ClientComponent implements OnInit {
+export class ClientComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   clients = signal<IClient[]>([]);
   isLoading = false;
 
   displayedColumns: string[] = ['companyName', 'contactName', 'email', 'phone', 'address', 'city', 'country', 'website', 'actions'];
+
+  // ---- Company name filter (debounced text input) ----
+  filterCompanyName = signal<string>('');
+  private readonly companyNameInput$ = new Subject<string>();
+  private companyNameSubscription: Subscription | null = null;
 
   sortState = sortStateSignal({});
 
@@ -66,6 +75,27 @@ export class ClientComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.companyNameSubscription = this.companyNameInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterCompanyName.set(value);
+      this.page = 1;
+      this.load();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.companyNameSubscription?.unsubscribe();
+  }
+
+  onCompanyNameInput(value: string): void {
+    this.companyNameInput$.next(value);
+  }
+
+  clearSearch(): void {
+    this.filterCompanyName.set('');
+    this.page = 1;
+    this.load();
   }
 
   delete(client: IClient): void {
@@ -130,6 +160,12 @@ export class ClientComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const companyName = this.filterCompanyName().trim();
+    if (companyName) {
+      queryObject['companyName'] = companyName;
+    }
+
     return this.clientService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 

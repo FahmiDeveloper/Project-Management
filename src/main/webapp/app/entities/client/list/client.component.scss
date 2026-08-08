@@ -49,3 +49,20 @@
     transform: rotate(360deg);
   }
 }
+
+.client-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.client-name-field {
+  width: 280px;
+}
+
+.client-filter-clear-btn {
+  height: 56px;
+  width: 56px;
+}
