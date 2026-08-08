@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the ProjectMember entity.
  */
 @Repository
-public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Long> {
+public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Long>, JpaSpecificationExecutor<ProjectMember> {
     default Optional<ProjectMember> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
@@ -23,14 +24,13 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     }
 
     default Page<ProjectMember> findAllWithEagerRelationships(Pageable pageable) {
-        return this.findAllWithToOneRelationships(pageable);
+        return this.findAll((Specification<ProjectMember>) null, pageable);
     }
 
-    @Query(
-        value = "select projectMember from ProjectMember projectMember left join fetch projectMember.project left join fetch projectMember.employee",
-        countQuery = "select count(projectMember) from ProjectMember projectMember"
-    )
-    Page<ProjectMember> findAllWithToOneRelationships(Pageable pageable);
+    // NEW: eager fetch relationships while applying any Specification (project/employee filters)
+    @EntityGraph(attributePaths = { "project", "employee" })
+    @Override
+    Page<ProjectMember> findAll(Specification<ProjectMember> spec, Pageable pageable);
 
     @Query(
         "select projectMember from ProjectMember projectMember left join fetch projectMember.project left join fetch projectMember.employee"

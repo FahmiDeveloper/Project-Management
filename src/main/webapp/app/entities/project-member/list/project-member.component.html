@@ -22,6 +22,48 @@
     </div>
   </h2>
 
+  <div class="project-member-filter-container">
+    <mat-form-field appearance="outline" class="project-member-project-field" subscriptSizing="dynamic">
+      <mat-label>Project</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="projectAuto"
+        [value]="projectSearchTerm()"
+        (input)="onProjectInput($event)"
+        placeholder="Search project"
+      />
+      <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProjectName" (optionSelected)="onProjectSelected($event)">
+        @for (project of filteredProjects(); track project.id) {
+          <mat-option [value]="project">{{ project.name }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="project-member-employee-field" subscriptSizing="dynamic">
+      <mat-label>Employee</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="employeeAuto"
+        [value]="employeeSearchTerm()"
+        (input)="onEmployeeInput($event)"
+        placeholder="Search employee"
+      />
+      <mat-autocomplete #employeeAuto="matAutocomplete" [displayWith]="displayEmployeeName" (optionSelected)="onEmployeeSelected($event)">
+        @for (employee of filteredEmployees(); track employee.id) {
+          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterProjectId() || filterEmployeeId()) {
+      <button mat-icon-button aria-label="Clear filters" class="project-member-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />
