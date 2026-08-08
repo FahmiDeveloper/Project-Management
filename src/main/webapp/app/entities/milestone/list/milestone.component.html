@@ -22,6 +22,45 @@
     </div>
   </h2>
 
+  <div class="milestone-filter-container">
+    <mat-form-field appearance="outline" class="milestone-title-field" subscriptSizing="dynamic">
+      <mat-label>Title</mat-label>
+      <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="milestone-status-field" subscriptSizing="dynamic">
+      <mat-label>Status</mat-label>
+      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.MilestoneStatus.' + status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="milestone-project-field" subscriptSizing="dynamic">
+      <mat-label>Project</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="projectAuto"
+        [value]="projectSearchTerm()"
+        (input)="onProjectInput($event)"
+        placeholder="Search project"
+      />
+      <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProjectName" (optionSelected)="onProjectSelected($event)">
+        @for (project of filteredProjects(); track project.id) {
+          <mat-option [value]="project">{{ project.name }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterTitle() || filterStatus() || filterProjectId()) {
+      <button mat-icon-button aria-label="Clear filters" class="milestone-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />

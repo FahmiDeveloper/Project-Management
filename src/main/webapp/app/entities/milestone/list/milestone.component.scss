@@ -87,3 +87,28 @@
     transform: rotate(360deg);
   }
 }
+
+.milestone-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.milestone-title-field {
+  width: 220px;
+}
+
+.milestone-status-field {
+  width: 180px;
+}
+
+.milestone-project-field {
+  width: 220px;
+}
+
+.milestone-filter-clear-btn {
+  height: 56px;
+  width: 56px;
+}
