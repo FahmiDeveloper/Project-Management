@@ -14,17 +14,23 @@
           <mat-label jhiTranslate="projectManagementApp.project.code">Code</mat-label>
           <input matInput type="text" name="code" id="field_code" data-cy="code" formControlName="code" />
           @if (codeRef.invalid && (codeRef.touched || codeRef.dirty) && codeRef.errors?.required) {
-            <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
           @if (codeRef.invalid && (codeRef.touched || codeRef.dirty) && codeRef.errors?.minlength) {
-            <mat-error jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
-              >This field is required to be at least 2 characters.</mat-error
-            >
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
+                >This field is required to be at least 2 characters.</mat-error
+              >
+            </ng-container>
           }
           @if (codeRef.invalid && (codeRef.touched || codeRef.dirty) && codeRef.errors?.maxlength) {
-            <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
-              >This field cannot be longer than 20 characters.</mat-error
-            >
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                >This field cannot be longer than 20 characters.</mat-error
+              >
+            </ng-container>
           }
         </mat-form-field>
 
@@ -34,17 +40,23 @@
           <mat-label jhiTranslate="projectManagementApp.project.name">Name</mat-label>
           <input matInput type="text" name="name" id="field_name" data-cy="name" formControlName="name" />
           @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.required) {
-            <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
           @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.minlength) {
-            <mat-error jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
-              >This field is required to be at least 2 characters.</mat-error
-            >
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
+                >This field is required to be at least 2 characters.</mat-error
+              >
+            </ng-container>
           }
           @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.maxlength) {
-            <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
-              >This field cannot be longer than 150 characters.</mat-error
-            >
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
+                >This field cannot be longer than 150 characters.</mat-error
+              >
+            </ng-container>
           }
         </mat-form-field>
 
@@ -76,16 +88,24 @@
           <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
           @if (startDateRef.invalid && (startDateRef.touched || startDateRef.dirty) && startDateRef.errors?.required) {
-            <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
         </mat-form-field>
 
         <!-- End Date Field -->
+        @let endDateRef = editForm.get('endDate')!;
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label jhiTranslate="projectManagementApp.project.endDate">End Date</mat-label>
           <input matInput [matDatepicker]="endDatePicker" name="endDate" id="field_endDate" data-cy="endDate" formControlName="endDate" />
           <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #endDatePicker></mat-datepicker>
+          @if (endDateRef.invalid && (endDateRef.touched || endDateRef.dirty) && endDateRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
         </mat-form-field>
 
         <!-- Budget Field -->
@@ -94,10 +114,14 @@
           <mat-label jhiTranslate="projectManagementApp.project.budget">Budget</mat-label>
           <input matInput type="number" name="budget" id="field_budget" data-cy="budget" formControlName="budget" />
           @if (budgetRef.invalid && (budgetRef.touched || budgetRef.dirty) && budgetRef.errors?.min) {
-            <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
+            </ng-container>
           }
           @if (budgetRef.invalid && (budgetRef.touched || budgetRef.dirty) && budgetRef.errors?.number) {
-            <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
+            </ng-container>
           }
         </mat-form-field>
 
@@ -107,18 +131,26 @@
           <mat-label jhiTranslate="projectManagementApp.project.progress">Progress</mat-label>
           <input matInput type="number" name="progress" id="field_progress" data-cy="progress" formControlName="progress" />
           @if (progressRef.invalid && (progressRef.touched || progressRef.dirty) && progressRef.errors?.required) {
-            <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
           @if (progressRef.invalid && (progressRef.touched || progressRef.dirty) && progressRef.errors?.min) {
-            <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
+            </ng-container>
           }
           @if (progressRef.invalid && (progressRef.touched || progressRef.dirty) && progressRef.errors?.max) {
-            <mat-error jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
-              >This field cannot be more than 100.</mat-error
-            >
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
+                >This field cannot be more than 100.</mat-error
+              >
+            </ng-container>
           }
           @if (progressRef.invalid && (progressRef.touched || progressRef.dirty) && progressRef.errors?.number) {
-            <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
+            </ng-container>
           }
         </mat-form-field>
 
@@ -133,11 +165,14 @@
             }
           </mat-select>
           @if (statusRef.invalid && (statusRef.touched || statusRef.dirty) && statusRef.errors?.required) {
-            <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
         </mat-form-field>
 
         <!-- Client Field -->
+        @let clientRef = editForm.get('client')!;
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label jhiTranslate="projectManagementApp.project.client">Client</mat-label>
           <mat-select id="field_client" data-cy="client" name="client" formControlName="client" [compareWith]="compareClient">
@@ -146,9 +181,15 @@
               <mat-option [value]="clientOption">{{ clientOption.companyName }}</mat-option>
             }
           </mat-select>
+          @if (clientRef.invalid && (clientRef.touched || clientRef.dirty) && clientRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
         </mat-form-field>
 
         <!-- Manager Field -->
+        @let managerRef = editForm.get('manager')!;
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label jhiTranslate="projectManagementApp.project.manager">Manager</mat-label>
           <mat-select id="field_manager" data-cy="manager" name="manager" formControlName="manager" [compareWith]="compareEmployee">
@@ -157,6 +198,11 @@
               <mat-option [value]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</mat-option>
             }
           </mat-select>
+          @if (managerRef.invalid && (managerRef.touched || managerRef.dirty) && managerRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
         </mat-form-field>
       </div>
 
