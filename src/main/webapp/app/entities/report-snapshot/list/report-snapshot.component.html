@@ -3,18 +3,20 @@
     <span jhiTranslate="projectManagementApp.reportSnapshot.home.title">Reports Snapshots</span>
 
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.reportSnapshot.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-report-snapshot"
+        mat-flat-button
+        color="primary"
+        class="jh-create-entity create-report-snapshot"
         [routerLink]="['/report-snapshot/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
+        <mat-icon>add</mat-icon>
         <span jhiTranslate="projectManagementApp.reportSnapshot.home.createLabel">Create a new Report Snapshot</span>
       </button>
     </div>
@@ -29,110 +31,101 @@
       <span jhiTranslate="projectManagementApp.reportSnapshot.home.notFound">No Report Snapshots found</span>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="name">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.reportSnapshot.name">Name</span>
+    <div class="mat-elevation-z1 report-snapshot-table-container">
+      <table
+        mat-table
+        [dataSource]="reportSnapshots()"
+        jhiSort
+        [(sortState)]="sortState"
+        (sortChange)="navigateToWithComponentValues($event)"
+        class="report-snapshot-mat-table"
+      >
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="name">
+            <span jhiTranslate="projectManagementApp.reportSnapshot.name">Name</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let reportSnapshot">{{ reportSnapshot.name }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="type">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.reportSnapshot.type">Type</span>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="type">
+            <span jhiTranslate="projectManagementApp.reportSnapshot.type">Type</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let reportSnapshot">{{ reportSnapshot.type }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="generatedDate">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.reportSnapshot.generatedDate">Generated Date</span>
+        <ng-container matColumnDef="generatedDate">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="generatedDate">
+            <span jhiTranslate="projectManagementApp.reportSnapshot.generatedDate">Generated Date</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let reportSnapshot">{{ reportSnapshot.generatedDate | formatMediumDatetime }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="data">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.reportSnapshot.data">Data</span>
+        <ng-container matColumnDef="data">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="data">
+            <span jhiTranslate="projectManagementApp.reportSnapshot.data">Data</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let reportSnapshot" class="data-cell">{{ reportSnapshot.data }}</td>
+        </ng-container>
 
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="project.name">
-              <div class="d-flex">
-                <span jhiTranslate="projectManagementApp.reportSnapshot.project">Project</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (reportSnapshot of reportSnapshots(); track trackId(reportSnapshot)) {
-            <tr data-cy="entityTable">
-              <td>{{ reportSnapshot.name }}</td>
-              <td>{{ reportSnapshot.type }}</td>
-              <td>{{ reportSnapshot.generatedDate | formatMediumDatetime }}</td>
-              <td>{{ reportSnapshot.data }}</td>
-              <td>
-                @if (reportSnapshot.project) {
-                  <div>
-                    <a [routerLink]="['/project', reportSnapshot.project.id, 'view']">{{ reportSnapshot.project.name }}</a>
-                  </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a
-                    [routerLink]="['/report-snapshot', reportSnapshot.id, 'view']"
-                    class="btn btn-info btn-sm"
-                    data-cy="entityDetailsButton"
-                  >
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                  </a>
+        <ng-container matColumnDef="project">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="project.name">
+            <span jhiTranslate="projectManagementApp.reportSnapshot.project">Project</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let reportSnapshot">
+            @if (reportSnapshot.project) {
+              <a [routerLink]="['/project', reportSnapshot.project.id, 'view']">{{ reportSnapshot.project.name }}</a>
+            }
+          </td>
+        </ng-container>
 
-                  <a
-                    [routerLink]="['/report-snapshot', reportSnapshot.id, 'edit']"
-                    class="btn btn-primary btn-sm"
-                    data-cy="entityEditButton"
-                  >
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                  </a>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let reportSnapshot" class="text-end actions-cell">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/report-snapshot', reportSnapshot.id, 'view']"
+              data-cy="entityDetailsButton"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              color="accent"
+              [routerLink]="['/report-snapshot', reportSnapshot.id, 'edit']"
+              data-cy="entityEditButton"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="delete(reportSnapshot)" data-cy="entityDeleteButton" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-                  <button type="submit" (click)="delete(reportSnapshot)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
       </table>
     </div>
   }
-  @if (reportSnapshots().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page, totalItems, itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
-    </div>
+  @if (reportSnapshots().length > 0) {
+    <mat-paginator
+      class="report-snapshot-paginator"
+      [length]="totalItems"
+      [pageSize]="itemsPerPage"
+      [pageIndex]="page - 1"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   }
 </div>

@@ -1,7 +1,9 @@
 package com.fehmidev.projectmanagement.service;
 
 import com.fehmidev.projectmanagement.domain.Milestone;
+import com.fehmidev.projectmanagement.domain.enumeration.MilestoneStatus;
 import com.fehmidev.projectmanagement.repository.MilestoneRepository;
+import com.fehmidev.projectmanagement.repository.MilestoneSpecification;
 import com.fehmidev.projectmanagement.service.dto.MilestoneDTO;
 import com.fehmidev.projectmanagement.service.mapper.MilestoneMapper;
 import java.util.Optional;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +33,6 @@ public class MilestoneService {
         this.milestoneMapper = milestoneMapper;
     }
 
-    /**
-     * Save a milestone.
-     *
-     * @param milestoneDTO the entity to save.
-     * @return the persisted entity.
-     */
     public MilestoneDTO save(MilestoneDTO milestoneDTO) {
         LOG.debug("Request to save Milestone : {}", milestoneDTO);
         Milestone milestone = milestoneMapper.toEntity(milestoneDTO);
@@ -43,12 +40,6 @@ public class MilestoneService {
         return milestoneMapper.toDto(milestone);
     }
 
-    /**
-     * Update a milestone.
-     *
-     * @param milestoneDTO the entity to save.
-     * @return the persisted entity.
-     */
     public MilestoneDTO update(MilestoneDTO milestoneDTO) {
         LOG.debug("Request to update Milestone : {}", milestoneDTO);
         Milestone milestone = milestoneMapper.toEntity(milestoneDTO);
@@ -56,12 +47,6 @@ public class MilestoneService {
         return milestoneMapper.toDto(milestone);
     }
 
-    /**
-     * Partially update a milestone.
-     *
-     * @param milestoneDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<MilestoneDTO> partialUpdate(MilestoneDTO milestoneDTO) {
         LOG.debug("Request to partially update Milestone : {}", milestoneDTO);
 
@@ -76,44 +61,36 @@ public class MilestoneService {
             .map(milestoneMapper::toDto);
     }
 
-    /**
-     * Get all the milestones.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<MilestoneDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Milestones");
         return milestoneRepository.findAll(pageable).map(milestoneMapper::toDto);
     }
 
-    /**
-     * Get all the milestones with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
-    public Page<MilestoneDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return milestoneRepository.findAllWithEagerRelationships(pageable).map(milestoneMapper::toDto);
+    // NEW: filtered
+    @Transactional(readOnly = true)
+    public Page<MilestoneDTO> findAll(String title, MilestoneStatus status, Long projectId, Pageable pageable) {
+        LOG.debug("Request to get all Milestones filtered by title: {}, status: {}, projectId: {}", title, status, projectId);
+        Specification<Milestone> spec = MilestoneSpecification.withFilters(title, status, projectId);
+        return milestoneRepository.findAll(spec, pageable).map(milestoneMapper::toDto);
     }
 
-    /**
-     * Get one milestone by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
+    public Page<MilestoneDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return findAll(null, null, null, pageable);
+    }
+
+    // NEW: eager, filtered
+    public Page<MilestoneDTO> findAllWithEagerRelationships(String title, MilestoneStatus status, Long projectId, Pageable pageable) {
+        LOG.debug("Request to get all Milestones (eager) filtered by title: {}, status: {}, projectId: {}", title, status, projectId);
+        return findAll(title, status, projectId, pageable);
+    }
+
     @Transactional(readOnly = true)
     public Optional<MilestoneDTO> findOne(Long id) {
         LOG.debug("Request to get Milestone : {}", id);
         return milestoneRepository.findOneWithEagerRelationships(id).map(milestoneMapper::toDto);
     }
 
-    /**
-     * Delete the milestone by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         LOG.debug("Request to delete Milestone : {}", id);
         milestoneRepository.deleteById(id);

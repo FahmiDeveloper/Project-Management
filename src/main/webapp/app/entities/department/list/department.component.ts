@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -14,6 +14,8 @@ import { IDepartment } from '../department.model';
 import { DepartmentService, EntityArrayResponseType } from '../service/department.service';
 import { DepartmentDeleteDialogComponent } from '../delete/department-delete-dialog.component';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
@@ -30,6 +32,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SharedModule,
     SortDirective,
     SortByDirective,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatTableModule,
@@ -37,12 +41,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule,
   ],
 })
-export class DepartmentComponent implements OnInit {
+export class DepartmentComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   departments = signal<IDepartment[]>([]);
   isLoading = false;
 
   displayedColumns: string[] = ['name', 'description', 'actions'];
+
+  // ---- Name filter (debounced text input) ----
+  filterName = signal<string>('');
+  private readonly nameInput$ = new Subject<string>();
+  private nameSubscription: Subscription | null = null;
 
   sortState = sortStateSignal({});
 
@@ -66,6 +75,27 @@ export class DepartmentComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.nameSubscription = this.nameInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterName.set(value);
+      this.page = 1;
+      this.load();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.nameSubscription?.unsubscribe();
+  }
+
+  onNameInput(value: string): void {
+    this.nameInput$.next(value);
+  }
+
+  clearSearch(): void {
+    this.filterName.set('');
+    this.page = 1;
+    this.load();
   }
 
   delete(department: IDepartment): void {
@@ -130,6 +160,12 @@ export class DepartmentComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const name = this.filterName().trim();
+    if (name) {
+      queryObject['name'] = name;
+    }
+
     return this.departmentService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 

@@ -30,12 +30,6 @@ public class ClientService {
         this.clientMapper = clientMapper;
     }
 
-    /**
-     * Save a client.
-     *
-     * @param clientDTO the entity to save.
-     * @return the persisted entity.
-     */
     public ClientDTO save(ClientDTO clientDTO) {
         LOG.debug("Request to save Client : {}", clientDTO);
         Client client = clientMapper.toEntity(clientDTO);
@@ -43,12 +37,6 @@ public class ClientService {
         return clientMapper.toDto(client);
     }
 
-    /**
-     * Update a client.
-     *
-     * @param clientDTO the entity to save.
-     * @return the persisted entity.
-     */
     public ClientDTO update(ClientDTO clientDTO) {
         LOG.debug("Request to update Client : {}", clientDTO);
         Client client = clientMapper.toEntity(clientDTO);
@@ -56,12 +44,6 @@ public class ClientService {
         return clientMapper.toDto(client);
     }
 
-    /**
-     * Partially update a client.
-     *
-     * @param clientDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<ClientDTO> partialUpdate(ClientDTO clientDTO) {
         LOG.debug("Request to partially update Client : {}", clientDTO);
 
@@ -76,35 +58,28 @@ public class ClientService {
             .map(clientMapper::toDto);
     }
 
-    /**
-     * Get all the clients.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<ClientDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Clients");
         return clientRepository.findAll(pageable).map(clientMapper::toDto);
     }
 
-    /**
-     * Get one client by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
+    // NEW: filtered by company name
+    @Transactional(readOnly = true)
+    public Page<ClientDTO> findAll(String companyName, Pageable pageable) {
+        LOG.debug("Request to get all Clients filtered by companyName: {}", companyName);
+        if (companyName != null && !companyName.isBlank()) {
+            return clientRepository.findByCompanyNameContainingIgnoreCase(companyName, pageable).map(clientMapper::toDto);
+        }
+        return clientRepository.findAll(pageable).map(clientMapper::toDto);
+    }
+
     @Transactional(readOnly = true)
     public Optional<ClientDTO> findOne(Long id) {
         LOG.debug("Request to get Client : {}", id);
         return clientRepository.findById(id).map(clientMapper::toDto);
     }
 
-    /**
-     * Delete the client by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         LOG.debug("Request to delete Client : {}", id);
         clientRepository.deleteById(id);

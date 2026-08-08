@@ -97,3 +97,21 @@
     transform: rotate(360deg);
   }
 }
+
+.project-member-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.project-member-project-field,
+.project-member-employee-field {
+  width: 240px;
+}
+
+.project-member-filter-clear-btn {
+  height: 56px;
+  width: 56px;
+}

@@ -22,6 +22,45 @@
     </div>
   </h2>
 
+  <div class="sprint-filter-container">
+    <mat-form-field appearance="outline" class="sprint-name-field" subscriptSizing="dynamic">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" [ngModel]="filterName()" (ngModelChange)="onNameInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="sprint-status-field" subscriptSizing="dynamic">
+      <mat-label>Status</mat-label>
+      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.SprintStatus.' + status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="sprint-project-field" subscriptSizing="dynamic">
+      <mat-label>Project</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="projectAuto"
+        [value]="projectSearchTerm()"
+        (input)="onProjectInput($event)"
+        placeholder="Search project"
+      />
+      <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProjectName" (optionSelected)="onProjectSelected($event)">
+        @for (project of filteredProjects(); track project.id) {
+          <mat-option [value]="project">{{ project.name }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterName() || filterStatus() || filterProjectId()) {
+      <button mat-icon-button aria-label="Clear filters" class="sprint-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />

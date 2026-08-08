@@ -1,9 +1,9 @@
-.client-table-container {
+.authority-table-container {
   overflow-x: auto;
   border-radius: 4px;
 }
 
-.client-mat-table {
+.authority-mat-table {
   width: 100%;
 
   th.mat-mdc-header-cell {
@@ -30,13 +30,6 @@
   }
 }
 
-.client-paginator {
-  margin-top: 0.5rem;
-  background: transparent;
-  display: flex;
-  justify-content: center;
-}
-
 .spin {
   animation: spin 1s linear infinite;
 }
@@ -48,21 +41,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-.client-filter-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.client-name-field {
-  width: 280px;
-}
-
-.client-filter-clear-btn {
-  height: 56px;
-  width: 56px;
 }

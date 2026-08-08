@@ -135,16 +135,13 @@ public class ClientResource {
         );
     }
 
-    /**
-     * {@code GET  /clients} : get all the clients.
-     *
-     * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of clients in body.
-     */
     @GetMapping("")
-    public ResponseEntity<List<ClientDTO>> getAllClients(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ClientDTO>> getAllClients(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "companyName", required = false) String companyName
+    ) {
         LOG.debug("REST request to get a page of Clients");
-        Page<ClientDTO> page = clientService.findAll(pageable);
+        Page<ClientDTO> page = clientService.findAll(companyName, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

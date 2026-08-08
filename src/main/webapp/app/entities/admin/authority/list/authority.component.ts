@@ -11,15 +11,33 @@ import { IAuthority } from '../authority.model';
 import { AuthorityService, EntityArrayResponseType } from '../service/authority.service';
 import { AuthorityDeleteDialogComponent } from '../delete/authority-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-authority',
   templateUrl: './authority.component.html',
-  imports: [RouterModule, FormsModule, SharedModule, SortDirective, SortByDirective],
+  styleUrls: ['./authority.component.scss'],
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatTooltipModule,
+  ],
 })
 export class AuthorityComponent implements OnInit {
   subscription: Subscription | null = null;
   authorities = signal<IAuthority[]>([]);
   isLoading = false;
+
+  displayedColumns: string[] = ['name', 'actions'];
 
   sortState = sortStateSignal({});
 

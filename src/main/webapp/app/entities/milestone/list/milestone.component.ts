@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -12,12 +12,20 @@ import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/co
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
 import { DataUtils } from 'app/core/util/data-util.service';
 import { IMilestone } from '../milestone.model';
+import { MilestoneStatus } from 'app/entities/enumerations/milestone-status.model';
 
 import { EntityArrayResponseType, MilestoneService } from '../service/milestone.service';
 import { MilestoneDeleteDialogComponent } from '../delete/milestone-delete-dialog.component';
 
+import { IProject } from 'app/entities/project/project.model';
+import { ProjectService } from 'app/entities/project/service/project.service';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -33,14 +41,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SortDirective,
     SortByDirective,
     FormatMediumDatePipe,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
+    MatSelectModule,
+    MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
   ],
 })
-export class MilestoneComponent implements OnInit {
+export class MilestoneComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   milestones = signal<IMilestone[]>([]);
   isLoading = false;
@@ -55,6 +67,32 @@ export class MilestoneComponent implements OnInit {
     CANCELLED: 'CANCELLED',
   };
 
+  // ---- Title filter (debounced text input) ----
+  filterTitle = signal<string>('');
+  private readonly titleInput$ = new Subject<string>();
+  private titleSubscription: Subscription | null = null;
+
+  // ---- Status filter (dropdown, fixed options) ----
+  filterStatus = signal<string>('');
+  readonly statusOptions: MilestoneStatus[] = [
+    MilestoneStatus.PLANNED,
+    MilestoneStatus.IN_PROGRESS,
+    MilestoneStatus.COMPLETED,
+    MilestoneStatus.CANCELLED,
+  ];
+
+  // ---- Project filter (searchable autocomplete) ----
+  filterProjectId = signal<number | null>(null);
+  projectSearchTerm = signal<string>('');
+  projects = signal<IProject[]>([]);
+  filteredProjects = computed(() => {
+    const term = this.projectSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.projects();
+    }
+    return this.projects().filter(p => (p.name ?? '').toLowerCase().includes(term));
+  });
+
   sortState = sortStateSignal({});
 
   itemsPerPage = ITEMS_PER_PAGE;
@@ -68,6 +106,7 @@ export class MilestoneComponent implements OnInit {
   protected dataUtils = inject(DataUtils);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected readonly projectService = inject(ProjectService);
 
   trackId = (item: IMilestone): number => this.milestoneService.getMilestoneIdentifier(item);
 
@@ -82,6 +121,54 @@ export class MilestoneComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.titleSubscription = this.titleInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterTitle.set(value);
+      this.page = 1;
+      this.load();
+    });
+
+    this.projectService.query().subscribe(res => this.projects.set(res.body ?? []));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.titleSubscription?.unsubscribe();
+  }
+
+  onTitleInput(value: string): void {
+    this.titleInput$.next(value);
+  }
+
+  onStatusChange(value: string): void {
+    this.filterStatus.set(value);
+    this.page = 1;
+    this.load();
+  }
+
+  // ---- Project autocomplete handlers ----
+  displayProjectName = (project: IProject | null): string => (project ? (project.name ?? '') : '');
+
+  onProjectInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.projectSearchTerm.set(value);
+  }
+
+  onProjectSelected(event: MatAutocompleteSelectedEvent): void {
+    const project: IProject | null = event.option.value;
+    this.filterProjectId.set(project ? project.id : null);
+    this.projectSearchTerm.set(this.displayProjectName(project));
+    this.page = 1;
+    this.load();
+  }
+
+  clearSearch(): void {
+    this.filterTitle.set('');
+    this.filterStatus.set('');
+    this.filterProjectId.set(null);
+    this.projectSearchTerm.set('');
+    this.page = 1;
+    this.load();
   }
 
   byteSize(base64String: string): string {
@@ -155,6 +242,22 @@ export class MilestoneComponent implements OnInit {
       eagerload: true,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const title = this.filterTitle().trim();
+    if (title) {
+      queryObject['title'] = title;
+    }
+
+    const status = this.filterStatus();
+    if (status) {
+      queryObject['status'] = status;
+    }
+
+    const projectId = this.filterProjectId();
+    if (projectId) {
+      queryObject['projectId'] = projectId;
+    }
+
     return this.milestoneService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 

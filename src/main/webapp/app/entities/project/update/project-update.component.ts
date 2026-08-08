@@ -25,6 +25,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { CUSTOM_DATE_FORMATS, CustomDateAdapter } from './custom-date-adapter';
 
 @Component({
   selector: 'jhi-project-update',
@@ -41,6 +43,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
+  ],
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
   ],
 })
 export class ProjectUpdateComponent implements OnInit {

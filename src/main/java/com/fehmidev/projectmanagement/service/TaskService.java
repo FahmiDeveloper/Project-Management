@@ -70,38 +70,52 @@ public class TaskService {
 
     // NEW: filtered
     @Transactional(readOnly = true)
-    public Page<TaskDTO> findAll(TaskStatus status, TaskPriority priority, Long assignedToId, Long sprintId, Pageable pageable) {
-        LOG.debug(
-            "Request to get all Tasks filtered by status: {}, priority: {}, assignedToId: {}, sprintId: {}",
-            status,
-            priority,
-            assignedToId,
-            sprintId
-        );
-        Specification<Task> spec = TaskSpecification.withFilters(status, priority, assignedToId, sprintId);
-        return taskRepository.findAll(spec, pageable).map(taskMapper::toDto);
-    }
-
-    public Page<TaskDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return findAll(null, null, null, null, pageable);
-    }
-
-    // NEW: eager, filtered
-    public Page<TaskDTO> findAllWithEagerRelationships(
+    public Page<TaskDTO> findAll(
+        String title,
         TaskStatus status,
         TaskPriority priority,
         Long assignedToId,
         Long sprintId,
+        Long createdById,
         Pageable pageable
     ) {
         LOG.debug(
-            "Request to get all Tasks (eager) filtered by status: {}, priority: {}, assignedToId: {}, sprintId: {}",
+            "Request to get all Tasks filtered by title: {}, status: {}, priority: {}, assignedToId: {}, sprintId: {}, createdById: {}",
+            title,
             status,
             priority,
             assignedToId,
-            sprintId
+            sprintId,
+            createdById
         );
-        return findAll(status, priority, assignedToId, sprintId, pageable);
+        Specification<Task> spec = TaskSpecification.withFilters(title, status, priority, assignedToId, sprintId, createdById);
+        return taskRepository.findAll(spec, pageable).map(taskMapper::toDto);
+    }
+
+    public Page<TaskDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return findAll(null, null, null, null, null, null, pageable);
+    }
+
+    // NEW: eager, filtered
+    public Page<TaskDTO> findAllWithEagerRelationships(
+        String title,
+        TaskStatus status,
+        TaskPriority priority,
+        Long assignedToId,
+        Long sprintId,
+        Long createdById,
+        Pageable pageable
+    ) {
+        LOG.debug(
+            "Request to get all Tasks (eager) filtered by title: {}, status: {}, priority: {}, assignedToId: {}, sprintId: {}, createdById: {}",
+            title,
+            status,
+            priority,
+            assignedToId,
+            sprintId,
+            createdById
+        );
+        return findAll(title, status, priority, assignedToId, sprintId, createdById, pageable);
     }
 
     @Transactional(readOnly = true)

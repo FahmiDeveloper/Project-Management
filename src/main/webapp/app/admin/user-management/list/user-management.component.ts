@@ -8,16 +8,32 @@ import SharedModule from 'app/shared/shared.module';
 import { SortByDirective, SortDirective, SortService, SortState, sortStateSignal } from 'app/shared/sort';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { SORT } from 'app/config/navigation.constants';
-import { ItemCountComponent } from 'app/shared/pagination';
 import { AccountService } from 'app/core/auth/account.service';
 import { UserManagementService } from '../service/user-management.service';
 import { User } from '../user-management.model';
 import UserManagementDeleteDialogComponent from '../delete/user-management-delete-dialog.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 @Component({
   selector: 'jhi-user-mgmt',
   templateUrl: './user-management.component.html',
-  imports: [RouterModule, SharedModule, SortDirective, SortByDirective, ItemCountComponent],
+  styleUrls: ['./user-management.component.scss'],
+  imports: [
+    RouterModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    MatIconModule,
+    MatButtonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+  ],
 })
 export default class UserManagementComponent implements OnInit {
   currentAccount = inject(AccountService).trackCurrentAccount();
@@ -27,6 +43,19 @@ export default class UserManagementComponent implements OnInit {
   itemsPerPage = ITEMS_PER_PAGE;
   page!: number;
   sortState = sortStateSignal({});
+
+  displayedColumns: string[] = [
+    'id',
+    'login',
+    'email',
+    'activated',
+    'langKey',
+    'profiles',
+    'createdDate',
+    'lastModifiedBy',
+    'lastModifiedDate',
+    'actions',
+  ];
 
   private readonly userService = inject(UserManagementService);
   private readonly activatedRoute = inject(ActivatedRoute);
@@ -82,6 +111,11 @@ export default class UserManagementComponent implements OnInit {
         sort: this.sortService.buildSortParam(sortState ?? this.sortState()),
       },
     });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.page = event.pageIndex + 1;
+    this.transition();
   }
 
   private handleNavigation(): void {

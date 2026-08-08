@@ -1,7 +1,7 @@
 import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -61,6 +61,11 @@ export class TaskComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   tasks = signal<ITask[]>([]);
   isLoading = false;
+
+  // ---- Title filter (debounced text input) ----
+  filterTitle = signal<string>('');
+  private readonly titleInput$ = new Subject<string>();
+  private titleSubscription: Subscription | null = null;
 
   // ---- Status filter (dropdown, fixed options) ----
   filterStatus = signal<string>('');
@@ -134,6 +139,17 @@ export class TaskComponent implements OnInit, OnDestroy {
     return this.sprints().filter(s => (s.name ?? '').toLowerCase().includes(term));
   });
 
+  // ---- Created By filter (searchable autocomplete, reuses employees list) ----
+  filterCreatedById = signal<number | null>(null);
+  createdBySearchTerm = signal<string>('');
+  filteredCreatedByEmployees = computed(() => {
+    const term = this.createdBySearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.employees();
+    }
+    return this.employees().filter(e => `${e.firstName ?? ''} ${e.lastName ?? ''}`.toLowerCase().includes(term));
+  });
+
   sortState = sortStateSignal({});
 
   itemsPerPage = ITEMS_PER_PAGE;
@@ -168,12 +184,19 @@ export class TaskComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
+    this.titleSubscription = this.titleInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterTitle.set(value);
+      this.page = 1;
+      this.load();
+    });
+
     this.employeeService.query().subscribe(res => this.employees.set(res.body ?? []));
     this.sprintService.query().subscribe(res => this.sprints.set(res.body ?? []));
   }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.titleSubscription?.unsubscribe();
   }
 
   byteSize(base64String: string): string {
@@ -192,6 +215,31 @@ export class TaskComponent implements OnInit, OnDestroy {
 
   onPriorityChange(value: string): void {
     this.filterPriority.set(value);
+    this.page = 1;
+    this.load();
+  }
+
+  onTitleInput(value: string): void {
+    this.titleInput$.next(value);
+  }
+
+  // ---- Created By autocomplete handlers ----
+  onCreatedByInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.createdBySearchTerm.set(value);
+  }
+
+  onCreatedBySelected(event: MatAutocompleteSelectedEvent): void {
+    const employee: IEmployee | null = event.option.value;
+    this.filterCreatedById.set(employee ? employee.id : null);
+    this.createdBySearchTerm.set(this.displayEmployeeName(employee));
+    this.page = 1;
+    this.load();
+  }
+
+  clearCreatedByFilter(): void {
+    this.filterCreatedById.set(null);
+    this.createdBySearchTerm.set('');
     this.page = 1;
     this.load();
   }
@@ -244,10 +292,17 @@ export class TaskComponent implements OnInit, OnDestroy {
   }
 
   clearSearch(): void {
+    this.filterTitle.set('');
     this.filterStatus.set('');
     this.filterPriority.set('');
-    this.clearAssignedToFilter();
-    this.clearSprintFilter();
+    this.filterAssignedToId.set(null);
+    this.assignedToSearchTerm.set('');
+    this.filterSprintId.set(null);
+    this.sprintSearchTerm.set('');
+    this.filterCreatedById.set(null);
+    this.createdBySearchTerm.set('');
+    this.page = 1;
+    this.load();
   }
 
   delete(task: ITask): void {
@@ -309,6 +364,11 @@ export class TaskComponent implements OnInit, OnDestroy {
       sort: this.sortService.buildSortParam(this.sortState()),
     };
 
+    const title = this.filterTitle().trim();
+    if (title) {
+      queryObject['title'] = title;
+    }
+
     const status = this.filterStatus();
     if (status) {
       queryObject['status'] = status;
@@ -327,6 +387,11 @@ export class TaskComponent implements OnInit, OnDestroy {
     const sprintId = this.filterSprintId();
     if (sprintId) {
       queryObject['sprintId'] = sprintId;
+    }
+
+    const createdById = this.filterCreatedById();
+    if (createdById) {
+      queryObject['createdById'] = createdById;
     }
 
     return this.taskService.query(queryObject).pipe(tap(() => (this.isLoading = false)));

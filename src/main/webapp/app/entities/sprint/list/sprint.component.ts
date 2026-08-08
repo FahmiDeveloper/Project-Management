@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -12,12 +12,20 @@ import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/co
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
 import { DataUtils } from 'app/core/util/data-util.service';
 import { ISprint } from '../sprint.model';
+import { SprintStatus } from 'app/entities/enumerations/sprint-status.model';
 
 import { EntityArrayResponseType, SprintService } from '../service/sprint.service';
 import { SprintDeleteDialogComponent } from '../delete/sprint-delete-dialog.component';
 
+import { IProject } from 'app/entities/project/project.model';
+import { ProjectService } from 'app/entities/project/service/project.service';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -33,14 +41,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SortDirective,
     SortByDirective,
     FormatMediumDatePipe,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
+    MatSelectModule,
+    MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
   ],
 })
-export class SprintComponent implements OnInit {
+export class SprintComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   sprints = signal<ISprint[]>([]);
   isLoading = false;
@@ -53,6 +65,27 @@ export class SprintComponent implements OnInit {
     ACTIVE: 'ACTIVE',
     COMPLETED: 'COMPLETED',
   };
+
+  // ---- Name filter (debounced text input) ----
+  filterName = signal<string>('');
+  private readonly nameInput$ = new Subject<string>();
+  private nameSubscription: Subscription | null = null;
+
+  // ---- Status filter (dropdown, fixed options) ----
+  filterStatus = signal<string>('');
+  readonly statusOptions: SprintStatus[] = [SprintStatus.PLANNED, SprintStatus.ACTIVE, SprintStatus.COMPLETED];
+
+  // ---- Project filter (searchable autocomplete) ----
+  filterProjectId = signal<number | null>(null);
+  projectSearchTerm = signal<string>('');
+  projects = signal<IProject[]>([]);
+  filteredProjects = computed(() => {
+    const term = this.projectSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.projects();
+    }
+    return this.projects().filter(p => (p.name ?? '').toLowerCase().includes(term));
+  });
 
   sortState = sortStateSignal({});
 
@@ -67,6 +100,7 @@ export class SprintComponent implements OnInit {
   protected dataUtils = inject(DataUtils);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected readonly projectService = inject(ProjectService);
 
   trackId = (item: ISprint): number => this.sprintService.getSprintIdentifier(item);
 
@@ -81,6 +115,54 @@ export class SprintComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.nameSubscription = this.nameInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterName.set(value);
+      this.page = 1;
+      this.load();
+    });
+
+    this.projectService.query().subscribe(res => this.projects.set(res.body ?? []));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.nameSubscription?.unsubscribe();
+  }
+
+  onNameInput(value: string): void {
+    this.nameInput$.next(value);
+  }
+
+  onStatusChange(value: string): void {
+    this.filterStatus.set(value);
+    this.page = 1;
+    this.load();
+  }
+
+  // ---- Project autocomplete handlers ----
+  displayProjectName = (project: IProject | null): string => (project ? (project.name ?? '') : '');
+
+  onProjectInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.projectSearchTerm.set(value);
+  }
+
+  onProjectSelected(event: MatAutocompleteSelectedEvent): void {
+    const project: IProject | null = event.option.value;
+    this.filterProjectId.set(project ? project.id : null);
+    this.projectSearchTerm.set(this.displayProjectName(project));
+    this.page = 1;
+    this.load();
+  }
+
+  clearSearch(): void {
+    this.filterName.set('');
+    this.filterStatus.set('');
+    this.filterProjectId.set(null);
+    this.projectSearchTerm.set('');
+    this.page = 1;
+    this.load();
   }
 
   byteSize(base64String: string): string {
@@ -154,6 +236,22 @@ export class SprintComponent implements OnInit {
       eagerload: true,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const name = this.filterName().trim();
+    if (name) {
+      queryObject['name'] = name;
+    }
+
+    const status = this.filterStatus();
+    if (status) {
+      queryObject['status'] = status;
+    }
+
+    const projectId = this.filterProjectId();
+    if (projectId) {
+      queryObject['projectId'] = projectId;
+    }
+
     return this.sprintService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 

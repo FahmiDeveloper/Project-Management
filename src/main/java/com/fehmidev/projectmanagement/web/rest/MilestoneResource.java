@@ -1,5 +1,6 @@
 package com.fehmidev.projectmanagement.web.rest;
 
+import com.fehmidev.projectmanagement.domain.enumeration.MilestoneStatus;
 import com.fehmidev.projectmanagement.repository.MilestoneRepository;
 import com.fehmidev.projectmanagement.service.MilestoneService;
 import com.fehmidev.projectmanagement.service.dto.MilestoneDTO;
@@ -142,17 +143,21 @@ public class MilestoneResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of milestones in body.
      */
+
     @GetMapping("")
     public ResponseEntity<List<MilestoneDTO>> getAllMilestones(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "title", required = false) String title,
+        @RequestParam(name = "status", required = false) MilestoneStatus status,
+        @RequestParam(name = "projectId", required = false) Long projectId
     ) {
         LOG.debug("REST request to get a page of Milestones");
         Page<MilestoneDTO> page;
         if (eagerload) {
-            page = milestoneService.findAllWithEagerRelationships(pageable);
+            page = milestoneService.findAllWithEagerRelationships(title, status, projectId, pageable);
         } else {
-            page = milestoneService.findAll(pageable);
+            page = milestoneService.findAll(title, status, projectId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

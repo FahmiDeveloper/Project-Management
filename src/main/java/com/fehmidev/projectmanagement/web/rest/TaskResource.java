@@ -152,17 +152,19 @@ public class TaskResource {
     public ResponseEntity<List<TaskDTO>> getAllTasks(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "title", required = false) String title,
         @RequestParam(name = "status", required = false) TaskStatus status,
         @RequestParam(name = "priority", required = false) TaskPriority priority,
         @RequestParam(name = "assignedToId", required = false) Long assignedToId,
-        @RequestParam(name = "sprintId", required = false) Long sprintId
+        @RequestParam(name = "sprintId", required = false) Long sprintId,
+        @RequestParam(name = "createdById", required = false) Long createdById
     ) {
         LOG.debug("REST request to get a page of Tasks");
         Page<TaskDTO> page;
         if (eagerload) {
-            page = taskService.findAllWithEagerRelationships(status, priority, assignedToId, sprintId, pageable);
+            page = taskService.findAllWithEagerRelationships(title, status, priority, assignedToId, sprintId, createdById, pageable);
         } else {
-            page = taskService.findAll(status, priority, assignedToId, sprintId, pageable);
+            page = taskService.findAll(title, status, priority, assignedToId, sprintId, createdById, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
