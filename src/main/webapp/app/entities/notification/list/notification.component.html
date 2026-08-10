@@ -22,6 +22,36 @@
     </div>
   </h2>
 
+  <div class="notification-filter-container">
+    <mat-form-field appearance="outline" class="notification-title-field" subscriptSizing="dynamic">
+      <mat-label>Title</mat-label>
+      <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="notification-employee-field" subscriptSizing="dynamic">
+      <mat-label>Employee</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="employeeAuto"
+        [value]="employeeSearchTerm()"
+        (input)="onEmployeeInput($event)"
+        placeholder="Search employee"
+      />
+      <mat-autocomplete #employeeAuto="matAutocomplete" [displayWith]="displayEmployeeName" (optionSelected)="onEmployeeSelected($event)">
+        @for (employee of filteredEmployees(); track employee.id) {
+          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterTitle() || filterEmployeeId()) {
+      <button mat-icon-button aria-label="Clear filters" class="notification-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />
@@ -91,7 +121,9 @@
           </th>
           <td mat-cell *matCellDef="let notification">
             @if (notification.employee) {
-              <a [routerLink]="['/employee', notification.employee.id, 'view']">{{ notification.employee.firstName }}</a>
+              <a [routerLink]="['/employee', notification.employee.id, 'view']"
+                >{{ notification.employee.firstName }}&nbsp;{{ notification.employee.lastName }}</a
+              >
             }
           </td>
         </ng-container>

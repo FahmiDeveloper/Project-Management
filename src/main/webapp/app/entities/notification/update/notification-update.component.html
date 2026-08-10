@@ -114,7 +114,7 @@
           >
             <option [ngValue]="null"></option>
             @for (employeeOption of employeesSharedCollection; track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}</option>
+              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</option>
             }
           </select>
         </div>
