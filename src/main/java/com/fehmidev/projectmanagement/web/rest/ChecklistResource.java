@@ -145,14 +145,16 @@ public class ChecklistResource {
     @GetMapping("")
     public ResponseEntity<List<ChecklistDTO>> getAllChecklists(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "title", required = false) String title,
+        @RequestParam(name = "taskId", required = false) Long taskId
     ) {
         LOG.debug("REST request to get a page of Checklists");
         Page<ChecklistDTO> page;
         if (eagerload) {
-            page = checklistService.findAllWithEagerRelationships(pageable);
+            page = checklistService.findAllWithEagerRelationships(title, taskId, pageable);
         } else {
-            page = checklistService.findAll(pageable);
+            page = checklistService.findAll(title, taskId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

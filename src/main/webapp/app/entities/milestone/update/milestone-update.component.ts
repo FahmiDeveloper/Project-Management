@@ -16,11 +16,35 @@ import { MilestoneStatus } from 'app/entities/enumerations/milestone-status.mode
 import { MilestoneService } from '../service/milestone.service';
 import { IMilestone } from '../milestone.model';
 import { MilestoneFormGroup, MilestoneFormService } from './milestone-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { CustomDateAdapter, CUSTOM_DATE_FORMATS } from 'app/shared/date/custom-date-adapter';
 
 @Component({
   selector: 'jhi-milestone-update',
   templateUrl: './milestone-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./milestone-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+  ],
 })
 export class MilestoneUpdateComponent implements OnInit {
   isSaving = false;

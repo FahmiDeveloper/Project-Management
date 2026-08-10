@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -15,8 +15,14 @@ import { INotification } from '../notification.model';
 import { EntityArrayResponseType, NotificationService } from '../service/notification.service';
 import { NotificationDeleteDialogComponent } from '../delete/notification-delete-dialog.component';
 
+import { IEmployee } from 'app/entities/employee/employee.model';
+import { EmployeeService } from 'app/entities/employee/service/employee.service';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -32,19 +38,39 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SortDirective,
     SortByDirective,
     FormatMediumDatetimePipe,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
+    MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
   ],
 })
-export class NotificationComponent implements OnInit {
+export class NotificationComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   notifications = signal<INotification[]>([]);
   isLoading = false;
 
   displayedColumns: string[] = ['title', 'message', 'type', 'isRead', 'createdDate', 'employee', 'actions'];
+
+  // ---- Title filter (debounced text input) ----
+  filterTitle = signal<string>('');
+  private readonly titleInput$ = new Subject<string>();
+  private titleSubscription: Subscription | null = null;
+
+  // ---- Employee filter (searchable autocomplete) ----
+  filterEmployeeId = signal<number | null>(null);
+  employeeSearchTerm = signal<string>('');
+  employees = signal<IEmployee[]>([]);
+  filteredEmployees = computed(() => {
+    const term = this.employeeSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.employees();
+    }
+    return this.employees().filter(e => `${e.firstName ?? ''} ${e.lastName ?? ''}`.toLowerCase().includes(term));
+  });
 
   sortState = sortStateSignal({});
 
@@ -58,6 +84,7 @@ export class NotificationComponent implements OnInit {
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected readonly employeeService = inject(EmployeeService);
 
   trackId = (item: INotification): number => this.notificationService.getNotificationIdentifier(item);
 
@@ -68,6 +95,48 @@ export class NotificationComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.titleSubscription = this.titleInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterTitle.set(value);
+      this.page = 1;
+      this.load();
+    });
+
+    this.employeeService.query().subscribe(res => this.employees.set(res.body ?? []));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.titleSubscription?.unsubscribe();
+  }
+
+  onTitleInput(value: string): void {
+    this.titleInput$.next(value);
+  }
+
+  // ---- Employee autocomplete handlers ----
+  displayEmployeeName = (employee: IEmployee | null): string =>
+    employee ? `${employee.firstName ?? ''} ${employee.lastName ?? ''}`.trim() : '';
+
+  onEmployeeInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.employeeSearchTerm.set(value);
+  }
+
+  onEmployeeSelected(event: MatAutocompleteSelectedEvent): void {
+    const employee: IEmployee | null = event.option.value;
+    this.filterEmployeeId.set(employee ? employee.id : null);
+    this.employeeSearchTerm.set(this.displayEmployeeName(employee));
+    this.page = 1;
+    this.load();
+  }
+
+  clearSearch(): void {
+    this.filterTitle.set('');
+    this.filterEmployeeId.set(null);
+    this.employeeSearchTerm.set('');
+    this.page = 1;
+    this.load();
   }
 
   delete(notification: INotification): void {
@@ -133,6 +202,17 @@ export class NotificationComponent implements OnInit {
       eagerload: true,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const title = this.filterTitle().trim();
+    if (title) {
+      queryObject['title'] = title;
+    }
+
+    const employeeId = this.filterEmployeeId();
+    if (employeeId) {
+      queryObject['employeeId'] = employeeId;
+    }
+
     return this.notificationService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 

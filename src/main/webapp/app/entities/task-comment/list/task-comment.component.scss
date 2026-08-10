@@ -56,3 +56,25 @@
     transform: rotate(360deg);
   }
 }
+
+.task-comment-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.task-comment-content-field {
+  width: 260px;
+}
+
+.task-comment-task-field,
+.task-comment-employee-field {
+  width: 220px;
+}
+
+.task-comment-filter-clear-btn {
+  height: 56px;
+  width: 56px;
+}

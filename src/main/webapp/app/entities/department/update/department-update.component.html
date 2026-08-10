@@ -12,62 +12,52 @@
       <div>
         <jhi-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.department.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
+        <!-- Name Field -->
         @let nameRef = editForm.get('name')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_name" jhiTranslate="projectManagementApp.department.name">Name</label>
-          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
-          @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
-            <div>
-              @if (editForm.get('name')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-              @if (editForm.get('name')?.errors?.minlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
-                  >This field is required to be at least 2 characters.</small
-                >
-              }
-              @if (editForm.get('name')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
-                  >This field cannot be longer than 100 characters.</small
-                >
-              }
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.department.name">Name</mat-label>
+          <input matInput type="text" name="name" id="field_name" data-cy="name" formControlName="name" />
+          @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.minlength) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
+                >This field is required to be at least 2 characters.</mat-error
+              >
+            </ng-container>
+          }
+          @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.maxlength) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                >This field cannot be longer than 100 characters.</mat-error
+              >
+            </ng-container>
+          }
+        </mat-form-field>
 
+        <!-- Description Field -->
         @let descriptionRef = editForm.get('description')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_description" jhiTranslate="projectManagementApp.department.description">Description</label>
-          <input
-            type="text"
-            class="form-control"
-            name="description"
-            id="field_description"
-            data-cy="description"
-            formControlName="description"
-          />
-          @if (descriptionRef.invalid && (descriptionRef.dirty || descriptionRef.touched)) {
-            <div>
-              @if (editForm.get('description')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
-                  >This field cannot be longer than 500 characters.</small
-                >
-              }
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.department.description">Description</mat-label>
+          <input matInput type="text" name="description" id="field_description" data-cy="description" formControlName="description" />
+          @if (descriptionRef.invalid && (descriptionRef.touched || descriptionRef.dirty) && descriptionRef.errors?.maxlength) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                >This field cannot be longer than 500 characters.</mat-error
+              >
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" mat-stroked-button (click)="previousState()">
+          <mat-icon>block</mat-icon>
+          <span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
 
         <button
@@ -75,9 +65,11 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          mat-flat-button
+          color="primary"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          <mat-icon>save</mat-icon>
+          <span jhiTranslate="entity.action.save">Save</span>
         </button>
       </div>
     </form>

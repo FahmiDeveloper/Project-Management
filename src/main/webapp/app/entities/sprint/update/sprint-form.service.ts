@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import dayjs from 'dayjs/esm';
 
 import { ISprint, NewSprint } from '../sprint.model';
 
@@ -14,14 +15,18 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type SprintFormGroupInput = ISprint | PartialWithRequiredKeyOf<NewSprint>;
 
-type SprintFormDefaults = Pick<NewSprint, 'id'>;
+// startDate defaults to today when creating a new sprint.
+type SprintFormDefaults = Pick<NewSprint, 'id'> & { startDate: dayjs.Dayjs | null };
 
+// startDate/endDate are stored as native Date in the form because mat-datepicker
+// (with MatNativeDateModule) cannot read/format dayjs objects. They are converted
+// back to dayjs when the form value is read out via getSprint().
 type SprintFormGroupContent = {
   id: FormControl<ISprint['id'] | NewSprint['id']>;
   name: FormControl<ISprint['name']>;
   goal: FormControl<ISprint['goal']>;
-  startDate: FormControl<ISprint['startDate']>;
-  endDate: FormControl<ISprint['endDate']>;
+  startDate: FormControl<Date | null>;
+  endDate: FormControl<Date | null>;
   status: FormControl<ISprint['status']>;
   capacity: FormControl<ISprint['capacity']>;
   velocity: FormControl<ISprint['velocity']>;
@@ -49,10 +54,10 @@ export class SprintFormService {
         validators: [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
       }),
       goal: new FormControl(sprintRawValue.goal),
-      startDate: new FormControl(sprintRawValue.startDate, {
+      startDate: new FormControl(this.toDate(sprintRawValue.startDate), {
         validators: [Validators.required],
       }),
-      endDate: new FormControl(sprintRawValue.endDate, {
+      endDate: new FormControl(this.toDate(sprintRawValue.endDate), {
         validators: [Validators.required],
       }),
       status: new FormControl(sprintRawValue.status, {
@@ -64,12 +69,19 @@ export class SprintFormService {
       velocity: new FormControl(sprintRawValue.velocity, {
         validators: [Validators.min(0)],
       }),
-      project: new FormControl(sprintRawValue.project),
+      project: new FormControl(sprintRawValue.project, {
+        validators: [Validators.required],
+      }),
     });
   }
 
   getSprint(form: SprintFormGroup): ISprint | NewSprint {
-    return form.getRawValue() as ISprint | NewSprint;
+    const raw = form.getRawValue();
+    return {
+      ...raw,
+      startDate: this.toDayjs(raw.startDate),
+      endDate: this.toDayjs(raw.endDate),
+    } as ISprint | NewSprint;
   }
 
   resetForm(form: SprintFormGroup, sprint: SprintFormGroupInput): void {
@@ -77,6 +89,8 @@ export class SprintFormService {
     form.reset(
       {
         ...sprintRawValue,
+        startDate: this.toDate(sprintRawValue.startDate),
+        endDate: this.toDate(sprintRawValue.endDate),
         id: { value: sprintRawValue.id, disabled: true },
       } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
@@ -85,6 +99,25 @@ export class SprintFormService {
   private getFormDefaults(): SprintFormDefaults {
     return {
       id: null,
+      startDate: dayjs(), // today, used only when creating a new sprint
     };
+  }
+
+  // dayjs (from the API, or the today default) -> native Date (for mat-datepicker display)
+  private toDate(value: dayjs.Dayjs | null | undefined): Date | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d.toDate() : null;
+  }
+
+  // native Date (from mat-datepicker) -> dayjs (for the API payload)
+  private toDayjs(value: Date | null | undefined): dayjs.Dayjs | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d : null;
   }
 }

@@ -146,14 +146,16 @@ public class NotificationResource {
     @GetMapping("")
     public ResponseEntity<List<NotificationDTO>> getAllNotifications(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "title", required = false) String title,
+        @RequestParam(name = "employeeId", required = false) Long employeeId
     ) {
         LOG.debug("REST request to get a page of Notifications");
         Page<NotificationDTO> page;
         if (eagerload) {
-            page = notificationService.findAllWithEagerRelationships(pageable);
+            page = notificationService.findAllWithEagerRelationships(title, employeeId, pageable);
         } else {
-            page = notificationService.findAll(pageable);
+            page = notificationService.findAll(title, employeeId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

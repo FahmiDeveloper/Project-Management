@@ -2,6 +2,7 @@ package com.fehmidev.projectmanagement.service;
 
 import com.fehmidev.projectmanagement.domain.TimeEntry;
 import com.fehmidev.projectmanagement.repository.TimeEntryRepository;
+import com.fehmidev.projectmanagement.repository.TimeEntrySpecification;
 import com.fehmidev.projectmanagement.service.dto.TimeEntryDTO;
 import com.fehmidev.projectmanagement.service.mapper.TimeEntryMapper;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +32,6 @@ public class TimeEntryService {
         this.timeEntryMapper = timeEntryMapper;
     }
 
-    /**
-     * Save a timeEntry.
-     *
-     * @param timeEntryDTO the entity to save.
-     * @return the persisted entity.
-     */
     public TimeEntryDTO save(TimeEntryDTO timeEntryDTO) {
         LOG.debug("Request to save TimeEntry : {}", timeEntryDTO);
         TimeEntry timeEntry = timeEntryMapper.toEntity(timeEntryDTO);
@@ -43,12 +39,6 @@ public class TimeEntryService {
         return timeEntryMapper.toDto(timeEntry);
     }
 
-    /**
-     * Update a timeEntry.
-     *
-     * @param timeEntryDTO the entity to save.
-     * @return the persisted entity.
-     */
     public TimeEntryDTO update(TimeEntryDTO timeEntryDTO) {
         LOG.debug("Request to update TimeEntry : {}", timeEntryDTO);
         TimeEntry timeEntry = timeEntryMapper.toEntity(timeEntryDTO);
@@ -56,12 +46,6 @@ public class TimeEntryService {
         return timeEntryMapper.toDto(timeEntry);
     }
 
-    /**
-     * Partially update a timeEntry.
-     *
-     * @param timeEntryDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<TimeEntryDTO> partialUpdate(TimeEntryDTO timeEntryDTO) {
         LOG.debug("Request to partially update TimeEntry : {}", timeEntryDTO);
 
@@ -76,44 +60,36 @@ public class TimeEntryService {
             .map(timeEntryMapper::toDto);
     }
 
-    /**
-     * Get all the timeEntries.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<TimeEntryDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all TimeEntries");
         return timeEntryRepository.findAll(pageable).map(timeEntryMapper::toDto);
     }
 
-    /**
-     * Get all the timeEntries with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
-    public Page<TimeEntryDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return timeEntryRepository.findAllWithEagerRelationships(pageable).map(timeEntryMapper::toDto);
+    // NEW: filtered
+    @Transactional(readOnly = true)
+    public Page<TimeEntryDTO> findAll(Long taskId, Long employeeId, Pageable pageable) {
+        LOG.debug("Request to get all TimeEntries filtered by taskId: {}, employeeId: {}", taskId, employeeId);
+        Specification<TimeEntry> spec = TimeEntrySpecification.withFilters(taskId, employeeId);
+        return timeEntryRepository.findAll(spec, pageable).map(timeEntryMapper::toDto);
     }
 
-    /**
-     * Get one timeEntry by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
+    public Page<TimeEntryDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return findAll(null, null, pageable);
+    }
+
+    // NEW: eager, filtered
+    public Page<TimeEntryDTO> findAllWithEagerRelationships(Long taskId, Long employeeId, Pageable pageable) {
+        LOG.debug("Request to get all TimeEntries (eager) filtered by taskId: {}, employeeId: {}", taskId, employeeId);
+        return findAll(taskId, employeeId, pageable);
+    }
+
     @Transactional(readOnly = true)
     public Optional<TimeEntryDTO> findOne(Long id) {
         LOG.debug("Request to get TimeEntry : {}", id);
         return timeEntryRepository.findOneWithEagerRelationships(id).map(timeEntryMapper::toDto);
     }
 
-    /**
-     * Delete the timeEntry by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         LOG.debug("Request to delete TimeEntry : {}", id);
         timeEntryRepository.deleteById(id);

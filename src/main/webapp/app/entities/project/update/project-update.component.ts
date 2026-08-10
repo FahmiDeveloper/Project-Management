@@ -26,7 +26,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { CUSTOM_DATE_FORMATS, CustomDateAdapter } from './custom-date-adapter';
+import { CustomDateAdapter, CUSTOM_DATE_FORMATS } from 'app/shared/date/custom-date-adapter';
 
 @Component({
   selector: 'jhi-project-update',

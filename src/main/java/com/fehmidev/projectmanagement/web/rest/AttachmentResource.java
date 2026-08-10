@@ -145,14 +145,17 @@ public class AttachmentResource {
     @GetMapping("")
     public ResponseEntity<List<AttachmentDTO>> getAllAttachments(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "fileName", required = false) String fileName,
+        @RequestParam(name = "taskId", required = false) Long taskId,
+        @RequestParam(name = "employeeId", required = false) Long employeeId
     ) {
         LOG.debug("REST request to get a page of Attachments");
         Page<AttachmentDTO> page;
         if (eagerload) {
-            page = attachmentService.findAllWithEagerRelationships(pageable);
+            page = attachmentService.findAllWithEagerRelationships(fileName, taskId, employeeId, pageable);
         } else {
-            page = attachmentService.findAll(pageable);
+            page = attachmentService.findAll(fileName, taskId, employeeId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

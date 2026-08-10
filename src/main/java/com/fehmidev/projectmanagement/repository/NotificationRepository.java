@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the Notification entity.
  */
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, Long> {
+public interface NotificationRepository extends JpaRepository<Notification, Long>, JpaSpecificationExecutor<Notification> {
     default Optional<Notification> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
@@ -24,14 +25,13 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     }
 
     default Page<Notification> findAllWithEagerRelationships(Pageable pageable) {
-        return this.findAllWithToOneRelationships(pageable);
+        return this.findAll((Specification<Notification>) null, pageable);
     }
 
-    @Query(
-        value = "select notification from Notification notification left join fetch notification.employee",
-        countQuery = "select count(notification) from Notification notification"
-    )
-    Page<Notification> findAllWithToOneRelationships(Pageable pageable);
+    // NEW: eager fetch relationships while applying any Specification (title/employee filters)
+    @EntityGraph(attributePaths = { "employee" })
+    @Override
+    Page<Notification> findAll(Specification<Notification> spec, Pageable pageable);
 
     @Query("select notification from Notification notification left join fetch notification.employee")
     List<Notification> findAllWithToOneRelationships();

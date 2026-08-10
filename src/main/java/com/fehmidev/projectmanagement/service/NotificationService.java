@@ -3,6 +3,7 @@ package com.fehmidev.projectmanagement.service;
 import com.fehmidev.projectmanagement.domain.Employee;
 import com.fehmidev.projectmanagement.domain.Notification;
 import com.fehmidev.projectmanagement.repository.NotificationRepository;
+import com.fehmidev.projectmanagement.repository.NotificationSpecification;
 import com.fehmidev.projectmanagement.service.dto.NotificationDTO;
 import com.fehmidev.projectmanagement.service.mapper.NotificationMapper;
 import java.time.Instant;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -90,18 +92,20 @@ public class NotificationService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<NotificationDTO> findAll(Pageable pageable) {
-        LOG.debug("Request to get all Notifications");
-        return notificationRepository.findAll(pageable).map(notificationMapper::toDto);
+    public Page<NotificationDTO> findAll(String title, Long employeeId, Pageable pageable) {
+        LOG.debug("Request to get all Notifications filtered by title: {}, employeeId: {}", title, employeeId);
+        Specification<Notification> spec = NotificationSpecification.withFilters(title, employeeId);
+        return notificationRepository.findAll(spec, pageable).map(notificationMapper::toDto);
     }
 
-    /**
-     * Get all the notifications with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
     public Page<NotificationDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return notificationRepository.findAllWithEagerRelationships(pageable).map(notificationMapper::toDto);
+        return findAll(null, null, pageable);
+    }
+
+    // NEW: eager, filtered
+    public Page<NotificationDTO> findAllWithEagerRelationships(String title, Long employeeId, Pageable pageable) {
+        LOG.debug("Request to get all Notifications (eager) filtered by title: {}, employeeId: {}", title, employeeId);
+        return findAll(title, employeeId, pageable);
     }
 
     /**

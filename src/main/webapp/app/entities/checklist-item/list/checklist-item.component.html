@@ -22,6 +22,40 @@
     </div>
   </h2>
 
+  <div class="checklist-item-filter-container">
+    <mat-form-field appearance="outline" class="checklist-item-content-field" subscriptSizing="dynamic">
+      <mat-label>Content</mat-label>
+      <input matInput type="text" [ngModel]="filterContent()" (ngModelChange)="onContentInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="checklist-item-checklist-field" subscriptSizing="dynamic">
+      <mat-label>Checklist</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="checklistAuto"
+        [value]="checklistSearchTerm()"
+        (input)="onChecklistInput($event)"
+        placeholder="Search checklist"
+      />
+      <mat-autocomplete
+        #checklistAuto="matAutocomplete"
+        [displayWith]="displayChecklistTitle"
+        (optionSelected)="onChecklistSelected($event)"
+      >
+        @for (checklist of filteredChecklists(); track checklist.id) {
+          <mat-option [value]="checklist">{{ checklist.title }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterContent() || filterChecklistId()) {
+      <button mat-icon-button aria-label="Clear filters" class="checklist-item-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />

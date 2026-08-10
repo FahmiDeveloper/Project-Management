@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -15,8 +15,14 @@ import { IChecklist } from '../checklist.model';
 import { ChecklistService, EntityArrayResponseType } from '../service/checklist.service';
 import { ChecklistDeleteDialogComponent } from '../delete/checklist-delete-dialog.component';
 
+import { ITask } from 'app/entities/task/task.model';
+import { TaskService } from 'app/entities/task/service/task.service';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -32,19 +38,39 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SortDirective,
     SortByDirective,
     FormatMediumDatetimePipe,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
+    MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
   ],
 })
-export class ChecklistComponent implements OnInit {
+export class ChecklistComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   checklists = signal<IChecklist[]>([]);
   isLoading = false;
 
   displayedColumns: string[] = ['title', 'createdDate', 'task', 'actions'];
+
+  // ---- Title filter (debounced text input) ----
+  filterTitle = signal<string>('');
+  private readonly titleInput$ = new Subject<string>();
+  private titleSubscription: Subscription | null = null;
+
+  // ---- Task filter (searchable autocomplete) ----
+  filterTaskId = signal<number | null>(null);
+  taskSearchTerm = signal<string>('');
+  tasks = signal<ITask[]>([]);
+  filteredTasks = computed(() => {
+    const term = this.taskSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.tasks();
+    }
+    return this.tasks().filter(t => (t.title ?? '').toLowerCase().includes(term));
+  });
 
   sortState = sortStateSignal({});
 
@@ -58,6 +84,7 @@ export class ChecklistComponent implements OnInit {
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected readonly taskService = inject(TaskService);
 
   trackId = (item: IChecklist): number => this.checklistService.getChecklistIdentifier(item);
 
@@ -68,6 +95,47 @@ export class ChecklistComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.titleSubscription = this.titleInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterTitle.set(value);
+      this.page = 1;
+      this.load();
+    });
+
+    this.taskService.query().subscribe(res => this.tasks.set(res.body ?? []));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.titleSubscription?.unsubscribe();
+  }
+
+  onTitleInput(value: string): void {
+    this.titleInput$.next(value);
+  }
+
+  // ---- Task autocomplete handlers ----
+  displayTaskTitle = (task: ITask | null): string => (task ? (task.title ?? '') : '');
+
+  onTaskInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.taskSearchTerm.set(value);
+  }
+
+  onTaskSelected(event: MatAutocompleteSelectedEvent): void {
+    const task: ITask | null = event.option.value;
+    this.filterTaskId.set(task ? task.id : null);
+    this.taskSearchTerm.set(this.displayTaskTitle(task));
+    this.page = 1;
+    this.load();
+  }
+
+  clearSearch(): void {
+    this.filterTitle.set('');
+    this.filterTaskId.set(null);
+    this.taskSearchTerm.set('');
+    this.page = 1;
+    this.load();
   }
 
   delete(checklist: IChecklist): void {
@@ -133,6 +201,17 @@ export class ChecklistComponent implements OnInit {
       eagerload: true,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const title = this.filterTitle().trim();
+    if (title) {
+      queryObject['title'] = title;
+    }
+
+    const taskId = this.filterTaskId();
+    if (taskId) {
+      queryObject['taskId'] = taskId;
+    }
+
     return this.checklistService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 

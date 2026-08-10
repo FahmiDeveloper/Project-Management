@@ -145,14 +145,16 @@ public class TimeEntryResource {
     @GetMapping("")
     public ResponseEntity<List<TimeEntryDTO>> getAllTimeEntries(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "taskId", required = false) Long taskId,
+        @RequestParam(name = "employeeId", required = false) Long employeeId
     ) {
         LOG.debug("REST request to get a page of TimeEntries");
         Page<TimeEntryDTO> page;
         if (eagerload) {
-            page = timeEntryService.findAllWithEagerRelationships(pageable);
+            page = timeEntryService.findAllWithEagerRelationships(taskId, employeeId, pageable);
         } else {
-            page = timeEntryService.findAll(pageable);
+            page = timeEntryService.findAll(taskId, employeeId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
