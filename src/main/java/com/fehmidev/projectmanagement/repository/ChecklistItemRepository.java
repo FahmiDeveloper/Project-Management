@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the ChecklistItem entity.
  */
 @Repository
-public interface ChecklistItemRepository extends JpaRepository<ChecklistItem, Long> {
+public interface ChecklistItemRepository extends JpaRepository<ChecklistItem, Long>, JpaSpecificationExecutor<ChecklistItem> {
     default Optional<ChecklistItem> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
@@ -23,14 +24,13 @@ public interface ChecklistItemRepository extends JpaRepository<ChecklistItem, Lo
     }
 
     default Page<ChecklistItem> findAllWithEagerRelationships(Pageable pageable) {
-        return this.findAllWithToOneRelationships(pageable);
+        return this.findAll((Specification<ChecklistItem>) null, pageable);
     }
 
-    @Query(
-        value = "select checklistItem from ChecklistItem checklistItem left join fetch checklistItem.checklist",
-        countQuery = "select count(checklistItem) from ChecklistItem checklistItem"
-    )
-    Page<ChecklistItem> findAllWithToOneRelationships(Pageable pageable);
+    // NEW: eager fetch relationships while applying any Specification (content/checklist filters)
+    @EntityGraph(attributePaths = { "checklist" })
+    @Override
+    Page<ChecklistItem> findAll(Specification<ChecklistItem> spec, Pageable pageable);
 
     @Query("select checklistItem from ChecklistItem checklistItem left join fetch checklistItem.checklist")
     List<ChecklistItem> findAllWithToOneRelationships();

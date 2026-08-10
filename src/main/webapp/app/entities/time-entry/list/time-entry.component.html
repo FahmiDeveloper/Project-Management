@@ -22,6 +22,48 @@
     </div>
   </h2>
 
+  <div class="time-entry-filter-container">
+    <mat-form-field appearance="outline" class="time-entry-task-field" subscriptSizing="dynamic">
+      <mat-label>Task</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="taskAuto"
+        [value]="taskSearchTerm()"
+        (input)="onTaskInput($event)"
+        placeholder="Search task"
+      />
+      <mat-autocomplete #taskAuto="matAutocomplete" [displayWith]="displayTaskTitle" (optionSelected)="onTaskSelected($event)">
+        @for (task of filteredTasks(); track task.id) {
+          <mat-option [value]="task">{{ task.title }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="time-entry-employee-field" subscriptSizing="dynamic">
+      <mat-label>Employee</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="employeeAuto"
+        [value]="employeeSearchTerm()"
+        (input)="onEmployeeInput($event)"
+        placeholder="Search employee"
+      />
+      <mat-autocomplete #employeeAuto="matAutocomplete" [displayWith]="displayEmployeeName" (optionSelected)="onEmployeeSelected($event)">
+        @for (employee of filteredEmployees(); track employee.id) {
+          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterTaskId() || filterEmployeeId()) {
+      <button mat-icon-button aria-label="Clear filters" class="time-entry-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />
@@ -99,7 +141,9 @@
           </th>
           <td mat-cell *matCellDef="let timeEntry">
             @if (timeEntry.employee) {
-              <a [routerLink]="['/employee', timeEntry.employee.id, 'view']">{{ timeEntry.employee.firstName }}</a>
+              <a [routerLink]="['/employee', timeEntry.employee.id, 'view']"
+                >{{ timeEntry.employee.firstName }}&nbsp;{{ timeEntry.employee.lastName }}</a
+              >
             }
           </td>
         </ng-container>

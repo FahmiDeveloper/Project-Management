@@ -145,14 +145,17 @@ public class TaskCommentResource {
     @GetMapping("")
     public ResponseEntity<List<TaskCommentDTO>> getAllTaskComments(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "content", required = false) String content,
+        @RequestParam(name = "taskId", required = false) Long taskId,
+        @RequestParam(name = "employeeId", required = false) Long employeeId
     ) {
         LOG.debug("REST request to get a page of TaskComments");
         Page<TaskCommentDTO> page;
         if (eagerload) {
-            page = taskCommentService.findAllWithEagerRelationships(pageable);
+            page = taskCommentService.findAllWithEagerRelationships(content, taskId, employeeId, pageable);
         } else {
-            page = taskCommentService.findAll(pageable);
+            page = taskCommentService.findAll(content, taskId, employeeId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

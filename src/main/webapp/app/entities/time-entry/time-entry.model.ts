@@ -10,7 +10,7 @@ export interface ITimeEntry {
   hours?: number | null;
   entryDate?: dayjs.Dayjs | null;
   task?: Pick<ITask, 'id' | 'title'> | null;
-  employee?: Pick<IEmployee, 'id' | 'firstName'> | null;
+  employee?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
 }
 
 export type NewTimeEntry = Omit<ITimeEntry, 'id'> & { id: null };

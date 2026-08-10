@@ -22,6 +22,53 @@
     </div>
   </h2>
 
+  <div class="task-comment-filter-container">
+    <mat-form-field appearance="outline" class="task-comment-content-field" subscriptSizing="dynamic">
+      <mat-label>Content</mat-label>
+      <input matInput type="text" [ngModel]="filterContent()" (ngModelChange)="onContentInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="task-comment-task-field" subscriptSizing="dynamic">
+      <mat-label>Task</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="taskAuto"
+        [value]="taskSearchTerm()"
+        (input)="onTaskInput($event)"
+        placeholder="Search task"
+      />
+      <mat-autocomplete #taskAuto="matAutocomplete" [displayWith]="displayTaskTitle" (optionSelected)="onTaskSelected($event)">
+        @for (task of filteredTasks(); track task.id) {
+          <mat-option [value]="task">{{ task.title }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="task-comment-employee-field" subscriptSizing="dynamic">
+      <mat-label>Employee</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="employeeAuto"
+        [value]="employeeSearchTerm()"
+        (input)="onEmployeeInput($event)"
+        placeholder="Search employee"
+      />
+      <mat-autocomplete #employeeAuto="matAutocomplete" [displayWith]="displayEmployeeName" (optionSelected)="onEmployeeSelected($event)">
+        @for (employee of filteredEmployees(); track employee.id) {
+          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterContent() || filterTaskId() || filterEmployeeId()) {
+      <button mat-icon-button aria-label="Clear filters" class="task-comment-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />
