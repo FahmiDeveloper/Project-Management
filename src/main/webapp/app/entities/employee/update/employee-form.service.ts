@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import dayjs from 'dayjs/esm';
 
 import { IEmployee, NewEmployee } from '../employee.model';
 
@@ -14,8 +15,12 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type EmployeeFormGroupInput = IEmployee | PartialWithRequiredKeyOf<NewEmployee>;
 
-type EmployeeFormDefaults = Pick<NewEmployee, 'id'>;
+// hireDate defaults to today when creating a new employee.
+type EmployeeFormDefaults = Pick<NewEmployee, 'id'> & { hireDate: dayjs.Dayjs | null };
 
+// hireDate is stored as native Date in the form because mat-datepicker
+// (with MatNativeDateModule) cannot read/format dayjs objects. It is converted
+// back to dayjs when the form value is read out via getEmployee().
 type EmployeeFormGroupContent = {
   id: FormControl<IEmployee['id'] | NewEmployee['id']>;
   employeeNumber: FormControl<IEmployee['employeeNumber']>;
@@ -23,7 +28,7 @@ type EmployeeFormGroupContent = {
   lastName: FormControl<IEmployee['lastName']>;
   phone: FormControl<IEmployee['phone']>;
   jobTitle: FormControl<IEmployee['jobTitle']>;
-  hireDate: FormControl<IEmployee['hireDate']>;
+  hireDate: FormControl<Date | null>;
   user: FormControl<IEmployee['user']>;
   department: FormControl<IEmployee['department']>;
 };
@@ -60,16 +65,24 @@ export class EmployeeFormService {
       jobTitle: new FormControl(employeeRawValue.jobTitle, {
         validators: [Validators.required, Validators.maxLength(100)],
       }),
-      hireDate: new FormControl(employeeRawValue.hireDate, {
+      hireDate: new FormControl(this.toDate(employeeRawValue.hireDate), {
         validators: [Validators.required],
       }),
-      user: new FormControl(employeeRawValue.user),
-      department: new FormControl(employeeRawValue.department),
+      user: new FormControl(employeeRawValue.user, {
+        validators: [Validators.required],
+      }),
+      department: new FormControl(employeeRawValue.department, {
+        validators: [Validators.required],
+      }),
     });
   }
 
   getEmployee(form: EmployeeFormGroup): IEmployee | NewEmployee {
-    return form.getRawValue() as IEmployee | NewEmployee;
+    const raw = form.getRawValue();
+    return {
+      ...raw,
+      hireDate: this.toDayjs(raw.hireDate),
+    } as IEmployee | NewEmployee;
   }
 
   resetForm(form: EmployeeFormGroup, employee: EmployeeFormGroupInput): void {
@@ -77,6 +90,7 @@ export class EmployeeFormService {
     form.reset(
       {
         ...employeeRawValue,
+        hireDate: this.toDate(employeeRawValue.hireDate),
         id: { value: employeeRawValue.id, disabled: true },
       } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
@@ -85,6 +99,25 @@ export class EmployeeFormService {
   private getFormDefaults(): EmployeeFormDefaults {
     return {
       id: null,
+      hireDate: dayjs(), // today, used only when creating a new employee
     };
+  }
+
+  // dayjs (from the API, or the today default) -> native Date (for mat-datepicker display)
+  private toDate(value: dayjs.Dayjs | null | undefined): Date | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d.toDate() : null;
+  }
+
+  // native Date (from mat-datepicker) -> dayjs (for the API payload)
+  private toDayjs(value: Date | null | undefined): dayjs.Dayjs | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d : null;
   }
 }

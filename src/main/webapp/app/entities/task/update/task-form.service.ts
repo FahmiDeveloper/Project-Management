@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import dayjs from 'dayjs/esm';
 
 import { ITask, NewTask } from '../task.model';
 
@@ -14,8 +15,12 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type TaskFormGroupInput = ITask | PartialWithRequiredKeyOf<NewTask>;
 
-type TaskFormDefaults = Pick<NewTask, 'id'>;
+// startDate defaults to today when creating a new task.
+type TaskFormDefaults = Pick<NewTask, 'id'> & { startDate: dayjs.Dayjs | null };
 
+// startDate/dueDate are stored as native Date in the form because mat-datepicker
+// (with MatNativeDateModule) cannot read/format dayjs objects. They are converted
+// back to dayjs when the form value is read out via getTask().
 type TaskFormGroupContent = {
   id: FormControl<ITask['id'] | NewTask['id']>;
   title: FormControl<ITask['title']>;
@@ -25,8 +30,8 @@ type TaskFormGroupContent = {
   storyPoints: FormControl<ITask['storyPoints']>;
   estimatedHours: FormControl<ITask['estimatedHours']>;
   spentHours: FormControl<ITask['spentHours']>;
-  startDate: FormControl<ITask['startDate']>;
-  dueDate: FormControl<ITask['dueDate']>;
+  startDate: FormControl<Date | null>;
+  dueDate: FormControl<Date | null>;
   completionPercentage: FormControl<ITask['completionPercentage']>;
   sprint: FormControl<ITask['sprint']>;
   milestone: FormControl<ITask['milestone']>;
@@ -70,20 +75,33 @@ export class TaskFormService {
       spentHours: new FormControl(taskRawValue.spentHours, {
         validators: [Validators.min(0)],
       }),
-      startDate: new FormControl(taskRawValue.startDate),
-      dueDate: new FormControl(taskRawValue.dueDate),
+      startDate: new FormControl(this.toDate(taskRawValue.startDate), {
+        validators: [Validators.required],
+      }),
+      dueDate: new FormControl(this.toDate(taskRawValue.dueDate), {
+        validators: [Validators.required],
+      }),
       completionPercentage: new FormControl(taskRawValue.completionPercentage, {
         validators: [Validators.required, Validators.min(0), Validators.max(100)],
       }),
       sprint: new FormControl(taskRawValue.sprint),
       milestone: new FormControl(taskRawValue.milestone),
-      assignedTo: new FormControl(taskRawValue.assignedTo),
-      createdBy: new FormControl(taskRawValue.createdBy),
+      assignedTo: new FormControl(taskRawValue.assignedTo, {
+        validators: [Validators.required],
+      }),
+      createdBy: new FormControl(taskRawValue.createdBy, {
+        validators: [Validators.required],
+      }),
     });
   }
 
   getTask(form: TaskFormGroup): ITask | NewTask {
-    return form.getRawValue() as ITask | NewTask;
+    const raw = form.getRawValue();
+    return {
+      ...raw,
+      startDate: this.toDayjs(raw.startDate),
+      dueDate: this.toDayjs(raw.dueDate),
+    } as ITask | NewTask;
   }
 
   resetForm(form: TaskFormGroup, task: TaskFormGroupInput): void {
@@ -91,6 +109,8 @@ export class TaskFormService {
     form.reset(
       {
         ...taskRawValue,
+        startDate: this.toDate(taskRawValue.startDate),
+        dueDate: this.toDate(taskRawValue.dueDate),
         id: { value: taskRawValue.id, disabled: true },
       } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
@@ -99,6 +119,25 @@ export class TaskFormService {
   private getFormDefaults(): TaskFormDefaults {
     return {
       id: null,
+      startDate: dayjs(), // today, used only when creating a new task
     };
+  }
+
+  // dayjs (from the API, or the today default) -> native Date (for mat-datepicker display)
+  private toDate(value: dayjs.Dayjs | null | undefined): Date | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d.toDate() : null;
+  }
+
+  // native Date (from mat-datepicker) -> dayjs (for the API payload)
+  private toDayjs(value: Date | null | undefined): dayjs.Dayjs | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d : null;
   }
 }

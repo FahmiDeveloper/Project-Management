@@ -8,318 +8,305 @@
       <div>
         <jhi-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.task.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
+        <!-- Title Field -->
         @let titleRef = editForm.get('title')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_title" jhiTranslate="projectManagementApp.task.title">Title</label>
-          <input type="text" class="form-control" name="title" id="field_title" data-cy="title" formControlName="title" />
-          @if (titleRef.invalid && (titleRef.dirty || titleRef.touched)) {
-            <div>
-              @if (editForm.get('title')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-              @if (editForm.get('title')?.errors?.minlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
-                  >This field is required to be at least 2 characters.</small
-                >
-              }
-              @if (editForm.get('title')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
-                  >This field cannot be longer than 200 characters.</small
-                >
-              }
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.title">Title</mat-label>
+          <input matInput type="text" name="title" id="field_title" data-cy="title" formControlName="title" />
+          @if (titleRef.invalid && (titleRef.touched || titleRef.dirty) && titleRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (titleRef.invalid && (titleRef.touched || titleRef.dirty) && titleRef.errors?.minlength) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
+                >This field is required to be at least 2 characters.</mat-error
+              >
+            </ng-container>
+          }
+          @if (titleRef.invalid && (titleRef.touched || titleRef.dirty) && titleRef.errors?.maxlength) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                >This field cannot be longer than 200 characters.</mat-error
+              >
+            </ng-container>
+          }
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_description" jhiTranslate="projectManagementApp.task.description">Description</label>
+        <!-- Description Field -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.description">Description</mat-label>
           <textarea
-            class="form-control"
+            matInput
             name="description"
             id="field_description"
             data-cy="description"
             formControlName="description"
+            rows="3"
           ></textarea>
-        </div>
+        </mat-form-field>
 
+        <!-- Priority Field -->
         @let priorityRef = editForm.get('priority')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_priority" jhiTranslate="projectManagementApp.task.priority">Priority</label>
-          <select class="form-control" name="priority" formControlName="priority" id="field_priority" data-cy="priority">
-            <option [ngValue]="null">{{ 'projectManagementApp.TaskPriority.null' | translate }}</option>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.priority">Priority</mat-label>
+          <mat-select name="priority" formControlName="priority" id="field_priority" data-cy="priority">
+            <mat-option [value]="null">{{ 'projectManagementApp.TaskPriority.null' | translate }}</mat-option>
             @for (taskPriority of taskPriorityValues; track $index) {
-              <option [value]="taskPriority">{{ 'projectManagementApp.TaskPriority.' + taskPriority | translate }}</option>
+              <mat-option [value]="taskPriority">{{ 'projectManagementApp.TaskPriority.' + taskPriority | translate }}</mat-option>
             }
-          </select>
-          @if (priorityRef.invalid && (priorityRef.dirty || priorityRef.touched)) {
-            <div>
-              @if (editForm.get('priority')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+          </mat-select>
+          @if (priorityRef.invalid && (priorityRef.touched || priorityRef.dirty) && priorityRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
 
+        <!-- Status Field -->
         @let statusRef = editForm.get('status')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_status" jhiTranslate="projectManagementApp.task.status">Status</label>
-          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
-            <option [ngValue]="null">{{ 'projectManagementApp.TaskStatus.null' | translate }}</option>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.status">Status</mat-label>
+          <mat-select name="status" formControlName="status" id="field_status" data-cy="status">
+            <mat-option [value]="null">{{ 'projectManagementApp.TaskStatus.null' | translate }}</mat-option>
             @for (taskStatus of taskStatusValues; track $index) {
-              <option [value]="taskStatus">{{ 'projectManagementApp.TaskStatus.' + taskStatus | translate }}</option>
+              <mat-option [value]="taskStatus">{{ 'projectManagementApp.TaskStatus.' + taskStatus | translate }}</mat-option>
             }
-          </select>
-          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
-            <div>
-              @if (editForm.get('status')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+          </mat-select>
+          @if (statusRef.invalid && (statusRef.touched || statusRef.dirty) && statusRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
 
+        <!-- Story Points Field -->
         @let storyPointsRef = editForm.get('storyPoints')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_storyPoints" jhiTranslate="projectManagementApp.task.storyPoints">Story Points</label>
-          <input
-            type="number"
-            class="form-control"
-            name="storyPoints"
-            id="field_storyPoints"
-            data-cy="storyPoints"
-            formControlName="storyPoints"
-          />
-          @if (storyPointsRef.invalid && (storyPointsRef.dirty || storyPointsRef.touched)) {
-            <div>
-              @if (editForm.get('storyPoints')?.errors?.min) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
-                  >This field should be at least 1.</small
-                >
-              }
-              @if (editForm.get('storyPoints')?.errors?.max) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
-                  >This field cannot be more than 100.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('storyPoints')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >This field should be a number.</small
-              >
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.storyPoints">Story Points</mat-label>
+          <input matInput type="number" name="storyPoints" id="field_storyPoints" data-cy="storyPoints" formControlName="storyPoints" />
+          @if (storyPointsRef.invalid && (storyPointsRef.touched || storyPointsRef.dirty) && storyPointsRef.errors?.min) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '1' }">This field should be at least 1.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (storyPointsRef.invalid && (storyPointsRef.touched || storyPointsRef.dirty) && storyPointsRef.errors?.max) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
+                >This field cannot be more than 100.</mat-error
+              >
+            </ng-container>
+          }
+          @if (storyPointsRef.invalid && (storyPointsRef.touched || storyPointsRef.dirty) && storyPointsRef.errors?.number) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
+        <!-- Estimated Hours Field -->
         @let estimatedHoursRef = editForm.get('estimatedHours')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_estimatedHours" jhiTranslate="projectManagementApp.task.estimatedHours"
-            >Estimated Hours</label
-          >
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.estimatedHours">Estimated Hours</mat-label>
           <input
+            matInput
             type="number"
-            class="form-control"
             name="estimatedHours"
             id="field_estimatedHours"
             data-cy="estimatedHours"
             formControlName="estimatedHours"
           />
-          @if (estimatedHoursRef.invalid && (estimatedHoursRef.dirty || estimatedHoursRef.touched)) {
-            <div>
-              @if (editForm.get('estimatedHours')?.errors?.min) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >This field should be at least 0.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('estimatedHours')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >This field should be a number.</small
-              >
-            </div>
+          @if (estimatedHoursRef.invalid && (estimatedHoursRef.touched || estimatedHoursRef.dirty) && estimatedHoursRef.errors?.min) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (estimatedHoursRef.invalid && (estimatedHoursRef.touched || estimatedHoursRef.dirty) && estimatedHoursRef.errors?.number) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
+        <!-- Spent Hours Field -->
         @let spentHoursRef = editForm.get('spentHours')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_spentHours" jhiTranslate="projectManagementApp.task.spentHours">Spent Hours</label>
-          <input
-            type="number"
-            class="form-control"
-            name="spentHours"
-            id="field_spentHours"
-            data-cy="spentHours"
-            formControlName="spentHours"
-          />
-          @if (spentHoursRef.invalid && (spentHoursRef.dirty || spentHoursRef.touched)) {
-            <div>
-              @if (editForm.get('spentHours')?.errors?.min) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >This field should be at least 0.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('spentHours')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >This field should be a number.</small
-              >
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.spentHours">Spent Hours</mat-label>
+          <input matInput type="number" name="spentHours" id="field_spentHours" data-cy="spentHours" formControlName="spentHours" />
+          @if (spentHoursRef.invalid && (spentHoursRef.touched || spentHoursRef.dirty) && spentHoursRef.errors?.min) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (spentHoursRef.invalid && (spentHoursRef.touched || spentHoursRef.dirty) && spentHoursRef.errors?.number) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_startDate" jhiTranslate="projectManagementApp.task.startDate">Start Date</label>
-          <div class="input-group">
-            <input
-              id="field_startDate"
-              data-cy="startDate"
-              type="text"
-              class="form-control"
-              name="startDate"
-              ngbDatepicker
-              #startDateDp="ngbDatepicker"
-              formControlName="startDate"
-            />
-            <button type="button" class="btn btn-secondary" (click)="startDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_dueDate" jhiTranslate="projectManagementApp.task.dueDate">Due Date</label>
-          <div class="input-group">
-            <input
-              id="field_dueDate"
-              data-cy="dueDate"
-              type="text"
-              class="form-control"
-              name="dueDate"
-              ngbDatepicker
-              #dueDateDp="ngbDatepicker"
-              formControlName="dueDate"
-            />
-            <button type="button" class="btn btn-secondary" (click)="dueDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
-          </div>
-        </div>
-
-        @let completionPercentageRef = editForm.get('completionPercentage')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_completionPercentage" jhiTranslate="projectManagementApp.task.completionPercentage"
-            >Completion Percentage</label
-          >
+        <!-- Start Date Field -->
+        @let startDateRef = editForm.get('startDate')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.startDate">Start Date</mat-label>
           <input
+            matInput
+            [matDatepicker]="startDatePicker"
+            name="startDate"
+            id="field_startDate"
+            data-cy="startDate"
+            formControlName="startDate"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+          @if (startDateRef.invalid && (startDateRef.touched || startDateRef.dirty) && startDateRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
+
+        <!-- Due Date Field -->
+        @let dueDateRef = editForm.get('dueDate')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.dueDate">Due Date</mat-label>
+          <input matInput [matDatepicker]="dueDatePicker" name="dueDate" id="field_dueDate" data-cy="dueDate" formControlName="dueDate" />
+          <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #dueDatePicker></mat-datepicker>
+          @if (dueDateRef.invalid && (dueDateRef.touched || dueDateRef.dirty) && dueDateRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
+
+        <!-- Completion Percentage Field -->
+        @let completionPercentageRef = editForm.get('completionPercentage')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.completionPercentage">Completion Percentage</mat-label>
+          <input
+            matInput
             type="number"
-            class="form-control"
             name="completionPercentage"
             id="field_completionPercentage"
             data-cy="completionPercentage"
             formControlName="completionPercentage"
           />
-          @if (completionPercentageRef.invalid && (completionPercentageRef.dirty || completionPercentageRef.touched)) {
-            <div>
-              @if (editForm.get('completionPercentage')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-              @if (editForm.get('completionPercentage')?.errors?.min) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >This field should be at least 0.</small
-                >
-              }
-              @if (editForm.get('completionPercentage')?.errors?.max) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
-                  >This field cannot be more than 100.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('completionPercentage')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >This field should be a number.</small
-              >
-            </div>
+          @if (
+            completionPercentageRef.invalid &&
+            (completionPercentageRef.touched || completionPercentageRef.dirty) &&
+            completionPercentageRef.errors?.required
+          ) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (
+            completionPercentageRef.invalid &&
+            (completionPercentageRef.touched || completionPercentageRef.dirty) &&
+            completionPercentageRef.errors?.min
+          ) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }">This field should be at least 0.</mat-error>
+            </ng-container>
+          }
+          @if (
+            completionPercentageRef.invalid &&
+            (completionPercentageRef.touched || completionPercentageRef.dirty) &&
+            completionPercentageRef.errors?.max
+          ) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
+                >This field cannot be more than 100.</mat-error
+              >
+            </ng-container>
+          }
+          @if (
+            completionPercentageRef.invalid &&
+            (completionPercentageRef.touched || completionPercentageRef.dirty) &&
+            completionPercentageRef.errors?.number
+          ) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.number">This field should be a number.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_sprint" jhiTranslate="projectManagementApp.task.sprint">Sprint</label>
-          <select
-            class="form-control"
-            id="field_sprint"
-            data-cy="sprint"
-            name="sprint"
-            formControlName="sprint"
-            [compareWith]="compareSprint"
-          >
-            <option [ngValue]="null"></option>
+        <!-- Sprint Field -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.sprint">Sprint</mat-label>
+          <mat-select id="field_sprint" data-cy="sprint" name="sprint" formControlName="sprint" [compareWith]="compareSprint">
+            <mat-option [value]="null"></mat-option>
             @for (sprintOption of sprintsSharedCollection; track $index) {
-              <option [ngValue]="sprintOption">{{ sprintOption.name }}</option>
+              <mat-option [value]="sprintOption">{{ sprintOption.name }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_milestone" jhiTranslate="projectManagementApp.task.milestone">Milestone</label>
-          <select
-            class="form-control"
+        <!-- Milestone Field -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.milestone">Milestone</mat-label>
+          <mat-select
             id="field_milestone"
             data-cy="milestone"
             name="milestone"
             formControlName="milestone"
             [compareWith]="compareMilestone"
           >
-            <option [ngValue]="null"></option>
+            <mat-option [value]="null"></mat-option>
             @for (milestoneOption of milestonesSharedCollection; track $index) {
-              <option [ngValue]="milestoneOption">{{ milestoneOption.title }}</option>
+              <mat-option [value]="milestoneOption">{{ milestoneOption.title }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_assignedTo" jhiTranslate="projectManagementApp.task.assignedTo">Assigned To</label>
-          <select
-            class="form-control"
+        <!-- Assigned To Field -->
+        @let assignedToRef = editForm.get('assignedTo')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.assignedTo">Assigned To</mat-label>
+          <mat-select
             id="field_assignedTo"
             data-cy="assignedTo"
             name="assignedTo"
             formControlName="assignedTo"
             [compareWith]="compareEmployee"
           >
-            <option [ngValue]="null"></option>
+            <mat-option [value]="null"></mat-option>
             @for (employeeOption of employeesSharedCollection; track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</option>
+              <mat-option [value]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+          @if (assignedToRef.invalid && (assignedToRef.touched || assignedToRef.dirty) && assignedToRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_createdBy" jhiTranslate="projectManagementApp.task.createdBy">Created By</label>
-          <select
-            class="form-control"
-            id="field_createdBy"
-            data-cy="createdBy"
-            name="createdBy"
-            formControlName="createdBy"
-            [compareWith]="compareEmployee"
-          >
-            <option [ngValue]="null"></option>
+        <!-- Created By Field -->
+        @let createdByRef = editForm.get('createdBy')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.task.createdBy">Created By</mat-label>
+          <mat-select id="field_createdBy" data-cy="createdBy" name="createdBy" formControlName="createdBy" [compareWith]="compareEmployee">
+            <mat-option [value]="null"></mat-option>
             @for (employeeOption of employeesSharedCollection; track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</option>
+              <mat-option [value]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+          @if (createdByRef.invalid && (createdByRef.touched || createdByRef.dirty) && createdByRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" mat-stroked-button (click)="previousState()">
+          <mat-icon>block</mat-icon>
+          <span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
 
         <button
@@ -327,9 +314,11 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          mat-flat-button
+          color="primary"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          <mat-icon>save</mat-icon>
+          <span jhiTranslate="entity.action.save">Save</span>
         </button>
       </div>
     </form>

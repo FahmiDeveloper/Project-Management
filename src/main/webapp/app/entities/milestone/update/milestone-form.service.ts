@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import dayjs from 'dayjs/esm';
 
 import { IMilestone, NewMilestone } from '../milestone.model';
 
@@ -14,14 +15,18 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type MilestoneFormGroupInput = IMilestone | PartialWithRequiredKeyOf<NewMilestone>;
 
-type MilestoneFormDefaults = Pick<NewMilestone, 'id'>;
+// startDate defaults to today when creating a new milestone.
+type MilestoneFormDefaults = Pick<NewMilestone, 'id'> & { startDate: dayjs.Dayjs | null };
 
+// startDate/dueDate are stored as native Date in the form because mat-datepicker
+// (with MatNativeDateModule) cannot read/format dayjs objects. They are converted
+// back to dayjs when the form value is read out via getMilestone().
 type MilestoneFormGroupContent = {
   id: FormControl<IMilestone['id'] | NewMilestone['id']>;
   title: FormControl<IMilestone['title']>;
   description: FormControl<IMilestone['description']>;
-  startDate: FormControl<IMilestone['startDate']>;
-  dueDate: FormControl<IMilestone['dueDate']>;
+  startDate: FormControl<Date | null>;
+  dueDate: FormControl<Date | null>;
   status: FormControl<IMilestone['status']>;
   project: FormControl<IMilestone['project']>;
 };
@@ -47,21 +52,28 @@ export class MilestoneFormService {
         validators: [Validators.required, Validators.minLength(2), Validators.maxLength(150)],
       }),
       description: new FormControl(milestoneRawValue.description),
-      startDate: new FormControl(milestoneRawValue.startDate, {
+      startDate: new FormControl(this.toDate(milestoneRawValue.startDate), {
         validators: [Validators.required],
       }),
-      dueDate: new FormControl(milestoneRawValue.dueDate, {
+      dueDate: new FormControl(this.toDate(milestoneRawValue.dueDate), {
         validators: [Validators.required],
       }),
       status: new FormControl(milestoneRawValue.status, {
         validators: [Validators.required],
       }),
-      project: new FormControl(milestoneRawValue.project),
+      project: new FormControl(milestoneRawValue.project, {
+        validators: [Validators.required],
+      }),
     });
   }
 
   getMilestone(form: MilestoneFormGroup): IMilestone | NewMilestone {
-    return form.getRawValue() as IMilestone | NewMilestone;
+    const raw = form.getRawValue();
+    return {
+      ...raw,
+      startDate: this.toDayjs(raw.startDate),
+      dueDate: this.toDayjs(raw.dueDate),
+    } as IMilestone | NewMilestone;
   }
 
   resetForm(form: MilestoneFormGroup, milestone: MilestoneFormGroupInput): void {
@@ -69,6 +81,8 @@ export class MilestoneFormService {
     form.reset(
       {
         ...milestoneRawValue,
+        startDate: this.toDate(milestoneRawValue.startDate),
+        dueDate: this.toDate(milestoneRawValue.dueDate),
         id: { value: milestoneRawValue.id, disabled: true },
       } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
@@ -77,6 +91,25 @@ export class MilestoneFormService {
   private getFormDefaults(): MilestoneFormDefaults {
     return {
       id: null,
+      startDate: dayjs(), // today, used only when creating a new milestone
     };
+  }
+
+  // dayjs (from the API, or the today default) -> native Date (for mat-datepicker display)
+  private toDate(value: dayjs.Dayjs | null | undefined): Date | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d.toDate() : null;
+  }
+
+  // native Date (from mat-datepicker) -> dayjs (for the API payload)
+  private toDayjs(value: Date | null | undefined): dayjs.Dayjs | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d : null;
   }
 }
