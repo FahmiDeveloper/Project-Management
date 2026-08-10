@@ -10,11 +10,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IDepartment } from '../department.model';
 import { DepartmentService } from '../service/department.service';
 import { DepartmentFormGroup, DepartmentFormService } from './department-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-department-update',
   templateUrl: './department-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./department-update.component.scss'],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
 })
 export class DepartmentUpdateComponent implements OnInit {
   isSaving = false;

@@ -10,11 +10,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IClient } from '../client.model';
 import { ClientService } from '../service/client.service';
 import { ClientFormGroup, ClientFormService } from './client-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-client-update',
   templateUrl: './client-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./client-update.component.scss'],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
 })
 export class ClientUpdateComponent implements OnInit {
   isSaving = false;
