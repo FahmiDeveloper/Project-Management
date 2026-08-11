@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,6 +11,8 @@ import { IAuthority } from '../authority.model';
 import { AuthorityService, EntityArrayResponseType } from '../service/authority.service';
 import { AuthorityDeleteDialogComponent } from '../delete/authority-delete-dialog.component';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
@@ -26,6 +28,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SharedModule,
     SortDirective,
     SortByDirective,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatTableModule,
@@ -38,6 +42,16 @@ export class AuthorityComponent implements OnInit {
   isLoading = false;
 
   displayedColumns: string[] = ['name', 'actions'];
+
+  // ---- Name filter (client-side, since Authority list is small and unpaginated) ----
+  filterName = signal<string>('');
+  filteredAuthorities = computed(() => {
+    const term = this.filterName().toLowerCase().trim();
+    if (!term) {
+      return this.authorities();
+    }
+    return this.authorities().filter(a => (a.name ?? '').toLowerCase().includes(term));
+  });
 
   sortState = sortStateSignal({});
 
@@ -63,6 +77,14 @@ export class AuthorityComponent implements OnInit {
         }),
       )
       .subscribe();
+  }
+
+  onNameInput(value: string): void {
+    this.filterName.set(value);
+  }
+
+  clearSearch(): void {
+    this.filterName.set('');
   }
 
   delete(authority: IAuthority): void {

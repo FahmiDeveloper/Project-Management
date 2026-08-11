@@ -140,20 +140,22 @@ public class ReportSnapshotResource {
      * {@code GET  /report-snapshots} : get all the reportSnapshots.
      *
      * @param pageable the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param eagerload flag to eager load entities from relationships s(This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reportSnapshots in body.
      */
     @GetMapping("")
     public ResponseEntity<List<ReportSnapshotDTO>> getAllReportSnapshots(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "name", required = false) String name,
+        @RequestParam(name = "projectId", required = false) Long projectId
     ) {
         LOG.debug("REST request to get a page of ReportSnapshots");
         Page<ReportSnapshotDTO> page;
         if (eagerload) {
-            page = reportSnapshotService.findAllWithEagerRelationships(pageable);
+            page = reportSnapshotService.findAllWithEagerRelationships(name, projectId, pageable);
         } else {
-            page = reportSnapshotService.findAll(pageable);
+            page = reportSnapshotService.findAll(name, projectId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

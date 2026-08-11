@@ -22,6 +22,31 @@
     </div>
   </h2>
 
+  <div class="activity-log-filter-container">
+    <mat-form-field appearance="outline" class="activity-log-employee-field" subscriptSizing="dynamic">
+      <mat-label>Employee</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="employeeAuto"
+        [value]="employeeSearchTerm()"
+        (input)="onEmployeeInput($event)"
+        placeholder="Search employee"
+      />
+      <mat-autocomplete #employeeAuto="matAutocomplete" [displayWith]="displayEmployeeName" (optionSelected)="onEmployeeSelected($event)">
+        @for (employee of filteredEmployees(); track employee.id) {
+          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterEmployeeId()) {
+      <button mat-icon-button aria-label="Clear filters" class="activity-log-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />

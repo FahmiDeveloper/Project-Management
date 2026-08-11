@@ -22,6 +22,36 @@
     </div>
   </h2>
 
+  <div class="report-snapshot-filter-container">
+    <mat-form-field appearance="outline" class="report-snapshot-name-field" subscriptSizing="dynamic">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" [ngModel]="filterName()" (ngModelChange)="onNameInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="report-snapshot-project-field" subscriptSizing="dynamic">
+      <mat-label>Project</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="projectAuto"
+        [value]="projectSearchTerm()"
+        (input)="onProjectInput($event)"
+        placeholder="Search project"
+      />
+      <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProjectName" (optionSelected)="onProjectSelected($event)">
+        @for (project of filteredProjects(); track project.id) {
+          <mat-option [value]="project">{{ project.name }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (filterName() || filterProjectId()) {
+      <button mat-icon-button aria-label="Clear filters" class="report-snapshot-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />

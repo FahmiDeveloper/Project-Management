@@ -2,6 +2,7 @@ package com.fehmidev.projectmanagement.service;
 
 import com.fehmidev.projectmanagement.domain.ReportSnapshot;
 import com.fehmidev.projectmanagement.repository.ReportSnapshotRepository;
+import com.fehmidev.projectmanagement.repository.ReportSnapshotSpecification;
 import com.fehmidev.projectmanagement.service.dto.ReportSnapshotDTO;
 import com.fehmidev.projectmanagement.service.mapper.ReportSnapshotMapper;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +32,6 @@ public class ReportSnapshotService {
         this.reportSnapshotMapper = reportSnapshotMapper;
     }
 
-    /**
-     * Save a reportSnapshot.
-     *
-     * @param reportSnapshotDTO the entity to save.
-     * @return the persisted entity.
-     */
     public ReportSnapshotDTO save(ReportSnapshotDTO reportSnapshotDTO) {
         LOG.debug("Request to save ReportSnapshot : {}", reportSnapshotDTO);
         ReportSnapshot reportSnapshot = reportSnapshotMapper.toEntity(reportSnapshotDTO);
@@ -43,12 +39,6 @@ public class ReportSnapshotService {
         return reportSnapshotMapper.toDto(reportSnapshot);
     }
 
-    /**
-     * Update a reportSnapshot.
-     *
-     * @param reportSnapshotDTO the entity to save.
-     * @return the persisted entity.
-     */
     public ReportSnapshotDTO update(ReportSnapshotDTO reportSnapshotDTO) {
         LOG.debug("Request to update ReportSnapshot : {}", reportSnapshotDTO);
         ReportSnapshot reportSnapshot = reportSnapshotMapper.toEntity(reportSnapshotDTO);
@@ -56,12 +46,6 @@ public class ReportSnapshotService {
         return reportSnapshotMapper.toDto(reportSnapshot);
     }
 
-    /**
-     * Partially update a reportSnapshot.
-     *
-     * @param reportSnapshotDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<ReportSnapshotDTO> partialUpdate(ReportSnapshotDTO reportSnapshotDTO) {
         LOG.debug("Request to partially update ReportSnapshot : {}", reportSnapshotDTO);
 
@@ -76,44 +60,36 @@ public class ReportSnapshotService {
             .map(reportSnapshotMapper::toDto);
     }
 
-    /**
-     * Get all the reportSnapshots.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<ReportSnapshotDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all ReportSnapshots");
         return reportSnapshotRepository.findAll(pageable).map(reportSnapshotMapper::toDto);
     }
 
-    /**
-     * Get all the reportSnapshots with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
-    public Page<ReportSnapshotDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return reportSnapshotRepository.findAllWithEagerRelationships(pageable).map(reportSnapshotMapper::toDto);
+    // NEW: filtered
+    @Transactional(readOnly = true)
+    public Page<ReportSnapshotDTO> findAll(String name, Long projectId, Pageable pageable) {
+        LOG.debug("Request to get all ReportSnapshots filtered by name: {}, projectId: {}", name, projectId);
+        Specification<ReportSnapshot> spec = ReportSnapshotSpecification.withFilters(name, projectId);
+        return reportSnapshotRepository.findAll(spec, pageable).map(reportSnapshotMapper::toDto);
     }
 
-    /**
-     * Get one reportSnapshot by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
+    public Page<ReportSnapshotDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return findAll(null, null, pageable);
+    }
+
+    // NEW: eager, filtered
+    public Page<ReportSnapshotDTO> findAllWithEagerRelationships(String name, Long projectId, Pageable pageable) {
+        LOG.debug("Request to get all ReportSnapshots (eager) filtered by name: {}, projectId: {}", name, projectId);
+        return findAll(name, projectId, pageable);
+    }
+
     @Transactional(readOnly = true)
     public Optional<ReportSnapshotDTO> findOne(Long id) {
         LOG.debug("Request to get ReportSnapshot : {}", id);
         return reportSnapshotRepository.findOneWithEagerRelationships(id).map(reportSnapshotMapper::toDto);
     }
 
-    /**
-     * Delete the reportSnapshot by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         LOG.debug("Request to delete ReportSnapshot : {}", id);
         reportSnapshotRepository.deleteById(id);

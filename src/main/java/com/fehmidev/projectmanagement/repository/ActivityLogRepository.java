@@ -1,6 +1,7 @@
 package com.fehmidev.projectmanagement.repository;
 
 import com.fehmidev.projectmanagement.domain.ActivityLog;
+import com.fehmidev.projectmanagement.domain.Employee;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -37,4 +38,11 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
 
     @Query("select activityLog from ActivityLog activityLog left join fetch activityLog.employee where activityLog.id =:id")
     Optional<ActivityLog> findOneWithToOneRelationships(@Param("id") Long id);
+
+    // NEW: filtered by employee, eager
+    @Query(
+        value = "select activityLog from ActivityLog activityLog left join fetch activityLog.employee where activityLog.employee.id = :employeeId",
+        countQuery = "select count(activityLog) from ActivityLog activityLog where activityLog.employee.id = :employeeId"
+    )
+    Page<ActivityLog> findAllByEmployeeIdWithToOneRelationships(@Param("employeeId") Long employeeId, Pageable pageable);
 }

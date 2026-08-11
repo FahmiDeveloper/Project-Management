@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
@@ -15,8 +15,14 @@ import { IActivityLog } from '../activity-log.model';
 import { ActivityLogService, EntityArrayResponseType } from '../service/activity-log.service';
 import { ActivityLogDeleteDialogComponent } from '../delete/activity-log-delete-dialog.component';
 
+import { IEmployee } from 'app/entities/employee/employee.model';
+import { EmployeeService } from 'app/entities/employee/service/employee.service';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -32,8 +38,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SortDirective,
     SortByDirective,
     FormatMediumDatetimePipe,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
+    MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
@@ -45,6 +54,18 @@ export class ActivityLogComponent implements OnInit {
   isLoading = false;
 
   displayedColumns: string[] = ['action', 'entityName', 'entityId', 'description', 'createdDate', 'employee', 'actions'];
+
+  // ---- Employee filter (searchable autocomplete) ----
+  filterEmployeeId = signal<number | null>(null);
+  employeeSearchTerm = signal<string>('');
+  employees = signal<IEmployee[]>([]);
+  filteredEmployees = computed(() => {
+    const term = this.employeeSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.employees();
+    }
+    return this.employees().filter(e => `${e.firstName ?? ''} ${e.lastName ?? ''}`.toLowerCase().includes(term));
+  });
 
   sortState = sortStateSignal({});
 
@@ -58,6 +79,7 @@ export class ActivityLogComponent implements OnInit {
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected readonly employeeService = inject(EmployeeService);
 
   trackId = (item: IActivityLog): number => this.activityLogService.getActivityLogIdentifier(item);
 
@@ -68,6 +90,32 @@ export class ActivityLogComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.employeeService.query().subscribe(res => this.employees.set(res.body ?? []));
+  }
+
+  // ---- Employee autocomplete handlers ----
+  displayEmployeeName = (employee: IEmployee | null): string =>
+    employee ? `${employee.firstName ?? ''} ${employee.lastName ?? ''}`.trim() : '';
+
+  onEmployeeInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.employeeSearchTerm.set(value);
+  }
+
+  onEmployeeSelected(event: MatAutocompleteSelectedEvent): void {
+    const employee: IEmployee | null = event.option.value;
+    this.filterEmployeeId.set(employee ? employee.id : null);
+    this.employeeSearchTerm.set(this.displayEmployeeName(employee));
+    this.page = 1;
+    this.load();
+  }
+
+  clearSearch(): void {
+    this.filterEmployeeId.set(null);
+    this.employeeSearchTerm.set('');
+    this.page = 1;
+    this.load();
   }
 
   delete(activityLog: IActivityLog): void {
@@ -133,6 +181,12 @@ export class ActivityLogComponent implements OnInit {
       eagerload: true,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const employeeId = this.filterEmployeeId();
+    if (employeeId) {
+      queryObject['employeeId'] = employeeId;
+    }
+
     return this.activityLogService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 

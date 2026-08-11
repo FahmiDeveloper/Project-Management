@@ -22,11 +22,24 @@
     </div>
   </h2>
 
+  <div class="authority-filter-container">
+    <mat-form-field appearance="outline" class="authority-name-field" subscriptSizing="dynamic">
+      <mat-label>Filter by name</mat-label>
+      <input matInput type="text" [ngModel]="filterName()" (ngModelChange)="onNameInput($event)" />
+    </mat-form-field>
+
+    @if (filterName()) {
+      <button mat-icon-button aria-label="Clear filters" class="authority-filter-clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
   <jhi-alert-error />
 
   <jhi-alert />
 
-  @if (authorities().length === 0) {
+  @if (filteredAuthorities().length === 0) {
     <div class="alert alert-warning" id="no-result">
       <span jhiTranslate="projectManagementApp.adminAuthority.home.notFound">No Authorities found</span>
     </div>
@@ -34,7 +47,7 @@
     <div class="mat-elevation-z1 authority-table-container">
       <table
         mat-table
-        [dataSource]="authorities()"
+        [dataSource]="filteredAuthorities()"
         jhiSort
         [(sortState)]="sortState"
         (sortChange)="navigateToWithComponentValues($event)"
