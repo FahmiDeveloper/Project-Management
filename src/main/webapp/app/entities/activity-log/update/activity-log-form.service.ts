@@ -67,7 +67,9 @@ export class ActivityLogFormService {
       createdDate: new FormControl(activityLogRawValue.createdDate, {
         validators: [Validators.required],
       }),
-      employee: new FormControl(activityLogRawValue.employee),
+      employee: new FormControl(activityLogRawValue.employee, {
+        validators: [Validators.required],
+      }),
     });
   }
 

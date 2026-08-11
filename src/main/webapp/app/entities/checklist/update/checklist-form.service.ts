@@ -59,7 +59,9 @@ export class ChecklistFormService {
       createdDate: new FormControl(checklistRawValue.createdDate, {
         validators: [Validators.required],
       }),
-      task: new FormControl(checklistRawValue.task),
+      task: new FormControl(checklistRawValue.task, {
+        validators: [Validators.required],
+      }),
     });
   }
 

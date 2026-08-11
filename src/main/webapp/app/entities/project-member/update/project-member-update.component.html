@@ -12,107 +12,97 @@
       <div>
         <jhi-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.projectMember.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
+        <!-- Role Field -->
         @let roleRef = editForm.get('role')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_role" jhiTranslate="projectManagementApp.projectMember.role">Role</label>
-          <select class="form-control" name="role" formControlName="role" id="field_role" data-cy="role">
-            <option [ngValue]="null">{{ 'projectManagementApp.MemberRole.null' | translate }}</option>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.projectMember.role">Role</mat-label>
+          <mat-select name="role" formControlName="role" id="field_role" data-cy="role">
+            <mat-option [value]="null">{{ 'projectManagementApp.MemberRole.null' | translate }}</mat-option>
             @for (memberRole of memberRoleValues; track $index) {
-              <option [value]="memberRole">{{ 'projectManagementApp.MemberRole.' + memberRole | translate }}</option>
+              <mat-option [value]="memberRole">{{ 'projectManagementApp.MemberRole.' + memberRole | translate }}</mat-option>
             }
-          </select>
-          @if (roleRef.invalid && (roleRef.dirty || roleRef.touched)) {
-            <div>
-              @if (editForm.get('role')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+          </mat-select>
+          @if (roleRef.invalid && (roleRef.touched || roleRef.dirty) && roleRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
 
+        <!-- Joined Date Field -->
         @let joinedDateRef = editForm.get('joinedDate')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_joinedDate" jhiTranslate="projectManagementApp.projectMember.joinedDate">Joined Date</label>
-          <div class="input-group">
-            <input
-              id="field_joinedDate"
-              data-cy="joinedDate"
-              type="text"
-              class="form-control"
-              name="joinedDate"
-              ngbDatepicker
-              #joinedDateDp="ngbDatepicker"
-              formControlName="joinedDate"
-            />
-            <button type="button" class="btn btn-secondary" (click)="joinedDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
-          </div>
-          @if (joinedDateRef.invalid && (joinedDateRef.dirty || joinedDateRef.touched)) {
-            <div>
-              @if (editForm.get('joinedDate')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.projectMember.joinedDate">Joined Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="joinedDatePicker"
+            name="joinedDate"
+            id="field_joinedDate"
+            data-cy="joinedDate"
+            formControlName="joinedDate"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="joinedDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #joinedDatePicker></mat-datepicker>
+          @if (joinedDateRef.invalid && (joinedDateRef.touched || joinedDateRef.dirty) && joinedDateRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
 
+        <!-- Active Field -->
         @let activeRef = editForm.get('active')!;
         <div class="mb-3">
-          <label class="form-label" for="field_active" jhiTranslate="projectManagementApp.projectMember.active">Active</label>
-          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
-          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
+          <mat-checkbox name="active" id="field_active" data-cy="active" formControlName="active">
+            <span jhiTranslate="projectManagementApp.projectMember.active">Active</span>
+          </mat-checkbox>
+          @if (activeRef.invalid && (activeRef.touched || activeRef.dirty) && activeRef.errors?.required) {
             <div>
-              @if (editForm.get('active')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
             </div>
           }
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_project" jhiTranslate="projectManagementApp.projectMember.project">Project</label>
-          <select
-            class="form-control"
-            id="field_project"
-            data-cy="project"
-            name="project"
-            formControlName="project"
-            [compareWith]="compareProject"
-          >
-            <option [ngValue]="null"></option>
+        <!-- Project Field -->
+        @let projectRef = editForm.get('project')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.projectMember.project">Project</mat-label>
+          <mat-select id="field_project" data-cy="project" name="project" formControlName="project" [compareWith]="compareProject">
+            <mat-option [value]="null"></mat-option>
             @for (projectOption of projectsSharedCollection; track $index) {
-              <option [ngValue]="projectOption">{{ projectOption.name }}</option>
+              <mat-option [value]="projectOption">{{ projectOption.name }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+          @if (projectRef.invalid && (projectRef.touched || projectRef.dirty) && projectRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_employee" jhiTranslate="projectManagementApp.projectMember.employee">Employee</label>
-          <select
-            class="form-control"
-            id="field_employee"
-            data-cy="employee"
-            name="employee"
-            formControlName="employee"
-            [compareWith]="compareEmployee"
-          >
-            <option [ngValue]="null"></option>
+        <!-- Employee Field -->
+        @let employeeRef = editForm.get('employee')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.projectMember.employee">Employee</mat-label>
+          <mat-select id="field_employee" data-cy="employee" name="employee" formControlName="employee" [compareWith]="compareEmployee">
+            <mat-option [value]="null"></mat-option>
             @for (employeeOption of employeesSharedCollection; track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</option>
+              <mat-option [value]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+          @if (employeeRef.invalid && (employeeRef.touched || employeeRef.dirty) && employeeRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" mat-stroked-button (click)="previousState()">
+          <mat-icon>block</mat-icon>
+          <span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
 
         <button
@@ -120,9 +110,11 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          mat-flat-button
+          color="primary"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          <mat-icon>save</mat-icon>
+          <span jhiTranslate="entity.action.save">Save</span>
         </button>
       </div>
     </form>

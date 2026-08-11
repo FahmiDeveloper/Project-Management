@@ -14,11 +14,26 @@ import { EmployeeService } from 'app/entities/employee/service/employee.service'
 import { AttachmentService } from '../service/attachment.service';
 import { IAttachment } from '../attachment.model';
 import { AttachmentFormGroup, AttachmentFormService } from './attachment-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-attachment-update',
   templateUrl: './attachment-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./attachment-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
 })
 export class AttachmentUpdateComponent implements OnInit {
   isSaving = false;

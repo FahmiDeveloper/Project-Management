@@ -18,17 +18,21 @@ type TimeEntryFormGroupInput = ITimeEntry | PartialWithRequiredKeyOf<NewTimeEntr
 
 /**
  * Type that converts some properties for forms.
+ * startTime/endTime use the datetime-local string format; entryDate is stored as
+ * native Date because mat-datepicker (with MatNativeDateModule) cannot read/format
+ * dayjs objects directly.
  */
-type FormValueOf<T extends ITimeEntry | NewTimeEntry> = Omit<T, 'startTime' | 'endTime'> & {
+type FormValueOf<T extends ITimeEntry | NewTimeEntry> = Omit<T, 'startTime' | 'endTime' | 'entryDate'> & {
   startTime?: string | null;
   endTime?: string | null;
+  entryDate?: Date | null;
 };
 
 type TimeEntryFormRawValue = FormValueOf<ITimeEntry>;
 
 type NewTimeEntryFormRawValue = FormValueOf<NewTimeEntry>;
 
-type TimeEntryFormDefaults = Pick<NewTimeEntry, 'id' | 'startTime' | 'endTime'>;
+type TimeEntryFormDefaults = Pick<NewTimeEntry, 'id'> & { startTime: dayjs.Dayjs | null; endTime: dayjs.Dayjs | null };
 
 type TimeEntryFormGroupContent = {
   id: FormControl<TimeEntryFormRawValue['id'] | NewTimeEntry['id']>;
@@ -58,7 +62,9 @@ export class TimeEntryFormService {
           validators: [Validators.required],
         },
       ),
-      description: new FormControl(timeEntryRawValue.description),
+      description: new FormControl(timeEntryRawValue.description, {
+        validators: [Validators.required],
+      }),
       startTime: new FormControl(timeEntryRawValue.startTime, {
         validators: [Validators.required],
       }),
@@ -71,8 +77,12 @@ export class TimeEntryFormService {
       entryDate: new FormControl(timeEntryRawValue.entryDate, {
         validators: [Validators.required],
       }),
-      task: new FormControl(timeEntryRawValue.task),
-      employee: new FormControl(timeEntryRawValue.employee),
+      task: new FormControl(timeEntryRawValue.task, {
+        validators: [Validators.required],
+      }),
+      employee: new FormControl(timeEntryRawValue.employee, {
+        validators: [Validators.required],
+      }),
     });
   }
 
@@ -105,6 +115,7 @@ export class TimeEntryFormService {
       ...rawTimeEntry,
       startTime: dayjs(rawTimeEntry.startTime, DATE_TIME_FORMAT),
       endTime: dayjs(rawTimeEntry.endTime, DATE_TIME_FORMAT),
+      entryDate: this.toDayjs(rawTimeEntry.entryDate),
     };
   }
 
@@ -115,6 +126,25 @@ export class TimeEntryFormService {
       ...timeEntry,
       startTime: timeEntry.startTime ? timeEntry.startTime.format(DATE_TIME_FORMAT) : undefined,
       endTime: timeEntry.endTime ? timeEntry.endTime.format(DATE_TIME_FORMAT) : undefined,
+      entryDate: this.toDate(timeEntry.entryDate),
     };
+  }
+
+  // dayjs (from the API) -> native Date (for mat-datepicker display)
+  private toDate(value: dayjs.Dayjs | null | undefined): Date | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d.toDate() : null;
+  }
+
+  // native Date (from mat-datepicker) -> dayjs (for the API payload)
+  private toDayjs(value: Date | null | undefined): dayjs.Dayjs | null {
+    if (!value) {
+      return null;
+    }
+    const d = dayjs(value);
+    return d.isValid() ? d : null;
   }
 }

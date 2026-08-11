@@ -60,8 +60,12 @@ export class TaskCommentFormService {
       createdDate: new FormControl(taskCommentRawValue.createdDate, {
         validators: [Validators.required],
       }),
-      task: new FormControl(taskCommentRawValue.task),
-      employee: new FormControl(taskCommentRawValue.employee),
+      task: new FormControl(taskCommentRawValue.task, {
+        validators: [Validators.required],
+      }),
+      employee: new FormControl(taskCommentRawValue.employee, {
+        validators: [Validators.required],
+      }),
     });
   }
 

@@ -17,11 +17,26 @@ import { EmployeeService } from 'app/entities/employee/service/employee.service'
 import { TaskCommentService } from '../service/task-comment.service';
 import { ITaskComment } from '../task-comment.model';
 import { TaskCommentFormGroup, TaskCommentFormService } from './task-comment-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-task-comment-update',
   templateUrl: './task-comment-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./task-comment-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
 })
 export class TaskCommentUpdateComponent implements OnInit {
   isSaving = false;
