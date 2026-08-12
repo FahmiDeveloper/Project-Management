@@ -53,7 +53,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
   notifications = signal<INotification[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['title', 'message', 'type', 'isRead', 'createdDate', 'employee', 'actions'];
+  displayedColumns: string[] = ['title', 'message', 'type', 'isRead', 'createdDate', 'employee'];
 
   // ---- Title filter (debounced text input) ----
   filterTitle = signal<string>('');

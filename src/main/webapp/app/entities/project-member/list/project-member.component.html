@@ -23,6 +23,23 @@
   </h2>
 
   <div class="project-member-filter-container">
+    <mat-form-field appearance="outline" class="project-member-role-field" subscriptSizing="dynamic">
+      <mat-label>Role</mat-label>
+      <input
+        matInput
+        type="text"
+        [matAutocomplete]="roleAuto"
+        [value]="roleSearchTerm()"
+        (input)="onRoleInput($event)"
+        placeholder="Search role"
+      />
+      <mat-autocomplete #roleAuto="matAutocomplete" [displayWith]="displayRoleName" (optionSelected)="onRoleSelected($event)">
+        @for (role of filteredRoles(); track role.value) {
+          <mat-option [value]="role">{{ role.label }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="project-member-project-field" subscriptSizing="dynamic">
       <mat-label>Project</mat-label>
       <input
@@ -57,7 +74,7 @@
       </mat-autocomplete>
     </mat-form-field>
 
-    @if (filterProjectId() || filterEmployeeId()) {
+    @if (filterProjectId() || filterEmployeeId() || filterRole()) {
       <button mat-icon-button aria-label="Clear filters" class="project-member-filter-clear-btn" (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>
