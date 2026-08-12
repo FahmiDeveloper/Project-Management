@@ -14,7 +14,7 @@
         @let codeRef = editForm.get('code')!;
         <mat-form-field appearance="outline" class="w-100 mb-2">
           <mat-label jhiTranslate="projectManagementApp.project.code">Code</mat-label>
-          <input matInput type="text" name="code" id="field_code" data-cy="code" formControlName="code" />
+          <input matInput type="text" name="code" id="field_code" data-cy="code" formControlName="code" readonly />
           @if (codeRef.invalid && (codeRef.touched || codeRef.dirty) && codeRef.errors?.required) {
             <ng-container>
               <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
