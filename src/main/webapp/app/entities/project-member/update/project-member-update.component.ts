@@ -15,11 +15,37 @@ import { MemberRole } from 'app/entities/enumerations/member-role.model';
 import { ProjectMemberService } from '../service/project-member.service';
 import { IProjectMember } from '../project-member.model';
 import { ProjectMemberFormGroup, ProjectMemberFormService } from './project-member-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { CustomDateAdapter, CUSTOM_DATE_FORMATS } from 'app/shared/date/custom-date-adapter';
 
 @Component({
   selector: 'jhi-project-member-update',
   templateUrl: './project-member-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./project-member-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+  ],
 })
 export class ProjectMemberUpdateComponent implements OnInit {
   isSaving = false;

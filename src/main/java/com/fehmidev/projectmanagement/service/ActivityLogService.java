@@ -89,11 +89,42 @@ public class ActivityLogService {
     }
 
     /**
+     * Get all the activityLogs, optionally filtered by employee.
+     *
+     * @param employeeId optional employee id to filter by.
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<ActivityLogDTO> findAll(Long employeeId, Pageable pageable) {
+        LOG.debug("Request to get all ActivityLogs filtered by employeeId: {}", employeeId);
+        if (employeeId != null) {
+            return activityLogRepository.findAllByEmployeeIdWithToOneRelationships(employeeId, pageable).map(activityLogMapper::toDto);
+        }
+        return activityLogRepository.findAll(pageable).map(activityLogMapper::toDto);
+    }
+
+    /**
      * Get all the activityLogs with eager load of many-to-many relationships.
      *
      * @return the list of entities.
      */
     public Page<ActivityLogDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return activityLogRepository.findAllWithEagerRelationships(pageable).map(activityLogMapper::toDto);
+    }
+
+    /**
+     * Get all the activityLogs with eager load of many-to-many relationships, optionally filtered by employee.
+     *
+     * @param employeeId optional employee id to filter by.
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    public Page<ActivityLogDTO> findAllWithEagerRelationships(Long employeeId, Pageable pageable) {
+        LOG.debug("Request to get all ActivityLogs (eager) filtered by employeeId: {}", employeeId);
+        if (employeeId != null) {
+            return activityLogRepository.findAllByEmployeeIdWithToOneRelationships(employeeId, pageable).map(activityLogMapper::toDto);
+        }
         return activityLogRepository.findAllWithEagerRelationships(pageable).map(activityLogMapper::toDto);
     }
 

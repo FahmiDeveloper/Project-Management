@@ -12,11 +12,26 @@ import { TaskService } from 'app/entities/task/service/task.service';
 import { IChecklist } from '../checklist.model';
 import { ChecklistService } from '../service/checklist.service';
 import { ChecklistFormGroup, ChecklistFormService } from './checklist-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-checklist-update',
   templateUrl: './checklist-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./checklist-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
 })
 export class ChecklistUpdateComponent implements OnInit {
   isSaving = false;

@@ -48,7 +48,9 @@ export class ChecklistItemFormService {
         validators: [Validators.required],
       }),
       position: new FormControl(checklistItemRawValue.position),
-      checklist: new FormControl(checklistItemRawValue.checklist),
+      checklist: new FormControl(checklistItemRawValue.checklist, {
+        validators: [Validators.required],
+      }),
     });
   }
 

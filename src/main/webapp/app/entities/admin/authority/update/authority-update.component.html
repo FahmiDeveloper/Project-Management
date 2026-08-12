@@ -9,39 +9,44 @@
         Create or edit a Authority
       </h2>
 
+      <br />
+
       <div>
         <jhi-alert-error />
 
+        <!-- Name Field -->
         @let nameRef = editForm.get('name')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_name" jhiTranslate="projectManagementApp.adminAuthority.name">Name</label>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.adminAuthority.name">Name</mat-label>
           <input
+            matInput
             type="text"
-            class="form-control"
             name="name"
             id="field_name"
             data-cy="name"
             formControlName="name"
             [readonly]="editForm.get('name')!.disabled"
           />
-          @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
-            <div>
-              @if (editForm.get('name')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-              @if (editForm.get('name')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
-                  >This field cannot be longer than 50 characters.</small
-                >
-              }
-            </div>
+          @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (nameRef.invalid && (nameRef.touched || nameRef.dirty) && nameRef.errors?.maxlength) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                >This field cannot be longer than 50 characters.</mat-error
+              >
+            </ng-container>
+          }
+        </mat-form-field>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" mat-stroked-button (click)="previousState()">
+          <mat-icon>block</mat-icon>
+          <span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
 
         <button
@@ -49,9 +54,11 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          mat-flat-button
+          color="primary"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          <mat-icon>save</mat-icon>
+          <span jhiTranslate="entity.action.save">Save</span>
         </button>
       </div>
     </form>

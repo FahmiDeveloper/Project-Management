@@ -29,6 +29,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+interface IRoleOption {
+  value: string;
+  label: string;
+}
+
 @Component({
   selector: 'jhi-project-member',
   templateUrl: './project-member.component.html',
@@ -89,6 +94,25 @@ export class ProjectMemberComponent implements OnInit {
       return this.employees();
     }
     return this.employees().filter(e => `${e.firstName ?? ''} ${e.lastName ?? ''}`.toLowerCase().includes(term));
+  });
+
+  // ---- Role filter (searchable autocomplete) ----
+  filterRole = signal<string | null>(null);
+  roleSearchTerm = signal<string>('');
+  roles = signal<IRoleOption[]>([
+    { value: 'PROJECT_MANAGER', label: 'PROJECT_MANAGER' },
+    { value: 'TEAM_LEAD', label: 'TEAM_LEAD' },
+    { value: 'DEVELOPER', label: 'DEVELOPER' },
+    { value: 'TESTER', label: 'TESTER' },
+    { value: 'DESIGNER', label: 'DESIGNER' },
+    { value: 'BUSINESS_ANALYST', label: 'BUSINESS_ANALYST' },
+  ]);
+  filteredRoles = computed(() => {
+    const term = this.roleSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.roles();
+    }
+    return this.roles().filter(r => r.label.toLowerCase().includes(term));
   });
 
   sortState = sortStateSignal({});
@@ -157,11 +181,29 @@ export class ProjectMemberComponent implements OnInit {
     this.load();
   }
 
+  // ---- Role autocomplete handlers ----
+  displayRoleName = (role: IRoleOption | null): string => (role ? role.label : '');
+
+  onRoleInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.roleSearchTerm.set(value);
+  }
+
+  onRoleSelected(event: MatAutocompleteSelectedEvent): void {
+    const role: IRoleOption | null = event.option.value;
+    this.filterRole.set(role ? role.value : null);
+    this.roleSearchTerm.set(this.displayRoleName(role));
+    this.page = 1;
+    this.load();
+  }
+
   clearSearch(): void {
     this.filterProjectId.set(null);
     this.projectSearchTerm.set('');
     this.filterEmployeeId.set(null);
     this.employeeSearchTerm.set('');
+    this.filterRole.set(null);
+    this.roleSearchTerm.set('');
     this.page = 1;
     this.load();
   }
@@ -237,6 +279,11 @@ export class ProjectMemberComponent implements OnInit {
     const employeeId = this.filterEmployeeId();
     if (employeeId) {
       queryObject['employeeId'] = employeeId;
+    }
+
+    const role = this.filterRole();
+    if (role) {
+      queryObject['role'] = role;
     }
 
     return this.projectMemberService.query(queryObject).pipe(tap(() => (this.isLoading = false)));

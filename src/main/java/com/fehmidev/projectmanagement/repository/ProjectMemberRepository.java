@@ -27,7 +27,7 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
         return this.findAll((Specification<ProjectMember>) null, pageable);
     }
 
-    // NEW: eager fetch relationships while applying any Specification (project/employee filters)
+    // NEW: eager fetch relationships while applying any Specification (project/employee/role filters)
     @EntityGraph(attributePaths = { "project", "employee" })
     @Override
     Page<ProjectMember> findAll(Specification<ProjectMember> spec, Pageable pageable);

@@ -5,6 +5,7 @@ import com.fehmidev.projectmanagement.domain.Authority;
 import com.fehmidev.projectmanagement.domain.User;
 import com.fehmidev.projectmanagement.repository.AuthorityRepository;
 import com.fehmidev.projectmanagement.repository.UserRepository;
+import com.fehmidev.projectmanagement.repository.UserSpecification;
 import com.fehmidev.projectmanagement.security.AuthoritiesConstants;
 import com.fehmidev.projectmanagement.security.SecurityUtils;
 import com.fehmidev.projectmanagement.service.dto.AdminUserDTO;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -320,5 +322,12 @@ public class UserService {
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evictIfPresent(user.getEmail());
         }
+    }
+
+    // NEW: filtered
+    @Transactional(readOnly = true)
+    public Page<AdminUserDTO> getAllManagedUsers(String login, String email, Pageable pageable) {
+        Specification<User> spec = UserSpecification.withFilters(login, email);
+        return userRepository.findAll(spec, pageable).map(AdminUserDTO::new);
     }
 }

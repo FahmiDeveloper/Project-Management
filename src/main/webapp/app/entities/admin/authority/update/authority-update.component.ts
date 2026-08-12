@@ -10,11 +10,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IAuthority } from '../authority.model';
 import { AuthorityService } from '../service/authority.service';
 import { AuthorityFormGroup, AuthorityFormService } from './authority-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-authority-update',
   templateUrl: './authority-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./authority-update.component.scss'],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
 })
 export class AuthorityUpdateComponent implements OnInit {
   isSaving = false;

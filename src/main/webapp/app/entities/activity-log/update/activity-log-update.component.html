@@ -9,116 +9,95 @@
         Create or edit a Activity Log
       </h2>
 
+      <br />
+
       <div>
         <jhi-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.activityLog.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
+        <!-- Action Field -->
         @let actionRef = editForm.get('action')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_action" jhiTranslate="projectManagementApp.activityLog.action">Action</label>
-          <input type="text" class="form-control" name="action" id="field_action" data-cy="action" formControlName="action" />
-          @if (actionRef.invalid && (actionRef.dirty || actionRef.touched)) {
-            <div>
-              @if (editForm.get('action')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.activityLog.action">Action</mat-label>
+          <input matInput type="text" name="action" id="field_action" data-cy="action" formControlName="action" />
+          @if (actionRef.invalid && (actionRef.touched || actionRef.dirty) && actionRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
 
+        <!-- Entity Name Field -->
         @let entityNameRef = editForm.get('entityName')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_entityName" jhiTranslate="projectManagementApp.activityLog.entityName">Entity Name</label>
-          <input
-            type="text"
-            class="form-control"
-            name="entityName"
-            id="field_entityName"
-            data-cy="entityName"
-            formControlName="entityName"
-          />
-          @if (entityNameRef.invalid && (entityNameRef.dirty || entityNameRef.touched)) {
-            <div>
-              @if (editForm.get('entityName')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.activityLog.entityName">Entity Name</mat-label>
+          <input matInput type="text" name="entityName" id="field_entityName" data-cy="entityName" formControlName="entityName" />
+          @if (entityNameRef.invalid && (entityNameRef.touched || entityNameRef.dirty) && entityNameRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_entityId" jhiTranslate="projectManagementApp.activityLog.entityId">Entity Id</label>
-          <input type="number" class="form-control" name="entityId" id="field_entityId" data-cy="entityId" formControlName="entityId" />
-        </div>
+        <!-- Entity Id Field -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.activityLog.entityId">Entity Id</mat-label>
+          <input matInput type="number" name="entityId" id="field_entityId" data-cy="entityId" formControlName="entityId" />
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_description" jhiTranslate="projectManagementApp.activityLog.description">Description</label>
-          <input
-            type="text"
-            class="form-control"
-            name="description"
-            id="field_description"
-            data-cy="description"
-            formControlName="description"
-          />
-        </div>
+        <!-- Description Field -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.activityLog.description">Description</mat-label>
+          <input matInput type="text" name="description" id="field_description" data-cy="description" formControlName="description" />
+        </mat-form-field>
 
+        <!-- Created Date Field -->
         @let createdDateRef = editForm.get('createdDate')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_createdDate" jhiTranslate="projectManagementApp.activityLog.createdDate">Created Date</label>
-          <div class="d-flex">
-            <input
-              id="field_createdDate"
-              data-cy="createdDate"
-              type="datetime-local"
-              class="form-control"
-              name="createdDate"
-              formControlName="createdDate"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          @if (createdDateRef.invalid && (createdDateRef.dirty || createdDateRef.touched)) {
-            <div>
-              @if (editForm.get('createdDate')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('createdDate')?.errors?.datetimelocal"
-                jhiTranslate="entity.validation.datetimelocal"
-                >This field should be a date and time.</small
-              >
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.activityLog.createdDate">Created Date</mat-label>
+          <input
+            matInput
+            type="datetime-local"
+            name="createdDate"
+            id="field_createdDate"
+            data-cy="createdDate"
+            formControlName="createdDate"
+            placeholder="YYYY-MM-DD HH:mm"
+          />
+          @if (createdDateRef.invalid && (createdDateRef.touched || createdDateRef.dirty) && createdDateRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (createdDateRef.invalid && (createdDateRef.touched || createdDateRef.dirty) && createdDateRef.errors?.datetimelocal) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.datetimelocal">This field should be a date and time.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_employee" jhiTranslate="projectManagementApp.activityLog.employee">Employee</label>
-          <select
-            class="form-control"
-            id="field_employee"
-            data-cy="employee"
-            name="employee"
-            formControlName="employee"
-            [compareWith]="compareEmployee"
-          >
-            <option [ngValue]="null"></option>
+        <!-- Employee Field -->
+        @let employeeRef = editForm.get('employee')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.activityLog.employee">Employee</mat-label>
+          <mat-select id="field_employee" data-cy="employee" name="employee" formControlName="employee" [compareWith]="compareEmployee">
+            <mat-option [value]="null"></mat-option>
             @for (employeeOption of employeesSharedCollection; track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</option>
+              <mat-option [value]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+          @if (employeeRef.invalid && (employeeRef.touched || employeeRef.dirty) && employeeRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" mat-stroked-button (click)="previousState()">
+          <mat-icon>block</mat-icon>
+          <span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
 
         <button
@@ -126,9 +105,11 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          mat-flat-button
+          color="primary"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          <mat-icon>save</mat-icon>
+          <span jhiTranslate="entity.action.save">Save</span>
         </button>
       </div>
     </form>

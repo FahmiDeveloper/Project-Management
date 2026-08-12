@@ -12,11 +12,26 @@ import { EmployeeService } from 'app/entities/employee/service/employee.service'
 import { IActivityLog } from '../activity-log.model';
 import { ActivityLogService } from '../service/activity-log.service';
 import { ActivityLogFormGroup, ActivityLogFormService } from './activity-log-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-activity-log-update',
   templateUrl: './activity-log-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./activity-log-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
 })
 export class ActivityLogUpdateComponent implements OnInit {
   isSaving = false;

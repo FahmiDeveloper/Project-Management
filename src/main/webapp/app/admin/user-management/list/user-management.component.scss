@@ -68,3 +68,21 @@
     transform: rotate(360deg);
   }
 }
+
+.user-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.user-login-field,
+.user-email-field {
+  width: 220px;
+}
+
+.user-filter-clear-btn {
+  height: 56px;
+  width: 56px;
+}

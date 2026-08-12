@@ -148,14 +148,15 @@ public class ProjectMemberResource {
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
         @RequestParam(name = "projectId", required = false) Long projectId,
-        @RequestParam(name = "employeeId", required = false) Long employeeId
+        @RequestParam(name = "employeeId", required = false) Long employeeId,
+        @RequestParam(name = "role", required = false) String role
     ) {
         LOG.debug("REST request to get a page of ProjectMembers");
         Page<ProjectMemberDTO> page;
         if (eagerload) {
-            page = projectMemberService.findAllWithEagerRelationships(projectId, employeeId, pageable);
+            page = projectMemberService.findAllWithEagerRelationships(projectId, employeeId, role, pageable);
         } else {
-            page = projectMemberService.findAll(projectId, employeeId, pageable);
+            page = projectMemberService.findAll(projectId, employeeId, role, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

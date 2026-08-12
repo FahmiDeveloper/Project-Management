@@ -9,68 +9,71 @@
         Create or edit a Checklist Item
       </h2>
 
+      <br />
+
       <div>
         <jhi-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.checklistItem.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
+        <!-- Content Field -->
         @let contentRef = editForm.get('content')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_content" jhiTranslate="projectManagementApp.checklistItem.content">Content</label>
-          <input type="text" class="form-control" name="content" id="field_content" data-cy="content" formControlName="content" />
-          @if (contentRef.invalid && (contentRef.dirty || contentRef.touched)) {
-            <div>
-              @if (editForm.get('content')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.checklistItem.content">Content</mat-label>
+          <input matInput type="text" name="content" id="field_content" data-cy="content" formControlName="content" />
+          @if (contentRef.invalid && (contentRef.touched || contentRef.dirty) && contentRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
 
+        <!-- Is Done Field -->
         @let isDoneRef = editForm.get('isDone')!;
         <div class="mb-3">
-          <label class="form-label" for="field_isDone" jhiTranslate="projectManagementApp.checklistItem.isDone">Is Done</label>
-          <input type="checkbox" class="form-check" name="isDone" id="field_isDone" data-cy="isDone" formControlName="isDone" />
-          @if (isDoneRef.invalid && (isDoneRef.dirty || isDoneRef.touched)) {
+          <mat-checkbox name="isDone" id="field_isDone" data-cy="isDone" formControlName="isDone">
+            <span jhiTranslate="projectManagementApp.checklistItem.isDone">Is Done</span>
+          </mat-checkbox>
+          @if (isDoneRef.invalid && (isDoneRef.touched || isDoneRef.dirty) && isDoneRef.errors?.required) {
             <div>
-              @if (editForm.get('isDone')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
             </div>
           }
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_position" jhiTranslate="projectManagementApp.checklistItem.position">Position</label>
-          <input type="number" class="form-control" name="position" id="field_position" data-cy="position" formControlName="position" />
-        </div>
+        <!-- Position Field -->
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.checklistItem.position">Position</mat-label>
+          <input matInput type="number" name="position" id="field_position" data-cy="position" formControlName="position" />
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_checklist" jhiTranslate="projectManagementApp.checklistItem.checklist">Checklist</label>
-          <select
-            class="form-control"
+        <!-- Checklist Field -->
+        @let checklistRef = editForm.get('checklist')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.checklistItem.checklist">Checklist</mat-label>
+          <mat-select
             id="field_checklist"
             data-cy="checklist"
             name="checklist"
             formControlName="checklist"
             [compareWith]="compareChecklist"
           >
-            <option [ngValue]="null"></option>
+            <mat-option [value]="null"></mat-option>
             @for (checklistOption of checklistsSharedCollection; track $index) {
-              <option [ngValue]="checklistOption">{{ checklistOption.title }}</option>
+              <mat-option [value]="checklistOption">{{ checklistOption.title }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+          @if (checklistRef.invalid && (checklistRef.touched || checklistRef.dirty) && checklistRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" mat-stroked-button (click)="previousState()">
+          <mat-icon>block</mat-icon>
+          <span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
 
         <button
@@ -78,9 +81,11 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          mat-flat-button
+          color="primary"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          <mat-icon>save</mat-icon>
+          <span jhiTranslate="entity.action.save">Save</span>
         </button>
       </div>
     </form>

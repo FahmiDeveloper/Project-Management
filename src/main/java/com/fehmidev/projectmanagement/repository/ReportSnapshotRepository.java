@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the ReportSnapshot entity.
  */
 @Repository
-public interface ReportSnapshotRepository extends JpaRepository<ReportSnapshot, Long> {
+public interface ReportSnapshotRepository extends JpaRepository<ReportSnapshot, Long>, JpaSpecificationExecutor<ReportSnapshot> {
     default Optional<ReportSnapshot> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
@@ -23,14 +24,13 @@ public interface ReportSnapshotRepository extends JpaRepository<ReportSnapshot, 
     }
 
     default Page<ReportSnapshot> findAllWithEagerRelationships(Pageable pageable) {
-        return this.findAllWithToOneRelationships(pageable);
+        return this.findAll((Specification<ReportSnapshot>) null, pageable);
     }
 
-    @Query(
-        value = "select reportSnapshot from ReportSnapshot reportSnapshot left join fetch reportSnapshot.project",
-        countQuery = "select count(reportSnapshot) from ReportSnapshot reportSnapshot"
-    )
-    Page<ReportSnapshot> findAllWithToOneRelationships(Pageable pageable);
+    // NEW: eager fetch relationships while applying any Specification (name/project filters)
+    @EntityGraph(attributePaths = { "project" })
+    @Override
+    Page<ReportSnapshot> findAll(Specification<ReportSnapshot> spec, Pageable pageable);
 
     @Query("select reportSnapshot from ReportSnapshot reportSnapshot left join fetch reportSnapshot.project")
     List<ReportSnapshot> findAllWithToOneRelationships();

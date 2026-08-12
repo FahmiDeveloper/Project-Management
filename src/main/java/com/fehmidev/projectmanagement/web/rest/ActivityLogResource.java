@@ -145,14 +145,15 @@ public class ActivityLogResource {
     @GetMapping("")
     public ResponseEntity<List<ActivityLogDTO>> getAllActivityLogs(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "employeeId", required = false) Long employeeId
     ) {
         LOG.debug("REST request to get a page of ActivityLogs");
         Page<ActivityLogDTO> page;
         if (eagerload) {
-            page = activityLogService.findAllWithEagerRelationships(pageable);
+            page = activityLogService.findAllWithEagerRelationships(employeeId, pageable);
         } else {
-            page = activityLogService.findAll(pageable);
+            page = activityLogService.findAll(employeeId, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

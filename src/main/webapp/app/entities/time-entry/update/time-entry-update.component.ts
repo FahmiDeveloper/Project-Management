@@ -14,11 +14,35 @@ import { EmployeeService } from 'app/entities/employee/service/employee.service'
 import { TimeEntryService } from '../service/time-entry.service';
 import { ITimeEntry } from '../time-entry.model';
 import { TimeEntryFormGroup, TimeEntryFormService } from './time-entry-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { CustomDateAdapter, CUSTOM_DATE_FORMATS } from 'app/shared/date/custom-date-adapter';
 
 @Component({
   selector: 'jhi-time-entry-update',
   templateUrl: './time-entry-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./time-entry-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+  ],
 })
 export class TimeEntryUpdateComponent implements OnInit {
   isSaving = false;

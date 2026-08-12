@@ -66,22 +66,27 @@ public class ProjectMemberService {
         return projectMemberRepository.findAll(pageable).map(projectMemberMapper::toDto);
     }
 
-    // NEW: filtered
+    // NEW: filtered by project/employee/role
     @Transactional(readOnly = true)
-    public Page<ProjectMemberDTO> findAll(Long projectId, Long employeeId, Pageable pageable) {
-        LOG.debug("Request to get all ProjectMembers filtered by projectId: {}, employeeId: {}", projectId, employeeId);
-        Specification<ProjectMember> spec = ProjectMemberSpecification.withFilters(projectId, employeeId);
+    public Page<ProjectMemberDTO> findAll(Long projectId, Long employeeId, String role, Pageable pageable) {
+        LOG.debug("Request to get all ProjectMembers filtered by projectId: {}, employeeId: {}, role: {}", projectId, employeeId, role);
+        Specification<ProjectMember> spec = ProjectMemberSpecification.withFilters(projectId, employeeId, role);
         return projectMemberRepository.findAll(spec, pageable).map(projectMemberMapper::toDto);
     }
 
     public Page<ProjectMemberDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return findAll(null, null, pageable);
+        return findAll(null, null, null, pageable);
     }
 
-    // NEW: eager, filtered
-    public Page<ProjectMemberDTO> findAllWithEagerRelationships(Long projectId, Long employeeId, Pageable pageable) {
-        LOG.debug("Request to get all ProjectMembers (eager) filtered by projectId: {}, employeeId: {}", projectId, employeeId);
-        return findAll(projectId, employeeId, pageable);
+    // NEW: eager, filtered by project/employee/role
+    public Page<ProjectMemberDTO> findAllWithEagerRelationships(Long projectId, Long employeeId, String role, Pageable pageable) {
+        LOG.debug(
+            "Request to get all ProjectMembers (eager) filtered by projectId: {}, employeeId: {}, role: {}",
+            projectId,
+            employeeId,
+            role
+        );
+        return findAll(projectId, employeeId, role, pageable);
     }
 
     @Transactional(readOnly = true)

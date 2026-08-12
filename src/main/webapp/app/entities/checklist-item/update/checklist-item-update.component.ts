@@ -12,11 +12,28 @@ import { ChecklistService } from 'app/entities/checklist/service/checklist.servi
 import { IChecklistItem } from '../checklist-item.model';
 import { ChecklistItemService } from '../service/checklist-item.service';
 import { ChecklistItemFormGroup, ChecklistItemFormService } from './checklist-item-form.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'jhi-checklist-item-update',
   templateUrl: './checklist-item-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  styleUrls: ['./checklist-item-update.component.scss'],
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
 })
 export class ChecklistItemUpdateComponent implements OnInit {
   isSaving = false;

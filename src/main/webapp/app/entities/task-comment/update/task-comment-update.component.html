@@ -9,89 +9,88 @@
         Create or edit a Task Comment
       </h2>
 
+      <br />
+
       <div>
         <jhi-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="projectManagementApp.taskComment.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
+        <!-- Content Field -->
         @let contentRef = editForm.get('content')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_content" jhiTranslate="projectManagementApp.taskComment.content">Content</label>
-          <textarea class="form-control" name="content" id="field_content" data-cy="content" formControlName="content"></textarea>
-          @if (contentRef.invalid && (contentRef.dirty || contentRef.touched)) {
-            <div>
-              @if (editForm.get('content')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.taskComment.content">Content</mat-label>
+          <textarea matInput name="content" id="field_content" data-cy="content" formControlName="content" rows="3"></textarea>
+          @if (contentRef.invalid && (contentRef.touched || contentRef.dirty) && contentRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+        </mat-form-field>
 
+        <!-- Created Date Field -->
         @let createdDateRef = editForm.get('createdDate')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_createdDate" jhiTranslate="projectManagementApp.taskComment.createdDate">Created Date</label>
-          <div class="d-flex">
-            <input
-              id="field_createdDate"
-              data-cy="createdDate"
-              type="datetime-local"
-              class="form-control"
-              name="createdDate"
-              formControlName="createdDate"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          @if (createdDateRef.invalid && (createdDateRef.dirty || createdDateRef.touched)) {
-            <div>
-              @if (editForm.get('createdDate')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('createdDate')?.errors?.datetimelocal"
-                jhiTranslate="entity.validation.datetimelocal"
-                >This field should be a date and time.</small
-              >
-            </div>
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.taskComment.createdDate">Created Date</mat-label>
+          <input
+            matInput
+            type="datetime-local"
+            name="createdDate"
+            id="field_createdDate"
+            data-cy="createdDate"
+            formControlName="createdDate"
+            placeholder="YYYY-MM-DD HH:mm"
+          />
+          @if (createdDateRef.invalid && (createdDateRef.touched || createdDateRef.dirty) && createdDateRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
           }
-        </div>
+          @if (createdDateRef.invalid && (createdDateRef.touched || createdDateRef.dirty) && createdDateRef.errors?.datetimelocal) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.datetimelocal">This field should be a date and time.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_task" jhiTranslate="projectManagementApp.taskComment.task">Task</label>
-          <select class="form-control" id="field_task" data-cy="task" name="task" formControlName="task" [compareWith]="compareTask">
-            <option [ngValue]="null"></option>
+        <!-- Task Field -->
+        @let taskRef = editForm.get('task')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.taskComment.task">Task</mat-label>
+          <mat-select id="field_task" data-cy="task" name="task" formControlName="task" [compareWith]="compareTask">
+            <mat-option [value]="null"></mat-option>
             @for (taskOption of tasksSharedCollection; track $index) {
-              <option [ngValue]="taskOption">{{ taskOption.title }}</option>
+              <mat-option [value]="taskOption">{{ taskOption.title }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+          @if (taskRef.invalid && (taskRef.touched || taskRef.dirty) && taskRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_employee" jhiTranslate="projectManagementApp.taskComment.employee">Employee</label>
-          <select
-            class="form-control"
-            id="field_employee"
-            data-cy="employee"
-            name="employee"
-            formControlName="employee"
-            [compareWith]="compareEmployee"
-          >
-            <option [ngValue]="null"></option>
+        <!-- Employee Field -->
+        @let employeeRef = editForm.get('employee')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.taskComment.employee">Employee</mat-label>
+          <mat-select id="field_employee" data-cy="employee" name="employee" formControlName="employee" [compareWith]="compareEmployee">
+            <mat-option [value]="null"></mat-option>
             @for (employeeOption of employeesSharedCollection; track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</option>
+              <mat-option [value]="employeeOption">{{ employeeOption.firstName }}&nbsp;{{ employeeOption.lastName }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+          @if (employeeRef.invalid && (employeeRef.touched || employeeRef.dirty) && employeeRef.errors?.required) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.required">This field is required.</mat-error>
+            </ng-container>
+          }
+        </mat-form-field>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" mat-stroked-button (click)="previousState()">
+          <mat-icon>block</mat-icon>
+          <span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
 
         <button
@@ -99,9 +98,11 @@
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          mat-flat-button
+          color="primary"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+          <mat-icon>save</mat-icon>
+          <span jhiTranslate="entity.action.save">Save</span>
         </button>
       </div>
     </form>

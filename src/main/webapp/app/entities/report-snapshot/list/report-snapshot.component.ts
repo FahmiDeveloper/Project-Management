@@ -1,7 +1,7 @@
-import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -16,8 +16,14 @@ import { IReportSnapshot } from '../report-snapshot.model';
 import { EntityArrayResponseType, ReportSnapshotService } from '../service/report-snapshot.service';
 import { ReportSnapshotDeleteDialogComponent } from '../delete/report-snapshot-delete-dialog.component';
 
+import { IProject } from 'app/entities/project/project.model';
+import { ProjectService } from 'app/entities/project/service/project.service';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -33,19 +39,39 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SortDirective,
     SortByDirective,
     FormatMediumDatetimePipe,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
+    MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
   ],
 })
-export class ReportSnapshotComponent implements OnInit {
+export class ReportSnapshotComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   reportSnapshots = signal<IReportSnapshot[]>([]);
   isLoading = false;
 
   displayedColumns: string[] = ['name', 'type', 'generatedDate', 'data', 'project', 'actions'];
+
+  // ---- Name filter (debounced text input) ----
+  filterName = signal<string>('');
+  private readonly nameInput$ = new Subject<string>();
+  private nameSubscription: Subscription | null = null;
+
+  // ---- Project filter (searchable autocomplete) ----
+  filterProjectId = signal<number | null>(null);
+  projectSearchTerm = signal<string>('');
+  projects = signal<IProject[]>([]);
+  filteredProjects = computed(() => {
+    const term = this.projectSearchTerm().toLowerCase().trim();
+    if (!term) {
+      return this.projects();
+    }
+    return this.projects().filter(p => (p.name ?? '').toLowerCase().includes(term));
+  });
 
   sortState = sortStateSignal({});
 
@@ -60,6 +86,7 @@ export class ReportSnapshotComponent implements OnInit {
   protected dataUtils = inject(DataUtils);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected readonly projectService = inject(ProjectService);
 
   trackId = (item: IReportSnapshot): number => this.reportSnapshotService.getReportSnapshotIdentifier(item);
 
@@ -70,6 +97,47 @@ export class ReportSnapshotComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+
+    this.nameSubscription = this.nameInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.filterName.set(value);
+      this.page = 1;
+      this.load();
+    });
+
+    this.projectService.query().subscribe(res => this.projects.set(res.body ?? []));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.nameSubscription?.unsubscribe();
+  }
+
+  onNameInput(value: string): void {
+    this.nameInput$.next(value);
+  }
+
+  // ---- Project autocomplete handlers ----
+  displayProjectName = (project: IProject | null): string => (project ? (project.name ?? '') : '');
+
+  onProjectInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.projectSearchTerm.set(value);
+  }
+
+  onProjectSelected(event: MatAutocompleteSelectedEvent): void {
+    const project: IProject | null = event.option.value;
+    this.filterProjectId.set(project ? project.id : null);
+    this.projectSearchTerm.set(this.displayProjectName(project));
+    this.page = 1;
+    this.load();
+  }
+
+  clearSearch(): void {
+    this.filterName.set('');
+    this.filterProjectId.set(null);
+    this.projectSearchTerm.set('');
+    this.page = 1;
+    this.load();
   }
 
   byteSize(base64String: string): string {
@@ -143,6 +211,17 @@ export class ReportSnapshotComponent implements OnInit {
       eagerload: true,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
+    const name = this.filterName().trim();
+    if (name) {
+      queryObject['name'] = name;
+    }
+
+    const projectId = this.filterProjectId();
+    if (projectId) {
+      queryObject['projectId'] = projectId;
+    }
+
     return this.reportSnapshotService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
