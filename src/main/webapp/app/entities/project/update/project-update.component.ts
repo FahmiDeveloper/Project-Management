@@ -77,6 +77,13 @@ export class ProjectUpdateComponent implements OnInit {
       this.project = project;
       if (project) {
         this.updateForm(project);
+        // Code is generated once at creation time and never editable afterwards.
+      } else {
+        // New project: generate the next sequential code for the current year,
+        // then lock the field so the user can't override it.
+        this.generateNextProjectCode().subscribe(code => {
+          this.editForm.patchValue({ code });
+        });
       }
 
       this.loadRelationshipsOptions();
@@ -158,5 +165,34 @@ export class ProjectUpdateComponent implements OnInit {
         map((employees: IEmployee[]) => this.employeeService.addEmployeeToCollectionIfMissing<IEmployee>(employees, this.project?.manager)),
       )
       .subscribe((employees: IEmployee[]) => (this.employeesSharedCollection = employees));
+  }
+
+  /**
+   * Generates the next project code for the current year in the format PR0001_<year>,
+   * e.g. PR0001_2026, PR0002_2026, etc. The sequence is based on the highest existing
+   * sequence number for the current year (i.e. the last project added), and resets
+   * to 0001 at the start of each new year.
+   */
+  protected generateNextProjectCode(): Observable<string> {
+    const currentYear = new Date().getFullYear();
+    const yearSuffix = String(currentYear);
+    const codePattern = /^PR(\d{4})_(\d{4})$/;
+
+    return this.projectService.query().pipe(
+      map((res: HttpResponse<IProject[]>) => res.body ?? []),
+      map((projects: IProject[]) => {
+        const sequencesForCurrentYear = projects
+          .map(p => p.code)
+          .filter((code): code is string => !!code)
+          .map(code => codePattern.exec(code))
+          .filter((match): match is RegExpExecArray => match !== null && match[2] === yearSuffix)
+          .map(match => parseInt(match[1], 10));
+
+        const nextSequence = sequencesForCurrentYear.length > 0 ? Math.max(...sequencesForCurrentYear) + 1 : 1;
+        const paddedSequence = String(nextSequence).padStart(4, '0');
+
+        return `PR${paddedSequence}_${yearSuffix}`;
+      }),
+    );
   }
 }

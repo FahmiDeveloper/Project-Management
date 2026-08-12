@@ -27,7 +27,8 @@
       "progress": "Progress",
       "status": "Status",
       "client": "Client",
-      "manager": "Manager"
+      "manager": "Manager",
+      "note": "Note"
     }
   }
 }

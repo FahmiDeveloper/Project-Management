@@ -31,6 +31,7 @@ type ProjectFormGroupContent = {
   budget: FormControl<IProject['budget']>;
   progress: FormControl<IProject['progress']>;
   status: FormControl<IProject['status']>;
+  note: FormControl<IProject['note']>;
   client: FormControl<IProject['client']>;
   manager: FormControl<IProject['manager']>;
 };
@@ -73,6 +74,9 @@ export class ProjectFormService {
       }),
       status: new FormControl(projectRawValue.status, {
         validators: [Validators.required],
+      }),
+      note: new FormControl(projectRawValue.note, {
+        validators: [Validators.maxLength(1000)],
       }),
       client: new FormControl(projectRawValue.client, {
         validators: [Validators.required],
