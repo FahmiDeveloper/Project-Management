@@ -38,6 +38,9 @@
             <column name="status" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="note" type="varchar(1000)">
+                <constraints nullable="true" />
+            </column>
             <column name="client_id" type="bigint">
                 <constraints nullable="true" />
             </column>

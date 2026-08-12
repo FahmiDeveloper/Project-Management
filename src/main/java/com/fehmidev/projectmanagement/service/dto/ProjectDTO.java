@@ -42,6 +42,9 @@ public class ProjectDTO implements Serializable {
     @NotNull
     private ProjectStatus status;
 
+    @Size(max = 1000)
+    private String note;
+
     private ClientDTO client;
 
     private EmployeeDTO manager;
@@ -118,6 +121,14 @@ public class ProjectDTO implements Serializable {
         this.status = status;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     public ClientDTO getClient() {
         return client;
     }
@@ -168,6 +179,7 @@ public class ProjectDTO implements Serializable {
             ", budget=" + getBudget() +
             ", progress=" + getProgress() +
             ", status='" + getStatus() + "'" +
+            ", note='" + getNote() + "'" +
             ", client=" + getClient() +
             ", manager=" + getManager() +
             "}";

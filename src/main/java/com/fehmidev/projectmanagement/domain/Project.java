@@ -63,6 +63,10 @@ public class Project implements Serializable {
     @Column(name = "status", nullable = false)
     private ProjectStatus status;
 
+    @Size(max = 1000)
+    @Column(name = "note", length = 1000)
+    private String note;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
@@ -189,6 +193,19 @@ public class Project implements Serializable {
         this.status = status;
     }
 
+    public String getNote() {
+        return this.note;
+    }
+
+    public Project note(String note) {
+        this.setNote(note);
+        return this;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     public Client getClient() {
         return this.client;
     }
@@ -247,6 +264,7 @@ public class Project implements Serializable {
             ", budget=" + getBudget() +
             ", progress=" + getProgress() +
             ", status='" + getStatus() + "'" +
+            ", note='" + getNote() + "'" +
             "}";
     }
 }
