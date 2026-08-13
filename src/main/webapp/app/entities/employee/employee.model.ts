@@ -12,6 +12,7 @@ export interface IEmployee {
   hireDate?: dayjs.Dayjs | null;
   user?: Pick<IUser, 'id' | 'login'> | null;
   department?: Pick<IDepartment, 'id' | 'name'> | null;
+  note?: string | null;
 }
 
 export type NewEmployee = Omit<IEmployee, 'id'> & { id: null };

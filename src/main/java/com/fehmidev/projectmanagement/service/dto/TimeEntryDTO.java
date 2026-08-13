@@ -32,6 +32,9 @@ public class TimeEntryDTO implements Serializable {
 
     private EmployeeDTO employee;
 
+    @Size(max = 1000)
+    private String note;
+
     public Long getId() {
         return id;
     }
@@ -96,6 +99,14 @@ public class TimeEntryDTO implements Serializable {
         this.employee = employee;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -129,6 +140,7 @@ public class TimeEntryDTO implements Serializable {
             ", entryDate='" + getEntryDate() + "'" +
             ", task=" + getTask() +
             ", employee=" + getEmployee() +
+            ", note='" + getNote() + "'" +
             "}";
     }
 }

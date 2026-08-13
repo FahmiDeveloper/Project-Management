@@ -38,6 +38,9 @@
             <column name="website" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="note" type="varchar(1000)">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>

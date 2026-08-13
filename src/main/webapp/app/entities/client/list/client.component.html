@@ -117,6 +117,22 @@
           <td mat-cell *matCellDef="let client">{{ client.website }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="note">
+          <th mat-header-cell *matHeaderCellDef jhiSortBy="note">
+            <span jhiTranslate="projectManagementApp.project.note">Note</span>
+            <mat-icon class="sort-icon">unfold_more</mat-icon>
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let client"
+            class="description-cell"
+            [matTooltip]="client.note ?? ''"
+            [matTooltipDisabled]="!client.note"
+          >
+            {{ client.note }}
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let client" class="text-end actions-cell">

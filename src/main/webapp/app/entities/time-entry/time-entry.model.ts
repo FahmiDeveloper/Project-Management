@@ -11,6 +11,7 @@ export interface ITimeEntry {
   entryDate?: dayjs.Dayjs | null;
   task?: Pick<ITask, 'id' | 'title'> | null;
   employee?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
+  note?: string | null;
 }
 
 export type NewTimeEntry = Omit<ITimeEntry, 'id'> & { id: null };

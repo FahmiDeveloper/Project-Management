@@ -25,7 +25,8 @@
       "address": "Address",
       "city": "City",
       "country": "Country",
-      "website": "Website"
+      "website": "Website",
+      "note": "Note"
     }
   }
 }

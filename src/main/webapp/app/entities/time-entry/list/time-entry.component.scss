@@ -67,3 +67,7 @@
   height: 56px;
   width: 56px;
 }
+
+::ng-deep .mat-mdc-tooltip .mdc-tooltip__surface {
+  font-size: 14px;
+}

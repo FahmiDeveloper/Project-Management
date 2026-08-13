@@ -90,6 +90,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     'hireDate',
     'user',
     'department',
+    'note',
     'actions',
   ];
 

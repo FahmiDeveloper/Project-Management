@@ -38,6 +38,9 @@ public class ClientDTO implements Serializable {
     @Size(max = 255)
     private String website;
 
+    @Size(max = 1000)
+    private String note;
+
     public Long getId() {
         return id;
     }
@@ -110,6 +113,14 @@ public class ClientDTO implements Serializable {
         this.website = website;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -144,6 +155,7 @@ public class ClientDTO implements Serializable {
             ", city='" + getCity() + "'" +
             ", country='" + getCountry() + "'" +
             ", website='" + getWebsite() + "'" +
+            ", note='" + getNote() + "'" +
             "}";
     }
 }

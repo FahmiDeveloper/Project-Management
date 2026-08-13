@@ -56,6 +56,9 @@
             <column name="created_by_id" type="bigint">
                 <constraints nullable="true" />
             </column>
+            <column name="note" type="varchar(1000)">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>

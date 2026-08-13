@@ -8,6 +8,7 @@ export interface IClient {
   city?: string | null;
   country?: string | null;
   website?: string | null;
+  note?: string | null;
 }
 
 export type NewClient = Omit<IClient, 'id'> & { id: null };

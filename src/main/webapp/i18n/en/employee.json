@@ -25,7 +25,8 @@
       "jobTitle": "Job Title",
       "hireDate": "Hire Date",
       "user": "User",
-      "department": "Department"
+      "department": "Department",
+      "note": "Note"
     }
   }
 }

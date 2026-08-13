@@ -31,6 +31,7 @@ type EmployeeFormGroupContent = {
   hireDate: FormControl<Date | null>;
   user: FormControl<IEmployee['user']>;
   department: FormControl<IEmployee['department']>;
+  note: FormControl<IEmployee['note']>;
 };
 
 export type EmployeeFormGroup = FormGroup<EmployeeFormGroupContent>;
@@ -73,6 +74,9 @@ export class EmployeeFormService {
       }),
       department: new FormControl(employeeRawValue.department, {
         validators: [Validators.required],
+      }),
+      note: new FormControl(employeeRawValue.note, {
+        validators: [Validators.maxLength(1000)],
       }),
     });
   }

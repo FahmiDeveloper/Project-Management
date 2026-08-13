@@ -37,6 +37,7 @@ type TaskFormGroupContent = {
   milestone: FormControl<ITask['milestone']>;
   assignedTo: FormControl<ITask['assignedTo']>;
   createdBy: FormControl<ITask['createdBy']>;
+  note: FormControl<ITask['note']>;
 };
 
 export type TaskFormGroup = FormGroup<TaskFormGroupContent>;
@@ -91,6 +92,9 @@ export class TaskFormService {
       }),
       createdBy: new FormControl(taskRawValue.createdBy, {
         validators: [Validators.required],
+      }),
+      note: new FormControl(taskRawValue.note, {
+        validators: [Validators.maxLength(1000)],
       }),
     });
   }
