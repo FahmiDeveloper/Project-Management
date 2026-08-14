@@ -162,6 +162,19 @@ public class ReportSnapshotResource {
     }
 
     /**
+     * {@code GET  /dashboards/count} : count the dashboards, optionally filtered by projectId.
+     *
+     * @param projectId optional project id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countReportSnapshots(@RequestParam(name = "projectId", required = false) Long projectId) {
+        LOG.debug("REST request to count ReportSnapshots by projectId: {}", projectId);
+        long count = projectId != null ? reportSnapshotRepository.countByProjectId(projectId) : reportSnapshotRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /report-snapshots/:id} : get the "id" reportSnapshot.
      *
      * @param id the id of the reportSnapshotDTO to retrieve.

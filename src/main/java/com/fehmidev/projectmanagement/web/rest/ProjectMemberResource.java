@@ -163,6 +163,19 @@ public class ProjectMemberResource {
     }
 
     /**
+     * {@code GET  /dashboards/count} : count the dashboards, optionally filtered by projectId.
+     *
+     * @param projectId optional project id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countProjectMembers(@RequestParam(name = "projectId", required = false) Long projectId) {
+        LOG.debug("REST request to count ProjectMembers by projectId: {}", projectId);
+        long count = projectId != null ? projectMemberRepository.countByProjectId(projectId) : projectMemberRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /project-members/:id} : get the "id" projectMember.
      *
      * @param id the id of the projectMemberDTO to retrieve.

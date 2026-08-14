@@ -164,6 +164,19 @@ public class MilestoneResource {
     }
 
     /**
+     * {@code GET  /milestones/count} : count the milestones, optionally filtered by projectId.
+     *
+     * @param projectId optional project id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countMilestones(@RequestParam(name = "projectId", required = false) Long projectId) {
+        LOG.debug("REST request to count Milestones by projectId: {}", projectId);
+        long count = projectId != null ? milestoneRepository.countByProjectId(projectId) : milestoneRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /milestones/:id} : get the "id" milestone.
      *
      * @param id the id of the milestoneDTO to retrieve.

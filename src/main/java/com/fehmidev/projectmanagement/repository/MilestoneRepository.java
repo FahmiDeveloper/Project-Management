@@ -37,4 +37,6 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long>, Jpa
 
     @Query("select milestone from Milestone milestone left join fetch milestone.project where milestone.id =:id")
     Optional<Milestone> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByProjectId(Long projectId);
 }

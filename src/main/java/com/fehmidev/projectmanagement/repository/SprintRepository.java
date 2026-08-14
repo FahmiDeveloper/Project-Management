@@ -37,4 +37,6 @@ public interface SprintRepository extends JpaRepository<Sprint, Long>, JpaSpecif
 
     @Query("select sprint from Sprint sprint left join fetch sprint.project where sprint.id =:id")
     Optional<Sprint> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByProjectId(Long projectId);
 }
