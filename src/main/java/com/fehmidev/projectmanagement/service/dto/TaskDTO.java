@@ -55,6 +55,9 @@ public class TaskDTO implements Serializable {
 
     private EmployeeDTO createdBy;
 
+    @Size(max = 1000)
+    private String note;
+
     public Long getId() {
         return id;
     }
@@ -175,6 +178,14 @@ public class TaskDTO implements Serializable {
         this.createdBy = createdBy;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -215,6 +226,7 @@ public class TaskDTO implements Serializable {
             ", milestone=" + getMilestone() +
             ", assignedTo=" + getAssignedTo() +
             ", createdBy=" + getCreatedBy() +
+            ", note='" + getNote() + "'" +
             "}";
     }
 }

@@ -43,6 +43,7 @@ type TimeEntryFormGroupContent = {
   entryDate: FormControl<TimeEntryFormRawValue['entryDate']>;
   task: FormControl<TimeEntryFormRawValue['task']>;
   employee: FormControl<TimeEntryFormRawValue['employee']>;
+  note: FormControl<TimeEntryFormRawValue['note']>;
 };
 
 export type TimeEntryFormGroup = FormGroup<TimeEntryFormGroupContent>;
@@ -82,6 +83,9 @@ export class TimeEntryFormService {
       }),
       employee: new FormControl(timeEntryRawValue.employee, {
         validators: [Validators.required],
+      }),
+      note: new FormControl(timeEntryRawValue.note, {
+        validators: [Validators.maxLength(1000)],
       }),
     });
   }

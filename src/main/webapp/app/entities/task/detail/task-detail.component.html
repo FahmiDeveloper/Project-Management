@@ -103,6 +103,10 @@
               </div>
             }
           </dd>
+          <dt><span jhiTranslate="projectManagementApp.task.note">Note</span></dt>
+          <dd>
+            <span>{{ taskRef.note }}</span>
+          </dd>
         </dl>
 
         <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

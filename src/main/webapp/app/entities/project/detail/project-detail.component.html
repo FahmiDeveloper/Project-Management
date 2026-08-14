@@ -51,10 +51,6 @@
               ]
             }}</span>
           </dd>
-          <dt><span jhiTranslate="projectManagementApp.project.note">Note</span></dt>
-          <dd>
-            <span>{{ projectRef.note }}</span>
-          </dd>
           <dt><span jhiTranslate="projectManagementApp.project.client">Client</span></dt>
           <dd>
             @if (project()!.client) {
@@ -70,6 +66,10 @@
                 <a [routerLink]="['/employee', project()!.manager?.id, 'view']">{{ projectRef.manager?.id }}</a>
               </div>
             }
+          </dd>
+          <dt><span jhiTranslate="projectManagementApp.project.note">Note</span></dt>
+          <dd>
+            <span>{{ projectRef.note }}</span>
           </dd>
         </dl>
 

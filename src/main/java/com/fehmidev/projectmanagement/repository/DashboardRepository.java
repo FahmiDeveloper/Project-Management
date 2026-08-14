@@ -39,4 +39,8 @@ public interface DashboardRepository extends JpaRepository<Dashboard, Long> {
         "select dashboard from Dashboard dashboard left join fetch dashboard.employee left join fetch dashboard.project where dashboard.id =:id"
     )
     Optional<Dashboard> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByProjectId(Long projectId);
+
+    long countByEmployeeId(Long employeeId);
 }

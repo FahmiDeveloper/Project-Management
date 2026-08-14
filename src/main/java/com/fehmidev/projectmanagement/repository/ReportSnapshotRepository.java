@@ -37,4 +37,6 @@ public interface ReportSnapshotRepository extends JpaRepository<ReportSnapshot, 
 
     @Query("select reportSnapshot from ReportSnapshot reportSnapshot left join fetch reportSnapshot.project where reportSnapshot.id =:id")
     Optional<ReportSnapshot> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByProjectId(Long projectId);
 }

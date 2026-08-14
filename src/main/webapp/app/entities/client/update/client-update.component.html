@@ -143,6 +143,20 @@
             </ng-container>
           }
         </mat-form-field>
+
+        <!-- Note Field -->
+        @let noteRef = editForm.get('note')!;
+        <mat-form-field appearance="outline" class="w-100 mb-2">
+          <mat-label jhiTranslate="projectManagementApp.client.note">Note</mat-label>
+          <textarea matInput name="note" id="field_note" data-cy="note" formControlName="note" rows="3"></textarea>
+          @if (noteRef.invalid && (noteRef.touched || noteRef.dirty) && noteRef.errors?.maxlength) {
+            <ng-container>
+              <mat-error jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '1000' }"
+                >This field cannot be longer than 1000 characters.</mat-error
+              >
+            </ng-container>
+          }
+        </mat-form-field>
       </div>
 
       <!-- Action Buttons -->

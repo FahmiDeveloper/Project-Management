@@ -183,4 +183,17 @@ public class ProjectResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
+    /**
+     * {@code GET  /Projects/count} : count the Projects, optionally filtered by managerId.
+     *
+     * @param managerId optional employee id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countProjects(@RequestParam(name = "managerId", required = false) Long managerId) {
+        LOG.debug("REST request to count Projects by managerId: {}", managerId);
+        long count = managerId != null ? projectRepository.countByManagerId(managerId) : projectRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
 }

@@ -161,6 +161,19 @@ public class TimeEntryResource {
     }
 
     /**
+     * {@code GET  /TimeEntries/count} : count the TimeEntries, optionally filtered by employeeId.
+     *
+     * @param employeeId optional employee id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countTimeEntries(@RequestParam(name = "employeeId", required = false) Long employeeId) {
+        LOG.debug("REST request to count TimeEntries by employeeId: {}", employeeId);
+        long count = employeeId != null ? timeEntryRepository.countByEmployeeId(employeeId) : timeEntryRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /time-entries/:id} : get the "id" timeEntry.
      *
      * @param id the id of the timeEntryDTO to retrieve.

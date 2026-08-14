@@ -21,6 +21,7 @@ export interface ITask {
   milestone?: Pick<IMilestone, 'id' | 'title'> | null;
   assignedTo?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
   createdBy?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
+  note?: string | null;
 }
 
 export type NewTask = Omit<ITask, 'id'> & { id: null };

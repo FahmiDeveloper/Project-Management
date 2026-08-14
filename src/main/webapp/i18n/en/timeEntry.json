@@ -24,7 +24,8 @@
       "hours": "Hours",
       "entryDate": "Entry Date",
       "task": "Task",
-      "employee": "Employee"
+      "employee": "Employee",
+      "note": "Note"
     }
   }
 }

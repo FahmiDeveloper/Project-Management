@@ -87,6 +87,10 @@ public class Task implements Serializable {
     @JsonIgnoreProperties(value = { "user", "department" }, allowSetters = true)
     private Employee createdBy;
 
+    @Size(max = 1000)
+    @Column(name = "note", length = 1000)
+    private String note;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -284,6 +288,19 @@ public class Task implements Serializable {
         return this;
     }
 
+    public String getNote() {
+        return this.note;
+    }
+
+    public Task note(String note) {
+        this.setNote(note);
+        return this;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -318,6 +335,7 @@ public class Task implements Serializable {
             ", startDate='" + getStartDate() + "'" +
             ", dueDate='" + getDueDate() + "'" +
             ", completionPercentage=" + getCompletionPercentage() +
+            ", note='" + getNote() + "'" +
             "}";
     }
 }

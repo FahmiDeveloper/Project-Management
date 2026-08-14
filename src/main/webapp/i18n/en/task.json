@@ -31,7 +31,8 @@
       "sprint": "Sprint",
       "milestone": "Milestone",
       "assignedTo": "Assigned To",
-      "createdBy": "Created By"
+      "createdBy": "Created By",
+      "note": "Note"
     }
   }
 }

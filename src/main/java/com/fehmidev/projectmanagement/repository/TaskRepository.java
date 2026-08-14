@@ -44,4 +44,8 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
         "select task from Task task left join fetch task.sprint left join fetch task.milestone left join fetch task.assignedTo left join fetch task.createdBy where task.id =:id"
     )
     Optional<Task> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByassignedToId(Long assignedToId);
+
+    long countBycreatedById(Long createdById);
 }

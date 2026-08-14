@@ -56,7 +56,7 @@ export class TimeEntryComponent implements OnInit {
   timeEntries = signal<ITimeEntry[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['description', 'startTime', 'endTime', 'hours', 'entryDate', 'task', 'employee', 'actions'];
+  displayedColumns: string[] = ['description', 'startTime', 'endTime', 'hours', 'entryDate', 'task', 'employee', 'note', 'actions'];
 
   // ---- Task filter (searchable autocomplete) ----
   filterTaskId = signal<number | null>(null);

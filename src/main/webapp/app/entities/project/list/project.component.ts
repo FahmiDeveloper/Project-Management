@@ -114,9 +114,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
     'budget',
     'progress',
     'status',
-    'note',
     'client',
     'manager',
+    'note',
     'actions',
   ];
 

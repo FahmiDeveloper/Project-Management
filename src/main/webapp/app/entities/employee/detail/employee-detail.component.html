@@ -51,6 +51,10 @@
               </div>
             }
           </dd>
+          <dt><span jhiTranslate="projectManagementApp.employee.note">Note</span></dt>
+          <dd>
+            <span>{{ employeeRef.note }}</span>
+          </dd>
         </dl>
 
         <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

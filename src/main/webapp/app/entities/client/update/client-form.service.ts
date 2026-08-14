@@ -26,6 +26,7 @@ type ClientFormGroupContent = {
   city: FormControl<IClient['city']>;
   country: FormControl<IClient['country']>;
   website: FormControl<IClient['website']>;
+  note: FormControl<IClient['note']>;
 };
 
 export type ClientFormGroup = FormGroup<ClientFormGroupContent>;
@@ -68,6 +69,9 @@ export class ClientFormService {
       }),
       website: new FormControl(clientRawValue.website, {
         validators: [Validators.maxLength(255)],
+      }),
+      note: new FormControl(clientRawValue.note, {
+        validators: [Validators.maxLength(1000)],
       }),
     });
   }

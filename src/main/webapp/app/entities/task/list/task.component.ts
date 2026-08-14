@@ -90,6 +90,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     'milestone',
     'assignedTo',
     'createdBy',
+    'note',
     'actions',
   ];
 

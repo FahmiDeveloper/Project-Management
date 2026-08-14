@@ -42,4 +42,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findByEmployee(Employee employee);
 
     Page<Notification> findByEmployee(Employee employee, Pageable pageable);
+
+    long countByEmployeeId(Long employeeId);
 }

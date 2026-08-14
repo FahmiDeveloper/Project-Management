@@ -41,4 +41,8 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
         "select projectMember from ProjectMember projectMember left join fetch projectMember.project left join fetch projectMember.employee where projectMember.id =:id"
     )
     Optional<ProjectMember> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByProjectId(Long projectId);
+
+    long countByEmployeeId(Long employeeId);
 }

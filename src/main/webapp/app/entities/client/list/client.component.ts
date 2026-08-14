@@ -46,7 +46,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   clients = signal<IClient[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['companyName', 'contactName', 'email', 'phone', 'address', 'city', 'country', 'website', 'actions'];
+  displayedColumns: string[] = ['companyName', 'contactName', 'email', 'phone', 'address', 'city', 'country', 'website', 'note', 'actions'];
 
   // ---- Company name filter (debounced text input) ----
   filterCompanyName = signal<string>('');

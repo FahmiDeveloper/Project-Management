@@ -39,6 +39,9 @@ public class EmployeeDTO implements Serializable {
 
     private DepartmentDTO department;
 
+    @Size(max = 1000)
+    private String note;
+
     public Long getId() {
         return id;
     }
@@ -111,6 +114,14 @@ public class EmployeeDTO implements Serializable {
         this.department = department;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -145,6 +156,7 @@ public class EmployeeDTO implements Serializable {
             ", hireDate='" + getHireDate() + "'" +
             ", user=" + getUser() +
             ", department=" + getDepartment() +
+            ", note='" + getNote() + "'" +
             "}";
     }
 }

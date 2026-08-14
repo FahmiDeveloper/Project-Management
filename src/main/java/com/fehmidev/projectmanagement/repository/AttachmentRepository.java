@@ -39,4 +39,6 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long>, J
         "select attachment from Attachment attachment left join fetch attachment.task left join fetch attachment.employee where attachment.id =:id"
     )
     Optional<Attachment> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByEmployeeId(Long employeeId);
 }

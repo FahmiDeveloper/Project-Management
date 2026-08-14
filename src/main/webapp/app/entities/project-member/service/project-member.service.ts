@@ -70,6 +70,11 @@ export class ProjectMemberService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  count(req?: any): Observable<HttpResponse<number>> {
+    const options = createRequestOption(req);
+    return this.http.get<number>(`${this.resourceUrl}/count`, { params: options, observe: 'response' });
+  }
+
   getProjectMemberIdentifier(projectMember: Pick<IProjectMember, 'id'>): number {
     return projectMember.id;
   }
