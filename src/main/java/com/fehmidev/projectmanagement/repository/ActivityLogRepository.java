@@ -45,4 +45,6 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
         countQuery = "select count(activityLog) from ActivityLog activityLog where activityLog.employee.id = :employeeId"
     )
     Page<ActivityLog> findAllByEmployeeIdWithToOneRelationships(@Param("employeeId") Long employeeId, Pageable pageable);
+
+    long countByEmployeeId(Long employeeId);
 }

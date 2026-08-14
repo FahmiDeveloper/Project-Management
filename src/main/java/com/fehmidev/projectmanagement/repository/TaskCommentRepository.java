@@ -39,4 +39,6 @@ public interface TaskCommentRepository extends JpaRepository<TaskComment, Long>,
         "select taskComment from TaskComment taskComment left join fetch taskComment.task left join fetch taskComment.employee where taskComment.id =:id"
     )
     Optional<TaskComment> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByEmployeeId(Long employeeId);
 }

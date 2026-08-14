@@ -41,4 +41,6 @@ public interface DashboardRepository extends JpaRepository<Dashboard, Long> {
     Optional<Dashboard> findOneWithToOneRelationships(@Param("id") Long id);
 
     long countByProjectId(Long projectId);
+
+    long countByEmployeeId(Long employeeId);
 }

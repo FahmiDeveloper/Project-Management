@@ -160,6 +160,19 @@ public class ActivityLogResource {
     }
 
     /**
+     * {@code GET  /ActivityLogs/count} : count the ActivityLogs, optionally filtered by employeeId.
+     *
+     * @param employeeId optional employee id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countActivityLogs(@RequestParam(name = "employeeId", required = false) Long employeeId) {
+        LOG.debug("REST request to count ActivityLogs by employeeId: {}", employeeId);
+        long count = employeeId != null ? activityLogRepository.countByEmployeeId(employeeId) : activityLogRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /activity-logs/:id} : get the "id" activityLog.
      *
      * @param id the id of the activityLogDTO to retrieve.

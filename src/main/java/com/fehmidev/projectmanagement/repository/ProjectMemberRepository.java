@@ -43,4 +43,6 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     Optional<ProjectMember> findOneWithToOneRelationships(@Param("id") Long id);
 
     long countByProjectId(Long projectId);
+
+    long countByEmployeeId(Long employeeId);
 }

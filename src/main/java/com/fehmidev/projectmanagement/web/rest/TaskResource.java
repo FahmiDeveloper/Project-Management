@@ -171,6 +171,25 @@ public class TaskResource {
     }
 
     /**
+     * {@code GET  /Tasks/count} : count the Tasks, optionally filtered by assignedToId and createdById.
+     *
+     * @param assignedToId optional assigned To id to filter by.
+     * @param createdById optional created By id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countTasks(
+        @RequestParam(name = "assignedToId", required = false) Long assignedToId,
+        @RequestParam(name = "createdById", required = false) Long createdById
+    ) {
+        LOG.debug("REST request to count Dashboards by assignedToId: {} and createdById: {}", assignedToId, createdById);
+        long count = assignedToId != null
+            ? taskRepository.countByassignedToId(assignedToId)
+            : createdById != null ? taskRepository.countBycreatedById(createdById) : taskRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /tasks/:id} : get the "id" task.
      *
      * @param id the id of the taskDTO to retrieve.

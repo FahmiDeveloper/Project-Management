@@ -39,4 +39,6 @@ public interface TimeEntryRepository extends JpaRepository<TimeEntry, Long>, Jpa
         "select timeEntry from TimeEntry timeEntry left join fetch timeEntry.task left join fetch timeEntry.employee where timeEntry.id =:id"
     )
     Optional<TimeEntry> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByEmployeeId(Long employeeId);
 }

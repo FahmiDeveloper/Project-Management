@@ -159,15 +159,21 @@ public class DashboardResource {
     }
 
     /**
-     * {@code GET  /dashboards/count} : count the dashboards, optionally filtered by projectId.
+     * {@code GET  /dashboards/count} : count the dashboards, optionally filtered by projectId and employeeId.
      *
      * @param projectId optional project id to filter by.
+     * @param employeeId optional employee id to filter by.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
     @GetMapping("/count")
-    public ResponseEntity<Long> countDashboards(@RequestParam(name = "projectId", required = false) Long projectId) {
-        LOG.debug("REST request to count Dashboards by projectId: {}", projectId);
-        long count = projectId != null ? dashboardRepository.countByProjectId(projectId) : dashboardRepository.count();
+    public ResponseEntity<Long> countDashboards(
+        @RequestParam(name = "projectId", required = false) Long projectId,
+        @RequestParam(name = "employeeId", required = false) Long employeeId
+    ) {
+        LOG.debug("REST request to count Dashboards by projectId: {} and employeeId: {}", projectId, employeeId);
+        long count = projectId != null
+            ? dashboardRepository.countByProjectId(projectId)
+            : employeeId != null ? dashboardRepository.countByEmployeeId(employeeId) : dashboardRepository.count();
         return ResponseEntity.ok().body(count);
     }
 

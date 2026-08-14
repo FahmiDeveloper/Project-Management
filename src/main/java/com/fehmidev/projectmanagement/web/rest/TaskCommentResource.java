@@ -162,6 +162,19 @@ public class TaskCommentResource {
     }
 
     /**
+     * {@code GET  /TaskComments/count} : count the TaskComments, optionally filtered by employeeId.
+     *
+     * @param employeeId optional employee id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countTaskComments(@RequestParam(name = "employeeId", required = false) Long employeeId) {
+        LOG.debug("REST request to count TaskComments by employeeId: {}", employeeId);
+        long count = employeeId != null ? taskCommentRepository.countByEmployeeId(employeeId) : taskCommentRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /task-comments/:id} : get the "id" taskComment.
      *
      * @param id the id of the taskCommentDTO to retrieve.

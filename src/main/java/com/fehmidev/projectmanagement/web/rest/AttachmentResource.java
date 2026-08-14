@@ -162,6 +162,19 @@ public class AttachmentResource {
     }
 
     /**
+     * {@code GET  /Attachments/count} : count the Attachments, optionally filtered by employeeId.
+     *
+     * @param employeeId optional employee id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countAttachments(@RequestParam(name = "employeeId", required = false) Long employeeId) {
+        LOG.debug("REST request to count Attachments by employeeId: {}", employeeId);
+        long count = employeeId != null ? attachmentRepository.countByEmployeeId(employeeId) : attachmentRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /attachments/:id} : get the "id" attachment.
      *
      * @param id the id of the attachmentDTO to retrieve.

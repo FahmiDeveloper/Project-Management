@@ -161,6 +161,18 @@ public class NotificationResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    /** {@code GET  /Notifications/count} : count the Notifications, optionally filtered by employeeId.
+     *
+     * @param employeeId optional employee id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countNotifications(@RequestParam(name = "employeeId", required = false) Long employeeId) {
+        LOG.debug("REST request to count Notifications by employeeId: {}", employeeId);
+        long count = employeeId != null ? notificationRepository.countByEmployeeId(employeeId) : notificationRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
     /**
      * {@code GET  /notifications/:id} : get the "id" notification.
      *
