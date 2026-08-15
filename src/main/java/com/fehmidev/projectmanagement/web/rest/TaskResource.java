@@ -171,21 +171,35 @@ public class TaskResource {
     }
 
     /**
-     * {@code GET  /Tasks/count} : count the Tasks, optionally filtered by assignedToId and createdById.
+     * {@code GET  /Tasks/count} : count the Tasks, optionally filtered by sprintId and milestoneId and assignedToId and createdById.
      *
+     * @param sprintId optional milestone To id to filter by.
+     * @param milestoneId optional milestone To id to filter by.
      * @param assignedToId optional assigned To id to filter by.
      * @param createdById optional created By id to filter by.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> countTasks(
+        @RequestParam(name = "sprintId", required = false) Long sprintId,
+        @RequestParam(name = "milestoneId", required = false) Long milestoneId,
         @RequestParam(name = "assignedToId", required = false) Long assignedToId,
         @RequestParam(name = "createdById", required = false) Long createdById
     ) {
-        LOG.debug("REST request to count Dashboards by assignedToId: {} and createdById: {}", assignedToId, createdById);
-        long count = assignedToId != null
-            ? taskRepository.countByassignedToId(assignedToId)
-            : createdById != null ? taskRepository.countBycreatedById(createdById) : taskRepository.count();
+        LOG.debug(
+            "REST request to count Tasks by sprintId: {} and milestoneId: {} and createdById: {} and createdById: {}",
+            sprintId,
+            milestoneId,
+            assignedToId,
+            createdById
+        );
+        long count = sprintId != null
+            ? taskRepository.countBySprintId(sprintId)
+            : milestoneId != null
+                ? taskRepository.countByMilestoneId(milestoneId)
+                : assignedToId != null
+                    ? taskRepository.countByAssignedToId(assignedToId)
+                    : createdById != null ? taskRepository.countByCreatedById(createdById) : taskRepository.count();
         return ResponseEntity.ok().body(count);
     }
 
