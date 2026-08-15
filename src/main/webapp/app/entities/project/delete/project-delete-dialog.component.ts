@@ -46,19 +46,21 @@ export class ProjectDeleteDialogComponent implements OnInit {
       reportSnapshots: this.reportSnapshotService.count({ 'projectId.equals': id }),
     }).subscribe(({ milestones, sprints, members, dashboards, reportSnapshots }) => {
       if ((milestones.body ?? 0) > 0) {
-        this.messages.push({ message: `This project has ${milestones.body} milestone(s) and cannot be deleted.` });
+        this.messages.push({ message: `Milestones list has ${milestones.body} row(s) with this project and cannot be deleted.` });
       }
       if ((sprints.body ?? 0) > 0) {
-        this.messages.push({ message: `This project has ${sprints.body} sprint(s) and cannot be deleted.` });
+        this.messages.push({ message: `Sprints list has ${sprints.body} row(s) with this project and cannot be deleted.` });
       }
       if ((members.body ?? 0) > 0) {
-        this.messages.push({ message: `This project has ${members.body} project member(s) and cannot be deleted.` });
+        this.messages.push({ message: `Projects members list has ${members.body} row(s) with this project and cannot be deleted.` });
       }
       if ((dashboards.body ?? 0) > 0) {
-        this.messages.push({ message: `This project has ${dashboards.body} dashboard(s) and cannot be deleted.` });
+        this.messages.push({ message: `Dashboards list has ${dashboards.body} row(s) with this project and cannot be deleted.` });
       }
       if ((reportSnapshots.body ?? 0) > 0) {
-        this.messages.push({ message: `This project has ${reportSnapshots.body} report snapshot(s) and cannot be deleted.` });
+        this.messages.push({
+          message: `Report snapshots list has ${reportSnapshots.body} row(s) with this project and cannot be deleted.`,
+        });
       }
       this.checkingReferences = false;
     });

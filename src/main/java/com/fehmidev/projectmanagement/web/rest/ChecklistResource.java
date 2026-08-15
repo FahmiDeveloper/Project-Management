@@ -161,6 +161,19 @@ public class ChecklistResource {
     }
 
     /**
+     * {@code GET  /Checklists/count} : count the Checklists, optionally filtered by taskId.
+     *
+     * @param taskId optional task id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countChecklists(@RequestParam(name = "taskId", required = false) Long taskId) {
+        LOG.debug("REST request to count Checklists by taskId: {}", taskId);
+        long count = taskId != null ? checklistRepository.countByTaskId(taskId) : checklistRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /checklists/:id} : get the "id" checklist.
      *
      * @param id the id of the checklistDTO to retrieve.

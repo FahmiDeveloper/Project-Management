@@ -40,5 +40,7 @@ public interface TimeEntryRepository extends JpaRepository<TimeEntry, Long>, Jpa
     )
     Optional<TimeEntry> findOneWithToOneRelationships(@Param("id") Long id);
 
+    long countByTaskId(Long taskId);
+
     long countByEmployeeId(Long employeeId);
 }
