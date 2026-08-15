@@ -1,0 +1,37 @@
+@mixin status-chip-base {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  background-color: #eceff1;
+  color: #37474f;
+}
+
+@mixin status-chip-colors {
+  .status-ACTIVE {
+    background-color: #e3f2e6;
+    color: #1e7e34;
+  }
+
+  .status-PLANNED {
+    background-color: #e3edfa;
+    color: #1a5fb4;
+  }
+
+  .status-ON_HOLD {
+    background-color: #fff4e0;
+    color: #b9770e;
+  }
+
+  .status-COMPLETED {
+    background-color: #e6f0ff;
+    color: #2c3e91;
+  }
+
+  .status-CANCELLED {
+    background-color: #fbe4e4;
+    color: #b02a2a;
+  }
+}

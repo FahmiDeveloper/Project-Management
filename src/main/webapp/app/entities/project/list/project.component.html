@@ -22,61 +22,140 @@
     </div>
   </h2>
 
-  <div class="project-filter-container">
-    <mat-form-field appearance="outline" class="project-filter-field" subscriptSizing="dynamic">
-      <mat-label>Filter by name</mat-label>
-      <input matInput type="text" name="filterName" [ngModel]="filterName()" (ngModelChange)="onFilterInput($event)" />
-    </mat-form-field>
+  @if (isMobile()) {
+    <mat-expansion-panel class="project-filter-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>filter_list</mat-icon>
+          <span class="filter-panel-label">Filters</span>
+          @if (activeFilterCount() > 0) {
+            <span class="filter-count-badge">{{ activeFilterCount() }}</span>
+          }
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <mat-form-field appearance="outline" class="project-status-field" subscriptSizing="dynamic">
-      <mat-label>Status</mat-label>
-      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
-        @for (status of statusOptions; track status) {
-          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.ProjectStatus.' + status">{{ status }}</mat-option>
+      <div class="project-filter-container project-filter-container-mobile">
+        <mat-form-field appearance="outline" class="project-filter-field" subscriptSizing="dynamic">
+          <mat-label>Filter by name</mat-label>
+          <input matInput type="text" name="filterName" [ngModel]="filterName()" (ngModelChange)="onFilterInput($event)" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="project-status-field" subscriptSizing="dynamic">
+          <mat-label>Status</mat-label>
+          <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.ProjectStatus.' + status">{{ status }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="project-client-field" subscriptSizing="dynamic">
+          <mat-label>Client</mat-label>
+          <input
+            matInput
+            type="text"
+            [matAutocomplete]="clientAutoMobile"
+            [value]="clientSearchTerm()"
+            (input)="onClientInput($event)"
+            placeholder="Search client"
+          />
+          <mat-autocomplete
+            #clientAutoMobile="matAutocomplete"
+            [displayWith]="displayClientName"
+            (optionSelected)="onClientSelected($event)"
+          >
+            @for (client of filteredClients(); track client.id) {
+              <mat-option [value]="client">{{ client.companyName }}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="project-manager-field" subscriptSizing="dynamic">
+          <mat-label>Manager</mat-label>
+          <input
+            matInput
+            type="text"
+            [matAutocomplete]="managerAutoMobile"
+            [value]="managerSearchTerm()"
+            (input)="onManagerInput($event)"
+            placeholder="Search manager"
+          />
+          <mat-autocomplete
+            #managerAutoMobile="matAutocomplete"
+            [displayWith]="displayManagerName"
+            (optionSelected)="onManagerSelected($event)"
+          >
+            @for (manager of filteredManagers(); track manager.id) {
+              <mat-option [value]="manager">{{ manager.firstName }} {{ manager.lastName }}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        @if (activeFilterCount() > 0) {
+          <button mat-stroked-button class="project-filter-clear-btn-mobile" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+            Clear filters
+          </button>
         }
-      </mat-select>
-    </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+  } @else {
+    <div class="project-filter-container">
+      <mat-form-field appearance="outline" class="project-filter-field" subscriptSizing="dynamic">
+        <mat-label>Filter by name</mat-label>
+        <input matInput type="text" name="filterName" [ngModel]="filterName()" (ngModelChange)="onFilterInput($event)" />
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="project-client-field" subscriptSizing="dynamic">
-      <mat-label>Client</mat-label>
-      <input
-        matInput
-        type="text"
-        [matAutocomplete]="clientAuto"
-        [value]="clientSearchTerm()"
-        (input)="onClientInput($event)"
-        placeholder="Search client"
-      />
-      <mat-autocomplete #clientAuto="matAutocomplete" [displayWith]="displayClientName" (optionSelected)="onClientSelected($event)">
-        @for (client of filteredClients(); track client.id) {
-          <mat-option [value]="client">{{ client.companyName }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="project-status-field" subscriptSizing="dynamic">
+        <mat-label>Status</mat-label>
+        <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+          @for (status of statusOptions; track status) {
+            <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.ProjectStatus.' + status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="project-manager-field" subscriptSizing="dynamic">
-      <mat-label>Manager</mat-label>
-      <input
-        matInput
-        type="text"
-        [matAutocomplete]="managerAuto"
-        [value]="managerSearchTerm()"
-        (input)="onManagerInput($event)"
-        placeholder="Search manager"
-      />
-      <mat-autocomplete #managerAuto="matAutocomplete" [displayWith]="displayManagerName" (optionSelected)="onManagerSelected($event)">
-        @for (manager of filteredManagers(); track manager.id) {
-          <mat-option [value]="manager">{{ manager.firstName }} {{ manager.lastName }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="project-client-field" subscriptSizing="dynamic">
+        <mat-label>Client</mat-label>
+        <input
+          matInput
+          type="text"
+          [matAutocomplete]="clientAuto"
+          [value]="clientSearchTerm()"
+          (input)="onClientInput($event)"
+          placeholder="Search client"
+        />
+        <mat-autocomplete #clientAuto="matAutocomplete" [displayWith]="displayClientName" (optionSelected)="onClientSelected($event)">
+          @for (client of filteredClients(); track client.id) {
+            <mat-option [value]="client">{{ client.companyName }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
 
-    @if (filterName() || filterStatus() || filterClientId() || filterManagerId()) {
-      <button mat-icon-button aria-label="Clear filters" class="project-filter-clear-btn" (click)="clearSearch()">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </div>
+      <mat-form-field appearance="outline" class="project-manager-field" subscriptSizing="dynamic">
+        <mat-label>Manager</mat-label>
+        <input
+          matInput
+          type="text"
+          [matAutocomplete]="managerAuto"
+          [value]="managerSearchTerm()"
+          (input)="onManagerInput($event)"
+          placeholder="Search manager"
+        />
+        <mat-autocomplete #managerAuto="matAutocomplete" [displayWith]="displayManagerName" (optionSelected)="onManagerSelected($event)">
+          @for (manager of filteredManagers(); track manager.id) {
+            <mat-option [value]="manager">{{ manager.firstName }} {{ manager.lastName }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      @if (activeFilterCount() > 0) {
+        <button mat-icon-button aria-label="Clear filters" class="project-filter-clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  }
 
   <jhi-alert-error />
 
@@ -87,156 +166,17 @@
       <span jhiTranslate="projectManagementApp.project.home.notFound">No Projects found</span>
     </div>
   } @else {
-    <div class="mat-elevation-z1 project-table-container">
-      <table
-        mat-table
-        [dataSource]="projects()"
-        jhiSort
-        [(sortState)]="sortState"
+    @if (isMobile()) {
+      <jhi-project-mobile-view [projects]="projects" [statusLabelFn]="statusLabel" (delete)="delete($event)" />
+    } @else {
+      <jhi-project-desktop-view
+        [projects]="projects"
+        [sortStateSignal]="sortState"
+        [statusLabelFn]="statusLabel"
         (sortChange)="navigateToWithComponentValues($event)"
-        class="project-mat-table"
-      >
-        <ng-container matColumnDef="code">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="code">
-            <span jhiTranslate="projectManagementApp.project.code">Code</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">{{ project.code }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="name">
-            <span jhiTranslate="projectManagementApp.project.name">Name</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">{{ project.name }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="description">
-            <span jhiTranslate="projectManagementApp.project.description">Description</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project" class="description-cell">{{ project.description }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="startDate">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="startDate">
-            <span jhiTranslate="projectManagementApp.project.startDate">Start Date</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">{{ project.startDate | formatMediumDate }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="endDate">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="endDate">
-            <span jhiTranslate="projectManagementApp.project.endDate">End Date</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">{{ project.endDate | formatMediumDate }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="budget">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="budget">
-            <span jhiTranslate="projectManagementApp.project.budget">Budget</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">{{ project.budget }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="progress">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="progress">
-            <span jhiTranslate="projectManagementApp.project.progress">Progress</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">{{ project.progress }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="status">
-            <span jhiTranslate="projectManagementApp.project.status">Status</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">
-            <span
-              class="status-chip"
-              [class]="'status-' + (project.status ?? 'null')"
-              [jhiTranslate]="'projectManagementApp.ProjectStatus.' + (project.status ?? 'null')"
-            >
-              {{ statusLabel(project.status) }}
-            </span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="client">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="client.id">
-            <span jhiTranslate="projectManagementApp.project.client">Client</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">
-            @if (project.client) {
-              <a [routerLink]="['/client', project.client.id, 'view']">
-                {{ project.client.companyName }}
-              </a>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="manager">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="manager.id">
-            <span jhiTranslate="projectManagementApp.project.manager">Manager</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let project">
-            @if (project.manager) {
-              <a [routerLink]="['/employee', project.manager.id, 'view']">
-                {{ project.manager.firstName }}&nbsp;{{ project.manager.lastName }}
-              </a>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="note">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="note">
-            <span jhiTranslate="projectManagementApp.project.note">Note</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td
-            mat-cell
-            *matCellDef="let project"
-            class="description-cell"
-            [matTooltip]="project.note ?? ''"
-            [matTooltipDisabled]="!project.note"
-          >
-            {{ project.note }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let project" class="text-end actions-cell">
-            <a
-              mat-icon-button
-              color="primary"
-              [routerLink]="['/project', project.id, 'view']"
-              data-cy="entityDetailsButton"
-              matTooltip="View"
-            >
-              <mat-icon>visibility</mat-icon>
-            </a>
-            <a mat-icon-button color="accent" [routerLink]="['/project', project.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
-              <mat-icon>edit</mat-icon>
-            </a>
-            <button mat-icon-button color="warn" (click)="delete(project)" data-cy="entityDeleteButton" matTooltip="Delete">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
-      </table>
-    </div>
+        (delete)="delete($event)"
+      />
+    }
   }
 
   @if (projects().length > 0) {

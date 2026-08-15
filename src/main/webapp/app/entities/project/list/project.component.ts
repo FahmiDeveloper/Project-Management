@@ -1,13 +1,13 @@
 import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subject, Subscription, combineLatest, filter, tap, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, filter, tap, debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import SharedModule from 'app/shared/shared.module';
-import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { FormatMediumDatePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
+import { SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormsModule } from '@angular/forms';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
@@ -26,12 +26,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { EntityArrayResponseType, ProjectService } from '../service/project.service';
 import { ProjectDeleteDialogComponent } from '../delete/project-delete-dialog.component';
+import { ProjectDesktopViewComponent } from './project-desktop-view/project-desktop-view.component';
+import { ProjectMobileViewComponent } from './project-mobile-view/project-mobile-view.component';
 
 @Component({
   selector: 'jhi-project',
@@ -41,24 +42,28 @@ import { ProjectDeleteDialogComponent } from '../delete/project-delete-dialog.co
     RouterModule,
     FormsModule,
     SharedModule,
-    SortDirective,
-    SortByDirective,
-    FormatMediumDatePipe,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatSelectModule,
     MatAutocompleteModule,
-    MatTableModule,
     MatPaginatorModule,
-    MatTooltipModule,
+    MatExpansionModule,
+    ProjectDesktopViewComponent,
+    ProjectMobileViewComponent,
   ],
 })
 export class ProjectComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   projects = signal<IProject[]>([]);
   isLoading = false;
+
+  // ---- Responsive layout ----
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  isMobile = toSignal(this.breakpointObserver.observe(['(max-width: 767px)']).pipe(map(result => result.matches)), {
+    initialValue: this.breakpointObserver.isMatched('(max-width: 767px)'),
+  });
 
   // ---- Name filter (debounced text input) ----
   filterName = signal<string>('');
@@ -101,24 +106,19 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   sortState = sortStateSignal({});
 
+  // Number of currently active filters, shown as a badge on the mobile filter toggle.
+  activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.filterName().trim()) count++;
+    if (this.filterStatus()) count++;
+    if (this.filterClientId()) count++;
+    if (this.filterManagerId()) count++;
+    return count;
+  });
+
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
-
-  displayedColumns: string[] = [
-    'code',
-    'name',
-    'description',
-    'startDate',
-    'endDate',
-    'budget',
-    'progress',
-    'status',
-    'client',
-    'manager',
-    'note',
-    'actions',
-  ];
 
   private readonly statusLabels: Record<string, string> = {
     null: '',
@@ -140,6 +140,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
   protected readonly employeeService = inject(EmployeeService);
 
   trackId = (item: IProject): number => this.projectService.getProjectIdentifier(item);
+
+  // Arrow property (not a method) so `this` stays bound when passed by reference to child components.
+  statusLabel = (status: string | null | undefined): string => this.statusLabels[status ?? 'null'];
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -334,9 +337,5 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   onPageChange(event: PageEvent): void {
     this.navigateToPage(event.pageIndex + 1);
-  }
-
-  statusLabel(status: string | null | undefined): string {
-    return this.statusLabels[status ?? 'null'];
   }
 }
