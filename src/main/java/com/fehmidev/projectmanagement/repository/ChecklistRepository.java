@@ -37,4 +37,6 @@ public interface ChecklistRepository extends JpaRepository<Checklist, Long>, Jpa
 
     @Query("select checklist from Checklist checklist left join fetch checklist.task where checklist.id =:id")
     Optional<Checklist> findOneWithToOneRelationships(@Param("id") Long id);
+
+    long countByTaskId(Long taskId);
 }

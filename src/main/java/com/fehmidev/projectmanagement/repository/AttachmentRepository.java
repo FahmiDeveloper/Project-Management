@@ -40,5 +40,7 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long>, J
     )
     Optional<Attachment> findOneWithToOneRelationships(@Param("id") Long id);
 
+    long countByTaskId(Long taskId);
+
     long countByEmployeeId(Long employeeId);
 }

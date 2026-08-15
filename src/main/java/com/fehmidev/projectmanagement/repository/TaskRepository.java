@@ -45,7 +45,11 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
     )
     Optional<Task> findOneWithToOneRelationships(@Param("id") Long id);
 
-    long countByassignedToId(Long assignedToId);
+    long countBySprintId(Long sprintId);
 
-    long countBycreatedById(Long createdById);
+    long countByMilestoneId(Long milestoneId);
+
+    long countByAssignedToId(Long assignedToId);
+
+    long countByCreatedById(Long createdById);
 }

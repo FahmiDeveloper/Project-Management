@@ -40,5 +40,7 @@ public interface TaskCommentRepository extends JpaRepository<TaskComment, Long>,
     )
     Optional<TaskComment> findOneWithToOneRelationships(@Param("id") Long id);
 
+    long countByTaskId(Long taskId);
+
     long countByEmployeeId(Long employeeId);
 }
