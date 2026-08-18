@@ -1,17 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin } from 'rxjs';
 
 import SharedModule from 'app/shared/shared.module';
 import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
-import { IProject } from '../project.model';
-import { ProjectService } from '../service/project.service';
-import { ProjectMemberService } from 'app/entities/project-member/service/project-member.service';
+
+import { DashboardService } from 'app/entities/dashboard/service/dashboard.service';
 import { MilestoneService } from 'app/entities/milestone/service/milestone.service';
+import { ProjectMemberService } from 'app/entities/project-member/service/project-member.service';
 import { ReportSnapshotService } from 'app/entities/report-snapshot/service/report-snapshot.service';
 import { SprintService } from 'app/entities/sprint/service/sprint.service';
-import { DashboardService } from 'app/entities/dashboard/service/dashboard.service';
+
+import { IProject } from '../project.model';
+import { ProjectService } from '../service/project.service';
 
 @Component({
   templateUrl: './project-delete-dialog.component.html',

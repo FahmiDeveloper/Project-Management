@@ -1,36 +1,31 @@
+import { HttpHeaders } from '@angular/common/http';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { HttpHeaders } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subject, Subscription, combineLatest, filter, tap, debounceTime, distinctUntilChanged, map } from 'rxjs';
+
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { BreakpointObserver } from '@angular/cdk/layout';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, map, tap } from 'rxjs';
 
 import SharedModule from 'app/shared/shared.module';
+import { MaterialModule } from 'app/shared/material.module';
 import { SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { FormsModule } from '@angular/forms';
-import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
+import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DataUtils } from 'app/core/util/data-util.service';
-import { IProject } from '../project.model';
-import { ProjectStatus } from 'app/entities/enumerations/project-status.model';
 
 import { IClient } from 'app/entities/client/client.model';
 import { ClientService } from 'app/entities/client/service/client.service';
 import { IEmployee } from 'app/entities/employee/employee.model';
 import { EmployeeService } from 'app/entities/employee/service/employee.service';
+import { ProjectStatus } from 'app/entities/enumerations/project-status.model';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatExpansionModule } from '@angular/material/expansion';
-
-import { EntityArrayResponseType, ProjectService } from '../service/project.service';
 import { ProjectDeleteDialogComponent } from '../delete/project-delete-dialog.component';
+import { EntityArrayResponseType, ProjectService } from '../service/project.service';
+import { IProject } from '../project.model';
 import { ProjectDesktopViewComponent } from './project-desktop-view/project-desktop-view.component';
 import { ProjectMobileViewComponent } from './project-mobile-view/project-mobile-view.component';
 
@@ -38,21 +33,7 @@ import { ProjectMobileViewComponent } from './project-mobile-view/project-mobile
   selector: 'jhi-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.scss'],
-  imports: [
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatAutocompleteModule,
-    MatPaginatorModule,
-    MatExpansionModule,
-    ProjectDesktopViewComponent,
-    ProjectMobileViewComponent,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule, MaterialModule, ProjectDesktopViewComponent, ProjectMobileViewComponent],
 })
 export class ProjectComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
