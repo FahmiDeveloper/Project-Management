@@ -162,6 +162,19 @@ public class ChecklistItemResource {
     }
 
     /**
+     * {@code GET  /checklistItems/count} : count the milestones, optionally filtered by checklistId.
+     *
+     * @param checklistId optional checklist id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countChecklistItems(@RequestParam(name = "checklistId", required = false) Long checklistId) {
+        LOG.debug("REST request to count ChecklistItems by checklistId: {}", checklistId);
+        long count = checklistId != null ? checklistItemRepository.countByChecklistId(checklistId) : checklistItemRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /checklist-items/:id} : get the "id" checklistItem.
      *
      * @param id the id of the checklistItemDTO to retrieve.

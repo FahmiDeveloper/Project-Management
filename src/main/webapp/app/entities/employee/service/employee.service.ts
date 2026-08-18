@@ -70,6 +70,11 @@ export class EmployeeService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  count(req?: any): Observable<HttpResponse<number>> {
+    const options = createRequestOption(req);
+    return this.http.get<number>(`${this.resourceUrl}/count`, { params: options, observe: 'response' });
+  }
+
   getEmployeeIdentifier(employee: Pick<IEmployee, 'id'>): number {
     return employee.id;
   }

@@ -1,18 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin } from 'rxjs';
 
 import SharedModule from 'app/shared/shared.module';
 import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
-import { IProject } from '../project.model';
-import { ProjectService } from '../service/project.service';
-import { TaskService } from 'app/entities/task/service/task.service';
-import { ProjectMemberService } from 'app/entities/project-member/service/project-member.service';
+
+import { DashboardService } from 'app/entities/dashboard/service/dashboard.service';
 import { MilestoneService } from 'app/entities/milestone/service/milestone.service';
+import { ProjectMemberService } from 'app/entities/project-member/service/project-member.service';
 import { ReportSnapshotService } from 'app/entities/report-snapshot/service/report-snapshot.service';
 import { SprintService } from 'app/entities/sprint/service/sprint.service';
-import { DashboardService } from 'app/entities/dashboard/service/dashboard.service';
+
+import { IProject } from '../project.model';
+import { ProjectService } from '../service/project.service';
 
 @Component({
   templateUrl: './project-delete-dialog.component.html',
@@ -39,11 +41,11 @@ export class ProjectDeleteDialogComponent implements OnInit {
 
     const id = this.project.id;
     forkJoin({
-      milestones: this.milestoneService.count({ 'projectId.equals': id }),
-      sprints: this.sprintService.count({ 'projectId.equals': id }),
-      members: this.projectMemberService.count({ 'projectId.equals': id }),
-      dashboards: this.dashboardService.count({ 'projectId.equals': id }),
-      reportSnapshots: this.reportSnapshotService.count({ 'projectId.equals': id }),
+      milestones: this.milestoneService.count({ projectId: id }),
+      sprints: this.sprintService.count({ projectId: id }),
+      members: this.projectMemberService.count({ projectId: id }),
+      dashboards: this.dashboardService.count({ projectId: id }),
+      reportSnapshots: this.reportSnapshotService.count({ projectId: id }),
     }).subscribe(({ milestones, sprints, members, dashboards, reportSnapshots }) => {
       if ((milestones.body ?? 0) > 0) {
         this.messages.push({ message: `Milestones list has ${milestones.body} row(s) with this project and cannot be deleted.` });

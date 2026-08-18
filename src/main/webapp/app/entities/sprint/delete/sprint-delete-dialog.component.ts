@@ -30,7 +30,7 @@ export class SprintDeleteDialogComponent implements OnInit {
 
     const id = this.sprint.id;
     forkJoin({
-      tasks: this.taskService.count({ 'sprintId.equals': id }),
+      tasks: this.taskService.count({ sprintId: id }),
     }).subscribe(({ tasks }) => {
       if ((tasks.body ?? 0) > 0) {
         this.messages.push({ message: `Tasks list has ${tasks.body} row(s) with this sprint and cannot be deleted.` });

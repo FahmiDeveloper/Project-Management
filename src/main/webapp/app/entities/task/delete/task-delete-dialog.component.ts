@@ -36,10 +36,10 @@ export class TaskDeleteDialogComponent implements OnInit {
 
     const id = this.task.id;
     forkJoin({
-      attachments: this.attachmentService.count({ 'taskId.equals': id }),
-      checklists: this.checklistService.count({ 'taskId.equals': id }),
-      taskComments: this.taskCommentService.count({ 'taskId.equals': id }),
-      timeEntries: this.timeEntryService.count({ 'taskId.equals': id }),
+      attachments: this.attachmentService.count({ taskId: id }),
+      checklists: this.checklistService.count({ taskId: id }),
+      taskComments: this.taskCommentService.count({ taskId: id }),
+      timeEntries: this.timeEntryService.count({ taskId: id }),
     }).subscribe(({ attachments, checklists, taskComments, timeEntries }) => {
       if ((attachments.body ?? 0) > 0) {
         this.messages.push({ message: `Attachments list has ${attachments.body} row(s) with this task and cannot be deleted.` });

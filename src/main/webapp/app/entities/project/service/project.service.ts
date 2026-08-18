@@ -1,13 +1,14 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
 
 import dayjs from 'dayjs/esm';
+import { Observable, map } from 'rxjs';
 
-import { isPresent } from 'app/core/util/operators';
-import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { createRequestOption } from 'app/core/request/request-util';
+import { isPresent } from 'app/core/util/operators';
+
 import { IProject, NewProject } from '../project.model';
 
 export type PartialUpdateProject = Partial<IProject> & Pick<IProject, 'id'>;

@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import SharedModule from 'app/shared/shared.module';
 import { FormatMediumDatePipe } from 'app/shared/date';
 import { DataUtils } from 'app/core/util/data-util.service';
+
 import { IProject } from '../project.model';
 
 @Component({

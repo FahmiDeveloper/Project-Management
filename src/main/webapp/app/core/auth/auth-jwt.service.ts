@@ -51,11 +51,14 @@ export class AuthServerProvider {
     // Save to JHipster state engine so route guards and interceptors function seamlessly
     this.stateStorageService.storeAuthenticationToken(response.id_token, rememberMe);
 
-    // Save to native window storage fallbacks for your Capacitor environment
+    // Save to native window storage fallbacks for your Capacitor environment,
+    // and clear the other storage to avoid a stale token lingering from a previous login
     if (rememberMe) {
       window.localStorage.setItem('authenticationToken', response.id_token);
+      window.sessionStorage.removeItem('authenticationToken');
     } else {
       window.sessionStorage.setItem('authenticationToken', response.id_token);
+      window.localStorage.removeItem('authenticationToken');
     }
   }
 }

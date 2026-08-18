@@ -165,6 +165,19 @@ public class EmployeeResource {
     }
 
     /**
+     * {@code GET  /employees/count} : count the milestones, optionally filtered by departmentId.
+     *
+     * @param departmentId optional department id to filter by.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countEmployees(@RequestParam(name = "departmentId", required = false) Long departmentId) {
+        LOG.debug("REST request to count Employees by departmentId: {}", departmentId);
+        long count = departmentId != null ? employeeRepository.countByDepartmentId(departmentId) : employeeRepository.count();
+        return ResponseEntity.ok().body(count);
+    }
+
+    /**
      * {@code GET  /employees/:id} : get the "id" employee.
      *
      * @param id the id of the employeeDTO to retrieve.

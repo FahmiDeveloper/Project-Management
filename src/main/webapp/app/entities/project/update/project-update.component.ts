@@ -1,49 +1,34 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { MaterialModule } from 'app/shared/material.module';
 import { AlertError } from 'app/shared/alert/alert-error.model';
-import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
+import { CUSTOM_DATE_FORMATS, CustomDateAdapter } from 'app/shared/date/custom-date-adapter';
 import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
+import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
+
 import { IClient } from 'app/entities/client/client.model';
 import { ClientService } from 'app/entities/client/service/client.service';
 import { IEmployee } from 'app/entities/employee/employee.model';
 import { EmployeeService } from 'app/entities/employee/service/employee.service';
 import { ProjectStatus } from 'app/entities/enumerations/project-status.model';
-import { ProjectService } from '../service/project.service';
+
 import { IProject } from '../project.model';
+import { ProjectService } from '../service/project.service';
 import { ProjectFormGroup, ProjectFormService } from './project-form.service';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { CustomDateAdapter, CUSTOM_DATE_FORMATS } from 'app/shared/date/custom-date-adapter';
 
 @Component({
   selector: 'jhi-project-update',
   templateUrl: './project-update.component.html',
   styleUrls: ['./project-update.component.scss'],
-  imports: [
-    SharedModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatButtonModule,
-    MatIconModule,
-  ],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, MaterialModule],
   providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },

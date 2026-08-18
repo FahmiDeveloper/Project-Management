@@ -47,16 +47,16 @@ export class EmployeeDeleteDialogComponent implements OnInit {
 
     const id = this.employee.id;
     forkJoin({
-      activityLogs: this.activityLogService.count({ 'employeeId.equals': id }),
-      attachments: this.attachmentService.count({ 'employeeId.equals': id }),
-      dashboards: this.dashboardService.count({ 'employeeId.equals': id }),
-      notifications: this.notificationService.count({ 'employeeId.equals': id }),
-      members: this.projectMemberService.count({ 'employeeId.equals': id }),
-      projects: this.projectService.count({ 'managerId.equals': id }),
-      taskComments: this.taskCommentService.count({ 'employeeId.equals': id }),
-      tasksassignedTo: this.taskService.count({ 'assignedToId.equals': id }),
-      taskscreatedBy: this.taskService.count({ 'createdById.equals': id }),
-      timeEntries: this.timeEntryService.count({ 'employeeId.equals': id }),
+      activityLogs: this.activityLogService.count({ employeeId: id }),
+      attachments: this.attachmentService.count({ employeeId: id }),
+      dashboards: this.dashboardService.count({ employeeId: id }),
+      notifications: this.notificationService.count({ employeeId: id }),
+      members: this.projectMemberService.count({ employeeId: id }),
+      projects: this.projectService.count({ managerId: id }),
+      taskComments: this.taskCommentService.count({ employeeId: id }),
+      tasksassignedTo: this.taskService.count({ assignedToId: id }),
+      taskscreatedBy: this.taskService.count({ createdById: id }),
+      timeEntries: this.timeEntryService.count({ employeeId: id }),
     }).subscribe(
       ({
         activityLogs,
