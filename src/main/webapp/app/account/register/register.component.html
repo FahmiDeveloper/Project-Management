@@ -86,6 +86,60 @@
         </div>
 
         <div class="form-group">
+          <label class="form-label" for="firstName" jhiTranslate="userManagement.firstName">First name</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">badge</mat-icon>
+            <input
+              type="text"
+              class="form-control"
+              id="firstName"
+              name="firstName"
+              placeholder="{{ 'userManagement.firstName' | translate }}"
+              formControlName="firstName"
+              data-cy="firstName"
+            />
+          </div>
+
+          @let firstNameRef = registerForm.get('firstName')!;
+          @if (firstNameRef.invalid && (firstNameRef.dirty || firstNameRef.touched)) {
+            <div class="validation-errors">
+              @if (firstNameRef?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >This field cannot be longer than 50 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="lastName" jhiTranslate="userManagement.lastName">Last name</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">badge</mat-icon>
+            <input
+              type="text"
+              class="form-control"
+              id="lastName"
+              name="lastName"
+              placeholder="{{ 'userManagement.lastName' | translate }}"
+              formControlName="lastName"
+              data-cy="lastName"
+            />
+          </div>
+
+          @let lastNameRef = registerForm.get('lastName')!;
+          @if (lastNameRef.invalid && (lastNameRef.dirty || lastNameRef.touched)) {
+            <div class="validation-errors">
+              @if (lastNameRef?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >This field cannot be longer than 50 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
           <label class="form-label" for="email" jhiTranslate="global.form.email.label">Email</label>
           <div class="input-wrapper">
             <mat-icon class="input-icon">email</mat-icon>
