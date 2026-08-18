@@ -34,5 +34,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpec
     @Query("select project from Project project left join fetch project.client left join fetch project.manager where project.id =:id")
     Optional<Project> findOneWithToOneRelationships(@Param("id") Long id);
 
+    long countByClientId(Long clientId);
+
     long countByManagerId(Long managerId);
 }

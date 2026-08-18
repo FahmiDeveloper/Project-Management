@@ -185,15 +185,21 @@ public class ProjectResource {
     }
 
     /**
-     * {@code GET  /Projects/count} : count the Projects, optionally filtered by managerId.
+     * {@code GET  /Projects/count} : count the Projects, optionally filtered by clientId and managerId.
      *
+     * @param clientId optional client id to filter by.
      * @param managerId optional employee id to filter by.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
     @GetMapping("/count")
-    public ResponseEntity<Long> countProjects(@RequestParam(name = "managerId", required = false) Long managerId) {
-        LOG.debug("REST request to count Projects by managerId: {}", managerId);
-        long count = managerId != null ? projectRepository.countByManagerId(managerId) : projectRepository.count();
+    public ResponseEntity<Long> countProjects(
+        @RequestParam(name = "clientId", required = false) Long clientId,
+        @RequestParam(name = "managerId", required = false) Long managerId
+    ) {
+        LOG.debug("REST request to count Projects by clientId: {} and managerId: {}", clientId, managerId);
+        long count = clientId != null
+            ? projectRepository.countByClientId(clientId)
+            : managerId != null ? projectRepository.countByManagerId(managerId) : projectRepository.count();
         return ResponseEntity.ok().body(count);
     }
 }

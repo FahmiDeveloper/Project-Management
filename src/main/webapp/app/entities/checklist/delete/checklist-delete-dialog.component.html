@@ -6,13 +6,19 @@
 
     <div class="modal-body">
       <jhi-alert-error />
-      <p
-        id="jhi-delete-checklist-heading"
-        jhiTranslate="projectManagementApp.checklist.delete.question"
-        [translateValues]="{ id: checklist.id }"
-      >
-        Are you sure you want to delete Checklist {{ checklist.id }}?
-      </p>
+      @if (!checkingReferences && messages.length === 0) {
+        <p
+          id="jhi-delete-checklist-heading"
+          jhiTranslate="projectManagementApp.checklist.delete.question"
+          [translateValues]="{ id: checklist.id }"
+        >
+          Are you sure you want to delete Checklist {{ checklist.id }}?
+        </p>
+      }
+
+      @for (msg of messages; track msg.message) {
+        <div class="text-danger">{{ msg.message }}</div>
+      }
     </div>
 
     <div class="modal-footer">
@@ -20,9 +26,17 @@
         <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
       </button>
 
-      <button id="jhi-confirm-delete-checklist" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
-        <fa-icon icon="times"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
-      </button>
+      @if (messages.length === 0) {
+        <button
+          id="jhi-confirm-delete-checklist"
+          data-cy="entityConfirmDeleteButton"
+          type="submit"
+          class="btn btn-danger"
+          [disabled]="checkingReferences"
+        >
+          <fa-icon icon="times"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+        </button>
+      }
     </div>
   </form>
 }

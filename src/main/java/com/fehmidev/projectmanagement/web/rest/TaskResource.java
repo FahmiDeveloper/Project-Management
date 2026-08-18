@@ -1,15 +1,19 @@
 package com.fehmidev.projectmanagement.web.rest;
 
+import com.fehmidev.projectmanagement.domain.Task;
 import com.fehmidev.projectmanagement.domain.enumeration.TaskPriority;
 import com.fehmidev.projectmanagement.domain.enumeration.TaskStatus;
 import com.fehmidev.projectmanagement.repository.TaskRepository;
 import com.fehmidev.projectmanagement.service.TaskService;
 import com.fehmidev.projectmanagement.service.dto.TaskDTO;
 import com.fehmidev.projectmanagement.web.rest.errors.BadRequestAlertException;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -187,19 +192,31 @@ public class TaskResource {
         @RequestParam(name = "createdById", required = false) Long createdById
     ) {
         LOG.debug(
-            "REST request to count Tasks by sprintId: {} and milestoneId: {} and createdById: {} and createdById: {}",
+            "REST request to count Tasks by sprintId: {} and milestoneId: {} and assignedToId: {} and createdById: {}",
             sprintId,
             milestoneId,
             assignedToId,
             createdById
         );
-        long count = sprintId != null
-            ? taskRepository.countBySprintId(sprintId)
-            : milestoneId != null
-                ? taskRepository.countByMilestoneId(milestoneId)
-                : assignedToId != null
-                    ? taskRepository.countByAssignedToId(assignedToId)
-                    : createdById != null ? taskRepository.countByCreatedById(createdById) : taskRepository.count();
+
+        Specification<Task> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (sprintId != null) {
+                predicates.add(cb.equal(root.get("sprint").get("id"), sprintId));
+            }
+            if (milestoneId != null) {
+                predicates.add(cb.equal(root.get("milestone").get("id"), milestoneId));
+            }
+            if (assignedToId != null) {
+                predicates.add(cb.equal(root.get("assignedTo").get("id"), assignedToId));
+            }
+            if (createdById != null) {
+                predicates.add(cb.equal(root.get("createdBy").get("id"), createdById));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        long count = taskRepository.count(spec);
         return ResponseEntity.ok().body(count);
     }
 
