@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-end">
       <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
         <mat-icon [class.spin]="isLoading">refresh</mat-icon>
-        <span jhiTranslate="projectManagementApp.task.home.refreshListLabel">Refresh list</span>
+        <span class="btn-label" jhiTranslate="projectManagementApp.task.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
@@ -17,96 +17,209 @@
         [routerLink]="['/task/new']"
       >
         <mat-icon>add</mat-icon>
-        <span jhiTranslate="projectManagementApp.task.home.createLabel">Create a new Task</span>
+        <span class="btn-label" jhiTranslate="projectManagementApp.task.home.createLabel">Create a new Task</span>
       </button>
     </div>
   </h2>
 
-  <div class="task-filter-container">
-    <mat-form-field appearance="outline" class="task-title-field" subscriptSizing="dynamic">
-      <mat-label>Title</mat-label>
-      <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
-    </mat-form-field>
+  @if (isMobile()) {
+    <mat-expansion-panel class="task-filter-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>filter_list</mat-icon>
+          <span class="filter-panel-label">Filters</span>
+          @if (activeFilterCount() > 0) {
+            <span class="filter-count-badge">{{ activeFilterCount() }}</span>
+          }
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <mat-form-field appearance="outline" class="task-priority-field" subscriptSizing="dynamic">
-      <mat-label>Priority</mat-label>
-      <mat-select [ngModel]="filterPriority()" (ngModelChange)="onPriorityChange($event)">
-        @for (priority of priorityOptions; track priority) {
-          <mat-option [value]="priority" [jhiTranslate]="'projectManagementApp.TaskPriority.' + priority">{{ priority }}</mat-option>
+      <div class="task-filter-container task-filter-container-mobile">
+        <mat-form-field appearance="outline" class="task-title-field" subscriptSizing="dynamic">
+          <mat-label>Title</mat-label>
+          <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="task-priority-field" subscriptSizing="dynamic">
+          <mat-label>Priority</mat-label>
+          <mat-select [ngModel]="filterPriority()" (ngModelChange)="onPriorityChange($event)">
+            @for (priority of priorityOptions; track priority) {
+              <mat-option [value]="priority" [jhiTranslate]="'projectManagementApp.TaskPriority.' + priority">{{ priority }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="task-status-field" subscriptSizing="dynamic">
+          <mat-label>Status</mat-label>
+          <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.TaskStatus.' + status">{{ status }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="task-sprint-field" subscriptSizing="dynamic">
+          <mat-label>Sprint</mat-label>
+          <input
+            matInput
+            type="text"
+            [matAutocomplete]="sprintAutoMobile"
+            [value]="sprintSearchTerm()"
+            (input)="onSprintInput($event)"
+            placeholder="Search sprint"
+          />
+          <mat-autocomplete
+            #sprintAutoMobile="matAutocomplete"
+            [displayWith]="displaySprintName"
+            (optionSelected)="onSprintSelected($event)"
+          >
+            @for (sprint of filteredSprints(); track sprint.id) {
+              <mat-option [value]="sprint">{{ sprint.name }}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="task-assigned-field" subscriptSizing="dynamic">
+          <mat-label>Assigned To</mat-label>
+          <input
+            matInput
+            type="text"
+            [matAutocomplete]="assignedToAutoMobile"
+            [value]="assignedToSearchTerm()"
+            (input)="onAssignedToInput($event)"
+            placeholder="Search employee"
+          />
+          <mat-autocomplete
+            #assignedToAutoMobile="matAutocomplete"
+            [displayWith]="displayEmployeeName"
+            (optionSelected)="onAssignedToSelected($event)"
+          >
+            @for (employee of filteredEmployees(); track employee.id) {
+              <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="task-created-by-field" subscriptSizing="dynamic">
+          <mat-label>Created By</mat-label>
+          <input
+            matInput
+            type="text"
+            [matAutocomplete]="createdByAutoMobile"
+            [value]="createdBySearchTerm()"
+            (input)="onCreatedByInput($event)"
+            placeholder="Search employee"
+          />
+          <mat-autocomplete
+            #createdByAutoMobile="matAutocomplete"
+            [displayWith]="displayEmployeeName"
+            (optionSelected)="onCreatedBySelected($event)"
+          >
+            @for (employee of filteredCreatedByEmployees(); track employee.id) {
+              <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        @if (activeFilterCount() > 0) {
+          <button mat-stroked-button class="task-filter-clear-btn-mobile" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+            Clear filters
+          </button>
         }
-      </mat-select>
-    </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+  } @else {
+    <div class="task-filter-container">
+      <mat-form-field appearance="outline" class="task-title-field" subscriptSizing="dynamic">
+        <mat-label>Title</mat-label>
+        <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="task-status-field" subscriptSizing="dynamic">
-      <mat-label>Status</mat-label>
-      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
-        @for (status of statusOptions; track status) {
-          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.TaskStatus.' + status">{{ status }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="task-priority-field" subscriptSizing="dynamic">
+        <mat-label>Priority</mat-label>
+        <mat-select [ngModel]="filterPriority()" (ngModelChange)="onPriorityChange($event)">
+          @for (priority of priorityOptions; track priority) {
+            <mat-option [value]="priority" [jhiTranslate]="'projectManagementApp.TaskPriority.' + priority">{{ priority }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="task-sprint-field" subscriptSizing="dynamic">
-      <mat-label>Sprint</mat-label>
-      <input
-        matInput
-        type="text"
-        [matAutocomplete]="sprintAuto"
-        [value]="sprintSearchTerm()"
-        (input)="onSprintInput($event)"
-        placeholder="Search sprint"
-      />
-      <mat-autocomplete #sprintAuto="matAutocomplete" [displayWith]="displaySprintName" (optionSelected)="onSprintSelected($event)">
-        @for (sprint of filteredSprints(); track sprint.id) {
-          <mat-option [value]="sprint">{{ sprint.name }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="task-status-field" subscriptSizing="dynamic">
+        <mat-label>Status</mat-label>
+        <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+          @for (status of statusOptions; track status) {
+            <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.TaskStatus.' + status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="task-assigned-field" subscriptSizing="dynamic">
-      <mat-label>Assigned To</mat-label>
-      <input
-        matInput
-        type="text"
-        [matAutocomplete]="assignedToAuto"
-        [value]="assignedToSearchTerm()"
-        (input)="onAssignedToInput($event)"
-        placeholder="Search employee"
-      />
-      <mat-autocomplete
-        #assignedToAuto="matAutocomplete"
-        [displayWith]="displayEmployeeName"
-        (optionSelected)="onAssignedToSelected($event)"
-      >
-        @for (employee of filteredEmployees(); track employee.id) {
-          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="task-sprint-field" subscriptSizing="dynamic">
+        <mat-label>Sprint</mat-label>
+        <input
+          matInput
+          type="text"
+          [matAutocomplete]="sprintAuto"
+          [value]="sprintSearchTerm()"
+          (input)="onSprintInput($event)"
+          placeholder="Search sprint"
+        />
+        <mat-autocomplete #sprintAuto="matAutocomplete" [displayWith]="displaySprintName" (optionSelected)="onSprintSelected($event)">
+          @for (sprint of filteredSprints(); track sprint.id) {
+            <mat-option [value]="sprint">{{ sprint.name }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="task-created-by-field" subscriptSizing="dynamic">
-      <mat-label>Created By</mat-label>
-      <input
-        matInput
-        type="text"
-        [matAutocomplete]="createdByAuto"
-        [value]="createdBySearchTerm()"
-        (input)="onCreatedByInput($event)"
-        placeholder="Search employee"
-      />
-      <mat-autocomplete #createdByAuto="matAutocomplete" [displayWith]="displayEmployeeName" (optionSelected)="onCreatedBySelected($event)">
-        @for (employee of filteredCreatedByEmployees(); track employee.id) {
-          <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="task-assigned-field" subscriptSizing="dynamic">
+        <mat-label>Assigned To</mat-label>
+        <input
+          matInput
+          type="text"
+          [matAutocomplete]="assignedToAuto"
+          [value]="assignedToSearchTerm()"
+          (input)="onAssignedToInput($event)"
+          placeholder="Search employee"
+        />
+        <mat-autocomplete
+          #assignedToAuto="matAutocomplete"
+          [displayWith]="displayEmployeeName"
+          (optionSelected)="onAssignedToSelected($event)"
+        >
+          @for (employee of filteredEmployees(); track employee.id) {
+            <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
 
-    @if (filterTitle() || filterStatus() || filterPriority() || filterAssignedToId() || filterSprintId() || filterCreatedById()) {
-      <button mat-icon-button aria-label="Clear filters" class="task-filter-clear-btn" (click)="clearSearch()">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </div>
+      <mat-form-field appearance="outline" class="task-created-by-field" subscriptSizing="dynamic">
+        <mat-label>Created By</mat-label>
+        <input
+          matInput
+          type="text"
+          [matAutocomplete]="createdByAuto"
+          [value]="createdBySearchTerm()"
+          (input)="onCreatedByInput($event)"
+          placeholder="Search employee"
+        />
+        <mat-autocomplete
+          #createdByAuto="matAutocomplete"
+          [displayWith]="displayEmployeeName"
+          (optionSelected)="onCreatedBySelected($event)"
+        >
+          @for (employee of filteredCreatedByEmployees(); track employee.id) {
+            <mat-option [value]="employee">{{ employee.firstName }} {{ employee.lastName }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      @if (activeFilterCount() > 0) {
+        <button mat-icon-button aria-label="Clear filters" class="task-filter-clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  }
 
   <jhi-alert-error />
 
@@ -117,167 +230,18 @@
       <span jhiTranslate="projectManagementApp.task.home.notFound">No Tasks found</span>
     </div>
   } @else {
-    <div class="mat-elevation-z1 task-table-container">
-      <table
-        mat-table
-        [dataSource]="tasks()"
-        jhiSort
-        [(sortState)]="sortState"
+    @if (isMobile()) {
+      <jhi-task-mobile-view [tasks]="tasks" [statusLabelFn]="statusLabel" [priorityLabelFn]="priorityLabel" (delete)="delete($event)" />
+    } @else {
+      <jhi-task-desktop-view
+        [tasks]="tasks"
+        [sortStateSignal]="sortState"
+        [statusLabelFn]="statusLabel"
+        [priorityLabelFn]="priorityLabel"
         (sortChange)="navigateToWithComponentValues($event)"
-        class="task-mat-table"
-      >
-        <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="title">
-            <span jhiTranslate="projectManagementApp.task.title">Title</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task">{{ task.title }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="description">
-            <span jhiTranslate="projectManagementApp.task.description">Description</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task" class="description-cell">{{ task.description }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="priority">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="priority">
-            <span jhiTranslate="projectManagementApp.task.priority">Priority</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task">
-            <span class="priority-chip" [class]="'priority-' + (task.priority ?? 'null')">
-              {{ priorityLabel(task.priority) }}
-            </span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="status">
-            <span jhiTranslate="projectManagementApp.task.status">Status</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task">
-            <span class="status-chip" [class]="'status-' + (task.status ?? 'null')">
-              {{ statusLabel(task.status) }}
-            </span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="effort">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="storyPoints">
-            <span>Effort</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task" class="effort-cell">
-            <span class="effort-line"><strong>Story points:</strong> {{ task.storyPoints }}</span>
-            <span class="effort-line"><strong>Estimated:</strong> {{ task.estimatedHours }}h</span>
-            <span class="effort-line"><strong>Spent:</strong> {{ task.spentHours }}h</span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="dates">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="startDate">
-            <span>Dates</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task" class="dates-cell">
-            <span class="date-line"><strong>Start:</strong> {{ task.startDate | formatMediumDate }}</span>
-            <span class="date-line"><strong>Due:</strong> {{ task.dueDate | formatMediumDate }}</span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="completionPercentage">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="completionPercentage">
-            <span>Completion(%)</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task">{{ task.completionPercentage }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="sprint">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="sprint.name">
-            <span jhiTranslate="projectManagementApp.task.sprint">Sprint</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task">
-            @if (task.sprint) {
-              <a [routerLink]="['/sprint', task.sprint.id, 'view']">{{ task.sprint.name }}</a>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="milestone">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="milestone.title">
-            <span jhiTranslate="projectManagementApp.task.milestone">Milestone</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task">
-            @if (task.milestone) {
-              <a [routerLink]="['/milestone', task.milestone.id, 'view']">{{ task.milestone.title }}</a>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="assignedTo">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="assignedTo.employeeNumber">
-            <span jhiTranslate="projectManagementApp.task.assignedTo">Assigned To</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task">
-            @if (task.assignedTo) {
-              <a [routerLink]="['/employee', task.assignedTo.id, 'view']">
-                {{ task.assignedTo.firstName }}&nbsp;{{ task.assignedTo.lastName }}
-              </a>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="createdBy">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="createdBy.employeeNumber">
-            <span jhiTranslate="projectManagementApp.task.createdBy">Created By</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task">
-            @if (task.createdBy) {
-              <a [routerLink]="['/employee', task.createdBy.id, 'view']">
-                {{ task.createdBy.firstName }}&nbsp;{{ task.createdBy.lastName }}
-              </a>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="note">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="note">
-            <span jhiTranslate="projectManagementApp.task.note">Note</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let task" class="description-cell" [matTooltip]="task.note ?? ''" [matTooltipDisabled]="!task.note">
-            {{ task.note }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let task" class="text-end actions-cell">
-            <a mat-icon-button color="primary" [routerLink]="['/task', task.id, 'view']" data-cy="entityDetailsButton" matTooltip="View">
-              <mat-icon>visibility</mat-icon>
-            </a>
-            <a mat-icon-button color="accent" [routerLink]="['/task', task.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
-              <mat-icon>edit</mat-icon>
-            </a>
-            <button mat-icon-button color="warn" (click)="delete(task)" data-cy="entityDeleteButton" matTooltip="Delete">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
-      </table>
-    </div>
+        (delete)="delete($event)"
+      />
+    }
   }
 
   @if (tasks().length > 0) {

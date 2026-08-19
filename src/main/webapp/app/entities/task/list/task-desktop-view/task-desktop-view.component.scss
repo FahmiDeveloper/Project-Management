@@ -1,0 +1,73 @@
+@use '../task-chips' as *;
+
+.task-table-container {
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+.task-mat-table {
+  width: 100%;
+
+  th.mat-mdc-header-cell {
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    background-color: #3f51b5;
+    color: white;
+  }
+
+  .sort-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+    margin-left: 4px;
+    color: inherit;
+    opacity: 1;
+  }
+
+  .description-cell {
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .effort-cell,
+  .dates-cell {
+    white-space: nowrap;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .effort-line,
+  .date-line {
+    display: block;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #37474f;
+
+    strong {
+      font-weight: 600;
+      margin-right: 4px;
+      color: #263238;
+    }
+  }
+
+  .actions-cell {
+    white-space: nowrap;
+  }
+
+  .status-chip,
+  .priority-chip {
+    @include chip-base;
+  }
+
+  @include status-chip-colors;
+  @include priority-chip-colors;
+}
+
+::ng-deep .mat-mdc-tooltip .mdc-tooltip__surface {
+  font-size: 14px;
+}
