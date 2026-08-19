@@ -4,7 +4,7 @@
       "home": {
         "title": "Times entries",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Time Entry",
+        "createLabel": "New Time Entry",
         "createOrEditLabel": "Create or edit a Time Entry",
         "notFound": "No Time Entries found"
       },
