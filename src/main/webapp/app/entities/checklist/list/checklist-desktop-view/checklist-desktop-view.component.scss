@@ -1,0 +1,35 @@
+.checklist-table-container {
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+.checklist-mat-table {
+  width: 100%;
+
+  th.mat-mdc-header-cell {
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    background-color: #3f51b5;
+    color: white;
+  }
+
+  .sort-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+    margin-left: 4px;
+    color: inherit;
+    opacity: 1;
+  }
+
+  .actions-cell {
+    white-space: nowrap;
+  }
+}
+
+::ng-deep .mat-mdc-tooltip .mdc-tooltip__surface {
+  font-size: 14px;
+}

@@ -1,35 +1,3 @@
-.checklist-table-container {
-  overflow-x: auto;
-  border-radius: 4px;
-}
-
-.checklist-mat-table {
-  width: 100%;
-
-  th.mat-mdc-header-cell {
-    font-weight: 600;
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-    background-color: #3f51b5;
-    color: white;
-  }
-
-  .sort-icon {
-    font-size: 16px;
-    height: 16px;
-    width: 16px;
-    vertical-align: middle;
-    margin-left: 4px;
-    color: inherit; /* Automatically inherits the header text color */
-    opacity: 1; /* Keeps full opacity to match the bold white text */
-  }
-
-  .actions-cell {
-    white-space: nowrap;
-  }
-}
-
 .checklist-paginator {
   margin-top: 0.5rem;
   background: transparent;
@@ -58,6 +26,13 @@
   flex-wrap: wrap;
 }
 
+.checklist-filter-container-mobile {
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 0;
+  padding-top: 8px;
+}
+
 .checklist-title-field {
   width: 220px;
 }
@@ -66,7 +41,84 @@
   width: 220px;
 }
 
+.checklist-filter-container-mobile .checklist-title-field,
+.checklist-filter-container-mobile .checklist-task-field {
+  width: 100%;
+}
+
 .checklist-filter-clear-btn {
   height: 56px;
   width: 56px;
+}
+
+.checklist-filter-clear-btn-mobile {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.checklist-filter-panel {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+
+  mat-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filter-panel-label {
+    font-weight: 500;
+  }
+
+  .filter-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background-color: #3f51b5;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+  }
+}
+
+// Mobile-only: keep Refresh/Create buttons side by side in one row,
+// truncating label text with an ellipsis instead of wrapping/stacking.
+@media (max-width: 767px) {
+  #page-heading {
+    display: flex;
+    flex-direction: column;
+
+    > .d-flex {
+      margin-top: 1.25rem;
+      flex-direction: row;
+      justify-content: flex-start !important;
+      width: 100%;
+      gap: 8px;
+
+      > button {
+        flex: 1 1 0;
+        min-width: 0;
+        margin-right: 0 !important;
+
+        .btn-label {
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          vertical-align: middle;
+          max-width: 100%;
+        }
+      }
+    }
+  }
+
+  .checklist-filter-panel,
+  .checklist-filter-container {
+    margin-top: 0.75rem;
+  }
 }
