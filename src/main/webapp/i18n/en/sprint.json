@@ -4,7 +4,7 @@
       "home": {
         "title": "Sprints",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Sprint",
+        "createLabel": "New sprint",
         "createOrEditLabel": "Create or edit a Sprint",
         "notFound": "No Sprints found"
       },

@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-end">
       <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
         <mat-icon [class.spin]="isLoading">refresh</mat-icon>
-        <span jhiTranslate="projectManagementApp.sprint.home.refreshListLabel">Refresh list</span>
+        <span class="btn-label" jhiTranslate="projectManagementApp.sprint.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
@@ -17,49 +17,107 @@
         [routerLink]="['/sprint/new']"
       >
         <mat-icon>add</mat-icon>
-        <span jhiTranslate="projectManagementApp.sprint.home.createLabel">Create a new Sprint</span>
+        <span class="btn-label" jhiTranslate="projectManagementApp.sprint.home.createLabel">Create a new Sprint</span>
       </button>
     </div>
   </h2>
 
-  <div class="sprint-filter-container">
-    <mat-form-field appearance="outline" class="sprint-name-field" subscriptSizing="dynamic">
-      <mat-label>Name</mat-label>
-      <input matInput type="text" [ngModel]="filterName()" (ngModelChange)="onNameInput($event)" />
-    </mat-form-field>
+  @if (isMobile()) {
+    <mat-expansion-panel class="sprint-filter-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>filter_list</mat-icon>
+          <span class="filter-panel-label">Filters</span>
+          @if (activeFilterCount() > 0) {
+            <span class="filter-count-badge">{{ activeFilterCount() }}</span>
+          }
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <mat-form-field appearance="outline" class="sprint-status-field" subscriptSizing="dynamic">
-      <mat-label>Status</mat-label>
-      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
-        @for (status of statusOptions; track status) {
-          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.SprintStatus.' + status">{{ status }}</mat-option>
+      <div class="sprint-filter-container sprint-filter-container-mobile">
+        <mat-form-field appearance="outline" class="sprint-name-field" subscriptSizing="dynamic">
+          <mat-label>Name</mat-label>
+          <input matInput type="text" [ngModel]="filterName()" (ngModelChange)="onNameInput($event)" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="sprint-status-field" subscriptSizing="dynamic">
+          <mat-label>Status</mat-label>
+          <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.SprintStatus.' + status">{{ status }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="sprint-project-field" subscriptSizing="dynamic">
+          <mat-label>Project</mat-label>
+          <input
+            matInput
+            type="text"
+            [matAutocomplete]="projectAutoMobile"
+            [value]="projectSearchTerm()"
+            (input)="onProjectInput($event)"
+            placeholder="Search project"
+          />
+          <mat-autocomplete
+            #projectAutoMobile="matAutocomplete"
+            [displayWith]="displayProjectName"
+            (optionSelected)="onProjectSelected($event)"
+          >
+            @for (project of filteredProjects(); track project.id) {
+              <mat-option [value]="project">{{ project.name }}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        @if (activeFilterCount() > 0) {
+          <button mat-stroked-button class="sprint-filter-clear-btn-mobile" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+            Clear filters
+          </button>
         }
-      </mat-select>
-    </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+  } @else {
+    <div class="sprint-filter-container">
+      <mat-form-field appearance="outline" class="sprint-name-field" subscriptSizing="dynamic">
+        <mat-label>Name</mat-label>
+        <input matInput type="text" [ngModel]="filterName()" (ngModelChange)="onNameInput($event)" />
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="sprint-project-field" subscriptSizing="dynamic">
-      <mat-label>Project</mat-label>
-      <input
-        matInput
-        type="text"
-        [matAutocomplete]="projectAuto"
-        [value]="projectSearchTerm()"
-        (input)="onProjectInput($event)"
-        placeholder="Search project"
-      />
-      <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProjectName" (optionSelected)="onProjectSelected($event)">
-        @for (project of filteredProjects(); track project.id) {
-          <mat-option [value]="project">{{ project.name }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="sprint-status-field" subscriptSizing="dynamic">
+        <mat-label>Status</mat-label>
+        <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+          @for (status of statusOptions; track status) {
+            <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.SprintStatus.' + status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    @if (filterName() || filterStatus() || filterProjectId()) {
-      <button mat-icon-button aria-label="Clear filters" class="sprint-filter-clear-btn" (click)="clearSearch()">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </div>
+      <mat-form-field appearance="outline" class="sprint-project-field" subscriptSizing="dynamic">
+        <mat-label>Project</mat-label>
+        <input
+          matInput
+          type="text"
+          [matAutocomplete]="projectAuto"
+          [value]="projectSearchTerm()"
+          (input)="onProjectInput($event)"
+          placeholder="Search project"
+        />
+        <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProjectName" (optionSelected)="onProjectSelected($event)">
+          @for (project of filteredProjects(); track project.id) {
+            <mat-option [value]="project">{{ project.name }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      @if (activeFilterCount() > 0) {
+        <button mat-icon-button aria-label="Clear filters" class="sprint-filter-clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  }
 
   <jhi-alert-error />
 
@@ -70,112 +128,17 @@
       <span jhiTranslate="projectManagementApp.sprint.home.notFound">No Sprints found</span>
     </div>
   } @else {
-    <div class="mat-elevation-z1 sprint-table-container">
-      <table
-        mat-table
-        [dataSource]="sprints()"
-        jhiSort
-        [(sortState)]="sortState"
+    @if (isMobile()) {
+      <jhi-sprint-mobile-view [sprints]="sprints" [statusLabelFn]="statusLabel" (delete)="delete($event)" />
+    } @else {
+      <jhi-sprint-desktop-view
+        [sprints]="sprints"
+        [sortStateSignal]="sortState"
+        [statusLabelFn]="statusLabel"
         (sortChange)="navigateToWithComponentValues($event)"
-        class="sprint-mat-table"
-      >
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="name">
-            <span jhiTranslate="projectManagementApp.sprint.name">Name</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let sprint">{{ sprint.name }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="goal">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="goal">
-            <span jhiTranslate="projectManagementApp.sprint.goal">Goal</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let sprint" class="goal-cell">{{ sprint.goal }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="startDate">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="startDate">
-            <span jhiTranslate="projectManagementApp.sprint.startDate">Start Date</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let sprint">{{ sprint.startDate | formatMediumDate }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="endDate">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="endDate">
-            <span jhiTranslate="projectManagementApp.sprint.endDate">End Date</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let sprint">{{ sprint.endDate | formatMediumDate }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="status">
-            <span jhiTranslate="projectManagementApp.sprint.status">Status</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let sprint">
-            <span class="status-chip" [class]="'status-' + (sprint.status ?? 'null')">
-              {{ statusLabel(sprint.status) }}
-            </span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="capacity">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="capacity">
-            <span jhiTranslate="projectManagementApp.sprint.capacity">Capacity</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let sprint">{{ sprint.capacity }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="velocity">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="velocity">
-            <span jhiTranslate="projectManagementApp.sprint.velocity">Velocity</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let sprint">{{ sprint.velocity }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="project">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="project.name">
-            <span jhiTranslate="projectManagementApp.sprint.project">Project</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let sprint">
-            @if (sprint.project) {
-              <a [routerLink]="['/project', sprint.project.id, 'view']">{{ sprint.project.name }}</a>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let sprint" class="text-end actions-cell">
-            <a
-              mat-icon-button
-              color="primary"
-              [routerLink]="['/sprint', sprint.id, 'view']"
-              data-cy="entityDetailsButton"
-              matTooltip="View"
-            >
-              <mat-icon>visibility</mat-icon>
-            </a>
-            <a mat-icon-button color="accent" [routerLink]="['/sprint', sprint.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
-              <mat-icon>edit</mat-icon>
-            </a>
-            <button mat-icon-button color="warn" (click)="delete(sprint)" data-cy="entityDeleteButton" matTooltip="Delete">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
-      </table>
-    </div>
+        (delete)="delete($event)"
+      />
+    }
   }
 
   @if (sprints().length > 0) {

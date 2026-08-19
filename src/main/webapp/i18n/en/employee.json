@@ -4,7 +4,7 @@
       "home": {
         "title": "Employees",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Employee",
+        "createLabel": "New employee",
         "createOrEditLabel": "Create or edit a Employee",
         "notFound": "No Employees found"
       },
