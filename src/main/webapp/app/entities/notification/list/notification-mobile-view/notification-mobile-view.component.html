@@ -1,0 +1,40 @@
+<div class="notification-mobile-list">
+  @for (notification of notifications(); track notification.id) {
+    <mat-card class="notification-card" appearance="outlined" [class.notification-unread]="!notification.isRead">
+      <mat-card-header>
+        <mat-card-title>{{ notification.title }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="notification-card-row">
+          <span class="type-chip">{{ notification.type }}</span>
+          <span class="read-status" [class.read-true]="notification.isRead" [class.read-false]="!notification.isRead">
+            <mat-icon class="meta-icon">{{ notification.isRead ? 'check_circle' : 'cancel' }}</mat-icon>
+            {{ notification.isRead ? 'Read' : 'Unread' }}
+          </span>
+        </div>
+
+        @if (notification.message) {
+          <div class="notification-message" [matTooltip]="notification.message">
+            {{ notification.message }}
+          </div>
+        }
+
+        <div class="notification-card-row notification-meta">
+          @if (notification.employee) {
+            <a [routerLink]="['/employee', notification.employee.id, 'view']" class="meta-link">
+              <mat-icon class="meta-icon">person</mat-icon>
+              <span>{{ notification.employee.firstName }}&nbsp;{{ notification.employee.lastName }}</span>
+            </a>
+          }
+          @if (notification.createdDate) {
+            <span class="notification-date">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ notification.createdDate | formatMediumDatetime }}
+            </span>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
