@@ -1,0 +1,75 @@
+<div class="user-mobile-list">
+  @for (user of users() ?? []; track user.id) {
+    <mat-card class="user-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ user.login }}</mat-card-title>
+        <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="user-card-row">
+          @if (!user.activated) {
+            <button
+              mat-flat-button
+              color="warn"
+              class="status-btn"
+              (click)="setActive.emit({ user, isActivated: true })"
+              jhiTranslate="userManagement.deactivated"
+            >
+              Deactivated
+            </button>
+          } @else {
+            <button
+              mat-flat-button
+              color="primary"
+              class="status-btn status-active"
+              (click)="setActive.emit({ user, isActivated: false })"
+              [disabled]="!currentAccount() || currentAccount()?.login === user.login"
+              jhiTranslate="userManagement.activated"
+            >
+              Activated
+            </button>
+          }
+          @if (user.langKey) {
+            <span class="lang-chip">{{ user.langKey }}</span>
+          }
+        </div>
+
+        @if (user.authorities && user.authorities.length > 0) {
+          <div class="user-card-row user-profiles">
+            @for (authority of user.authorities; track $index) {
+              <span class="profile-chip">{{ authority }}</span>
+            }
+          </div>
+        }
+
+        <div class="user-card-row user-meta">
+          @if (user.createdDate) {
+            <span class="meta-link">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ user.createdDate | date: 'dd/MM/yy HH:mm' }}
+            </span>
+          }
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <a mat-icon-button color="primary" [routerLink]="['./', user.login, 'view']" matTooltip="View">
+          <mat-icon>visibility</mat-icon>
+        </a>
+        <a mat-icon-button color="accent" [routerLink]="['./', user.login, 'edit']" queryParamsHandling="merge" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </a>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="delete.emit(user)"
+          [disabled]="!currentAccount() || currentAccount()?.login === user.login"
+          matTooltip="Delete"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

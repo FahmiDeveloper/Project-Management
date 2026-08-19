@@ -182,19 +182,21 @@
         </button>
       </div>
 
-      <div class="nav-section">
-        <span class="nav-label">Analytics</span>
-        <button
-          *ngFor="let item of getAnalyticsNav()"
-          mat-button
-          class="nav-item"
-          [class.active]="isActiveRoute(item.link)"
-          (click)="redirectToSideNavContext(item)"
-        >
-          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-          <span class="nav-text">{{ item.text }}</span>
-        </button>
-      </div>
+      @if (!isMobile) {
+        <div class="nav-section">
+          <span class="nav-label">Analytics</span>
+          <button
+            *ngFor="let item of getAnalyticsNav()"
+            mat-button
+            class="nav-item"
+            [class.active]="isActiveRoute(item.link)"
+            (click)="redirectToSideNavContext(item)"
+          >
+            <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+            <span class="nav-text">{{ item.text }}</span>
+          </button>
+        </div>
+      }
 
       <div class="nav-section" *jhiHasAnyAuthority="'ROLE_ADMIN'">
         <span class="nav-label" jhiTranslate="global.menu.admin.main">Administration</span>

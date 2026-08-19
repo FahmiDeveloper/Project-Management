@@ -1,0 +1,42 @@
+.time-entry-table-container {
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+.time-entry-mat-table {
+  width: 100%;
+
+  th.mat-mdc-header-cell {
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    background-color: #3f51b5;
+    color: white;
+  }
+
+  .sort-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+    margin-left: 4px;
+    color: inherit; /* Automatically inherits the header text color */
+    opacity: 1; /* Keeps full opacity to match the bold white text */
+  }
+
+  .description-cell {
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .actions-cell {
+    white-space: nowrap;
+  }
+}
+
+::ng-deep .mat-mdc-tooltip .mdc-tooltip__surface {
+  font-size: 14px;
+}

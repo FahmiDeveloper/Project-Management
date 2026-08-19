@@ -1,12 +1,13 @@
 import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subject, Subscription, combineLatest, filter, tap, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, filter, tap, debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import SharedModule from 'app/shared/shared.module';
-import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { FormatMediumDatePipe } from 'app/shared/date';
+import { SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -23,9 +24,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { EmployeeDesktopViewComponent } from './employee-desktop-view/employee-desktop-view.component';
+import { EmployeeMobileViewComponent } from './employee-mobile-view/employee-mobile-view.component';
 
 @Component({
   selector: 'jhi-employee',
@@ -35,23 +37,27 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RouterModule,
     FormsModule,
     SharedModule,
-    SortDirective,
-    SortByDirective,
-    FormatMediumDatePipe,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatAutocompleteModule,
-    MatTableModule,
     MatPaginatorModule,
-    MatTooltipModule,
+    MatExpansionModule,
+    EmployeeDesktopViewComponent,
+    EmployeeMobileViewComponent,
   ],
 })
 export class EmployeeComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   employees = signal<IEmployee[]>([]);
   isLoading = false;
+
+  // ---- Responsive layout ----
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  isMobile = toSignal(this.breakpointObserver.observe(['(max-width: 767px)']).pipe(map(result => result.matches)), {
+    initialValue: this.breakpointObserver.isMatched('(max-width: 767px)'),
+  });
 
   // ---- Name filter (debounced, matches first + last name) ----
   filterName = signal<string>('');
@@ -81,18 +87,14 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   totalItems = 0;
   page = 1;
 
-  displayedColumns: string[] = [
-    'employeeNumber',
-    'firstName',
-    'lastName',
-    'phone',
-    'jobTitle',
-    'hireDate',
-    'user',
-    'department',
-    'note',
-    'actions',
-  ];
+  // Number of currently active filters, shown as a badge on the mobile filter toggle.
+  activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.filterName().trim()) count++;
+    if (this.filterJobTitle().trim()) count++;
+    if (this.filterDepartmentId()) count++;
+    return count;
+  });
 
   public readonly router = inject(Router);
   protected readonly employeeService = inject(EmployeeService);

@@ -4,7 +4,7 @@
       "home": {
         "title": "Milestones",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Milestone",
+        "createLabel": "New milestone",
         "createOrEditLabel": "Create or edit a Milestone",
         "notFound": "No Milestones found"
       },

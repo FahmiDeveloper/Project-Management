@@ -1,12 +1,13 @@
 import { Component, NgZone, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subscription, combineLatest, filter, map, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import SharedModule from 'app/shared/shared.module';
-import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
+import { SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -25,9 +26,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TimeEntryDesktopViewComponent } from './time-entry-desktop-view/time-entry-desktop-view.component';
+import { TimeEntryMobileViewComponent } from './time-entry-mobile-view/time-entry-mobile-view.component';
 
 @Component({
   selector: 'jhi-time-entry',
@@ -37,18 +39,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RouterModule,
     FormsModule,
     SharedModule,
-    SortDirective,
-    SortByDirective,
-    FormatMediumDatetimePipe,
-    FormatMediumDatePipe,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatAutocompleteModule,
-    MatTableModule,
     MatPaginatorModule,
-    MatTooltipModule,
+    MatExpansionModule,
+    TimeEntryDesktopViewComponent,
+    TimeEntryMobileViewComponent,
   ],
 })
 export class TimeEntryComponent implements OnInit {
@@ -56,7 +55,11 @@ export class TimeEntryComponent implements OnInit {
   timeEntries = signal<ITimeEntry[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['description', 'startTime', 'endTime', 'hours', 'entryDate', 'task', 'employee', 'note', 'actions'];
+  // ---- Responsive layout ----
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  isMobile = toSignal(this.breakpointObserver.observe(['(max-width: 767px)']).pipe(map(result => result.matches)), {
+    initialValue: this.breakpointObserver.isMatched('(max-width: 767px)'),
+  });
 
   // ---- Task filter (searchable autocomplete) ----
   filterTaskId = signal<number | null>(null);
@@ -87,6 +90,14 @@ export class TimeEntryComponent implements OnInit {
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+
+  // Number of currently active filters, shown as a badge on the mobile filter toggle.
+  activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.filterTaskId()) count++;
+    if (this.filterEmployeeId()) count++;
+    return count;
+  });
 
   public readonly router = inject(Router);
   protected readonly timeEntryService = inject(TimeEntryService);

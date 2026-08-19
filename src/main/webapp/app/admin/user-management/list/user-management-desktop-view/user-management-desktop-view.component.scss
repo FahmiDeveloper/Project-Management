@@ -1,0 +1,54 @@
+.user-table-container {
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+.user-mat-table {
+  width: 100%;
+
+  th.mat-mdc-header-cell {
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    background-color: #3f51b5;
+    color: white;
+  }
+
+  .sort-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+    margin-left: 4px;
+    color: inherit;
+    opacity: 1;
+  }
+
+  .actions-cell {
+    white-space: nowrap;
+  }
+
+  .status-btn {
+    font-size: 12px;
+    min-width: 0;
+    padding: 0 12px;
+    line-height: 32px;
+  }
+
+  .profile-chip {
+    display: inline-block;
+    padding: 2px 10px;
+    margin: 2px 4px 2px 0;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    background-color: #e3edfa;
+    color: #1a5fb4;
+    white-space: nowrap;
+  }
+}
+
+::ng-deep .mat-mdc-tooltip .mdc-tooltip__surface {
+  font-size: 14px;
+}

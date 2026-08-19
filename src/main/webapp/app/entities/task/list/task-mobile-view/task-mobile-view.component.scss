@@ -1,0 +1,73 @@
+@use '../task-chips' as *;
+
+.task-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-card {
+  border-radius: 8px;
+}
+
+.task-card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.task-meta {
+  justify-content: space-between;
+}
+
+.meta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.meta-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  vertical-align: middle;
+  opacity: 0.7;
+}
+
+.task-due-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.task-card-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+
+  mat-progress-bar {
+    flex: 1;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.6);
+    min-width: 32px;
+    text-align: right;
+  }
+}
+
+.status-chip,
+.priority-chip {
+  @include chip-base;
+}
+
+@include status-chip-colors;
+@include priority-chip-colors;

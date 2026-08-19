@@ -202,7 +202,14 @@ export class BodyComponent implements OnInit, OnDestroy {
   }
 
   getManagementNav(): SideNavList[] {
-    return this.sideNavList.slice(4, 15);
+    const managementItems = this.sideNavList.slice(4, 15);
+
+    if (this.isMobile) {
+      const desktopOnlyLinks = ['/department', '/client', '/project-member', '/task-comment', '/attachment', '/checklist-item'];
+      return managementItems.filter(item => !desktopOnlyLinks.includes(item.link));
+    }
+
+    return managementItems;
   }
 
   getAnalyticsNav(): SideNavList[] {
@@ -210,7 +217,13 @@ export class BodyComponent implements OnInit, OnDestroy {
   }
 
   getAdministrationNav(): SideNavList[] {
-    return this.sideNavList.slice(18);
+    const administrationItems = this.sideNavList.slice(18);
+
+    if (this.isMobile) {
+      return administrationItems.filter(item => item.link === '/admin/user-management');
+    }
+
+    return administrationItems;
   }
 
   logout() {

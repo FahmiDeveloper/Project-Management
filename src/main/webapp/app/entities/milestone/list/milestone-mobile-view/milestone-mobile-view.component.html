@@ -1,0 +1,61 @@
+<div class="milestone-mobile-list">
+  @for (milestone of milestones(); track milestone.id) {
+    <mat-card class="milestone-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ milestone.title }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="milestone-card-row">
+          <span class="status-chip" [class]="'status-' + (milestone.status ?? 'null')">
+            {{ statusLabelFn(milestone.status) }}
+          </span>
+        </div>
+
+        @if (milestone.description) {
+          <p class="milestone-description">{{ milestone.description }}</p>
+        }
+
+        <div class="milestone-card-row milestone-meta">
+          @if (milestone.project) {
+            <a [routerLink]="['/project', milestone.project.id, 'view']" class="meta-link">
+              <mat-icon class="meta-icon">folder</mat-icon>
+              <span>{{ milestone.project.name }}</span>
+            </a>
+          }
+          @if (milestone.dueDate) {
+            <span class="milestone-due-date">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ milestone.dueDate | formatMediumDate }}
+            </span>
+          }
+        </div>
+
+        @if (milestone.startDate) {
+          <div class="milestone-card-row milestone-start-date">
+            <mat-icon class="meta-icon">event_available</mat-icon>
+            <span>Start: {{ milestone.startDate | formatMediumDate }}</span>
+          </div>
+        }
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <a
+          mat-icon-button
+          color="primary"
+          [routerLink]="['/milestone', milestone.id, 'view']"
+          data-cy="entityDetailsButton"
+          matTooltip="View"
+        >
+          <mat-icon>visibility</mat-icon>
+        </a>
+        <a mat-icon-button color="accent" [routerLink]="['/milestone', milestone.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </a>
+        <button mat-icon-button color="warn" (click)="delete.emit(milestone)" data-cy="entityDeleteButton" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

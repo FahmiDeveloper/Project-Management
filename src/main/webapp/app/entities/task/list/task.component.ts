@@ -1,13 +1,13 @@
 import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap, map } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import SharedModule from 'app/shared/shared.module';
-import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { FormatMediumDatePipe } from 'app/shared/date';
-import { ItemCountComponent } from 'app/shared/pagination';
+import { SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormsModule } from '@angular/forms';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
@@ -27,13 +27,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { EntityArrayResponseType, TaskService } from '../service/task.service';
 import { TaskDeleteDialogComponent } from '../delete/task-delete-dialog.component';
-
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { TaskDesktopViewComponent } from './task-desktop-view/task-desktop-view.component';
+import { TaskMobileViewComponent } from './task-mobile-view/task-mobile-view.component';
 
 @Component({
   selector: 'jhi-task',
@@ -43,24 +43,28 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RouterModule,
     FormsModule,
     SharedModule,
-    SortDirective,
-    SortByDirective,
-    FormatMediumDatePipe,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatSelectModule,
     MatAutocompleteModule,
-    MatTableModule,
     MatPaginatorModule,
-    MatTooltipModule,
+    MatExpansionModule,
+    TaskDesktopViewComponent,
+    TaskMobileViewComponent,
   ],
 })
 export class TaskComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   tasks = signal<ITask[]>([]);
   isLoading = false;
+
+  // ---- Responsive layout ----
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  isMobile = toSignal(this.breakpointObserver.observe(['(max-width: 767px)']).pipe(map(result => result.matches)), {
+    initialValue: this.breakpointObserver.isMatched('(max-width: 767px)'),
+  });
 
   // ---- Title filter (debounced text input) ----
   filterTitle = signal<string>('');
@@ -76,22 +80,6 @@ export class TaskComponent implements OnInit, OnDestroy {
     TaskStatus.TESTING,
     TaskStatus.DONE,
     TaskStatus.BLOCKED,
-  ];
-
-  displayedColumns: string[] = [
-    'title',
-    'description',
-    'priority',
-    'status',
-    'effort',
-    'dates',
-    'completionPercentage',
-    'sprint',
-    'milestone',
-    'assignedTo',
-    'createdBy',
-    'note',
-    'actions',
   ];
 
   private readonly statusLabels: Record<string, string> = {
@@ -157,13 +145,21 @@ export class TaskComponent implements OnInit, OnDestroy {
   totalItems = 0;
   page = 1;
 
-  statusLabel(status: string | null | undefined): string {
-    return this.statusLabels[status ?? 'null'];
-  }
+  // Number of currently active filters, shown as a badge on the mobile filter toggle.
+  activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.filterTitle().trim()) count++;
+    if (this.filterStatus()) count++;
+    if (this.filterPriority()) count++;
+    if (this.filterAssignedToId()) count++;
+    if (this.filterSprintId()) count++;
+    if (this.filterCreatedById()) count++;
+    return count;
+  });
 
-  priorityLabel(priority: string | null | undefined): string {
-    return this.priorityLabels[priority ?? 'null'];
-  }
+  // Arrow properties (not methods) so `this` stays bound when passed by reference to child components.
+  statusLabel = (status: string | null | undefined): string => this.statusLabels[status ?? 'null'];
+  priorityLabel = (priority: string | null | undefined): string => this.priorityLabels[priority ?? 'null'];
 
   public readonly router = inject(Router);
   protected readonly taskService = inject(TaskService);

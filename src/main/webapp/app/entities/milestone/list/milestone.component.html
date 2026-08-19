@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-end">
       <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
         <mat-icon [class.spin]="isLoading">refresh</mat-icon>
-        <span jhiTranslate="projectManagementApp.milestone.home.refreshListLabel">Refresh list</span>
+        <span class="btn-label" jhiTranslate="projectManagementApp.milestone.home.refreshListLabel">Refresh list</span>
       </button>
 
       <button
@@ -17,49 +17,107 @@
         [routerLink]="['/milestone/new']"
       >
         <mat-icon>add</mat-icon>
-        <span jhiTranslate="projectManagementApp.milestone.home.createLabel">Create a new Milestone</span>
+        <span class="btn-label" jhiTranslate="projectManagementApp.milestone.home.createLabel">Create a new Milestone</span>
       </button>
     </div>
   </h2>
 
-  <div class="milestone-filter-container">
-    <mat-form-field appearance="outline" class="milestone-title-field" subscriptSizing="dynamic">
-      <mat-label>Title</mat-label>
-      <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
-    </mat-form-field>
+  @if (isMobile()) {
+    <mat-expansion-panel class="milestone-filter-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>filter_list</mat-icon>
+          <span class="filter-panel-label">Filters</span>
+          @if (activeFilterCount() > 0) {
+            <span class="filter-count-badge">{{ activeFilterCount() }}</span>
+          }
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <mat-form-field appearance="outline" class="milestone-status-field" subscriptSizing="dynamic">
-      <mat-label>Status</mat-label>
-      <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
-        @for (status of statusOptions; track status) {
-          <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.MilestoneStatus.' + status">{{ status }}</mat-option>
+      <div class="milestone-filter-container milestone-filter-container-mobile">
+        <mat-form-field appearance="outline" class="milestone-title-field" subscriptSizing="dynamic">
+          <mat-label>Title</mat-label>
+          <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="milestone-status-field" subscriptSizing="dynamic">
+          <mat-label>Status</mat-label>
+          <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.MilestoneStatus.' + status">{{ status }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="milestone-project-field" subscriptSizing="dynamic">
+          <mat-label>Project</mat-label>
+          <input
+            matInput
+            type="text"
+            [matAutocomplete]="projectAutoMobile"
+            [value]="projectSearchTerm()"
+            (input)="onProjectInput($event)"
+            placeholder="Search project"
+          />
+          <mat-autocomplete
+            #projectAutoMobile="matAutocomplete"
+            [displayWith]="displayProjectName"
+            (optionSelected)="onProjectSelected($event)"
+          >
+            @for (project of filteredProjects(); track project.id) {
+              <mat-option [value]="project">{{ project.name }}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+
+        @if (activeFilterCount() > 0) {
+          <button mat-stroked-button class="milestone-filter-clear-btn-mobile" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+            Clear filters
+          </button>
         }
-      </mat-select>
-    </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+  } @else {
+    <div class="milestone-filter-container">
+      <mat-form-field appearance="outline" class="milestone-title-field" subscriptSizing="dynamic">
+        <mat-label>Title</mat-label>
+        <input matInput type="text" [ngModel]="filterTitle()" (ngModelChange)="onTitleInput($event)" />
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="milestone-project-field" subscriptSizing="dynamic">
-      <mat-label>Project</mat-label>
-      <input
-        matInput
-        type="text"
-        [matAutocomplete]="projectAuto"
-        [value]="projectSearchTerm()"
-        (input)="onProjectInput($event)"
-        placeholder="Search project"
-      />
-      <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProjectName" (optionSelected)="onProjectSelected($event)">
-        @for (project of filteredProjects(); track project.id) {
-          <mat-option [value]="project">{{ project.name }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="milestone-status-field" subscriptSizing="dynamic">
+        <mat-label>Status</mat-label>
+        <mat-select [ngModel]="filterStatus()" (ngModelChange)="onStatusChange($event)">
+          @for (status of statusOptions; track status) {
+            <mat-option [value]="status" [jhiTranslate]="'projectManagementApp.MilestoneStatus.' + status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    @if (filterTitle() || filterStatus() || filterProjectId()) {
-      <button mat-icon-button aria-label="Clear filters" class="milestone-filter-clear-btn" (click)="clearSearch()">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </div>
+      <mat-form-field appearance="outline" class="milestone-project-field" subscriptSizing="dynamic">
+        <mat-label>Project</mat-label>
+        <input
+          matInput
+          type="text"
+          [matAutocomplete]="projectAuto"
+          [value]="projectSearchTerm()"
+          (input)="onProjectInput($event)"
+          placeholder="Search project"
+        />
+        <mat-autocomplete #projectAuto="matAutocomplete" [displayWith]="displayProjectName" (optionSelected)="onProjectSelected($event)">
+          @for (project of filteredProjects(); track project.id) {
+            <mat-option [value]="project">{{ project.name }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      @if (activeFilterCount() > 0) {
+        <button mat-icon-button aria-label="Clear filters" class="milestone-filter-clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  }
 
   <jhi-alert-error />
 
@@ -70,102 +128,17 @@
       <span jhiTranslate="projectManagementApp.milestone.home.notFound">No Milestones found</span>
     </div>
   } @else {
-    <div class="mat-elevation-z1 milestone-table-container">
-      <table
-        mat-table
-        [dataSource]="milestones()"
-        jhiSort
-        [(sortState)]="sortState"
+    @if (isMobile()) {
+      <jhi-milestone-mobile-view [milestones]="milestones" [statusLabelFn]="statusLabel" (delete)="delete($event)" />
+    } @else {
+      <jhi-milestone-desktop-view
+        [milestones]="milestones"
+        [sortStateSignal]="sortState"
+        [statusLabelFn]="statusLabel"
         (sortChange)="navigateToWithComponentValues($event)"
-        class="milestone-mat-table"
-      >
-        <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="title">
-            <span jhiTranslate="projectManagementApp.milestone.title">Title</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let milestone">{{ milestone.title }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="description">
-            <span jhiTranslate="projectManagementApp.milestone.description">Description</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let milestone" class="description-cell">{{ milestone.description }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="startDate">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="startDate">
-            <span jhiTranslate="projectManagementApp.milestone.startDate">Start Date</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let milestone">{{ milestone.startDate | formatMediumDate }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="dueDate">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="dueDate">
-            <span jhiTranslate="projectManagementApp.milestone.dueDate">Due Date</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let milestone">{{ milestone.dueDate | formatMediumDate }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="status">
-            <span jhiTranslate="projectManagementApp.milestone.status">Status</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let milestone">
-            <span class="status-chip" [class]="'status-' + (milestone.status ?? 'null')">
-              {{ statusLabel(milestone.status) }}
-            </span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="project">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="project.name">
-            <span jhiTranslate="projectManagementApp.milestone.project">Project</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let milestone">
-            @if (milestone.project) {
-              <a [routerLink]="['/project', milestone.project.id, 'view']">{{ milestone.project.name }}</a>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let milestone" class="text-end actions-cell">
-            <a
-              mat-icon-button
-              color="primary"
-              [routerLink]="['/milestone', milestone.id, 'view']"
-              data-cy="entityDetailsButton"
-              matTooltip="View"
-            >
-              <mat-icon>visibility</mat-icon>
-            </a>
-            <a
-              mat-icon-button
-              color="accent"
-              [routerLink]="['/milestone', milestone.id, 'edit']"
-              data-cy="entityEditButton"
-              matTooltip="Edit"
-            >
-              <mat-icon>edit</mat-icon>
-            </a>
-            <button mat-icon-button color="warn" (click)="delete(milestone)" data-cy="entityDeleteButton" matTooltip="Delete">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns" data-cy="entityTable"></tr>
-      </table>
-    </div>
+        (delete)="delete($event)"
+      />
+    }
   }
 
   @if (milestones().length > 0) {

@@ -4,7 +4,7 @@
       "home": {
         "title": "Tasks",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Task",
+        "createLabel": "New task",
         "createOrEditLabel": "Create or edit a Task",
         "notFound": "No Tasks found"
       },

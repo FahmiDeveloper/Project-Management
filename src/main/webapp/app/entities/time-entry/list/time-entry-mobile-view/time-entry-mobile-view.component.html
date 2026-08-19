@@ -1,0 +1,76 @@
+<div class="time-entry-mobile-list">
+  @for (timeEntry of timeEntries(); track timeEntry.id) {
+    <mat-card class="time-entry-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ timeEntry.description || 'Time Entry' }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="time-entry-card-row time-entry-highlight">
+          <span class="hours-chip">
+            <mat-icon class="meta-icon">schedule</mat-icon>
+            {{ timeEntry.hours }}h
+          </span>
+          @if (timeEntry.entryDate) {
+            <span class="time-entry-date">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ timeEntry.entryDate | formatMediumDate }}
+            </span>
+          }
+        </div>
+
+        @if (timeEntry.startTime || timeEntry.endTime) {
+          <div class="time-entry-card-row time-entry-range">
+            <mat-icon class="meta-icon">timelapse</mat-icon>
+            <span>
+              {{ timeEntry.startTime | formatMediumDatetime }}
+              @if (timeEntry.endTime) {
+                &nbsp;&ndash;&nbsp;{{ timeEntry.endTime | formatMediumDatetime }}
+              }
+            </span>
+          </div>
+        }
+
+        <div class="time-entry-card-row time-entry-meta">
+          @if (timeEntry.task) {
+            <a [routerLink]="['/task', timeEntry.task.id, 'view']" class="meta-link">
+              <mat-icon class="meta-icon">assignment</mat-icon>
+              <span>{{ timeEntry.task.title }}</span>
+            </a>
+          }
+          @if (timeEntry.employee) {
+            <a [routerLink]="['/employee', timeEntry.employee.id, 'view']" class="meta-link">
+              <mat-icon class="meta-icon">person</mat-icon>
+              <span>{{ timeEntry.employee.firstName }}&nbsp;{{ timeEntry.employee.lastName }}</span>
+            </a>
+          }
+        </div>
+
+        @if (timeEntry.note) {
+          <div class="time-entry-card-row time-entry-note" [matTooltip]="timeEntry.note">
+            <mat-icon class="meta-icon">notes</mat-icon>
+            <span class="note-text">{{ timeEntry.note }}</span>
+          </div>
+        }
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <a
+          mat-icon-button
+          color="primary"
+          [routerLink]="['/time-entry', timeEntry.id, 'view']"
+          data-cy="entityDetailsButton"
+          matTooltip="View"
+        >
+          <mat-icon>visibility</mat-icon>
+        </a>
+        <a mat-icon-button color="accent" [routerLink]="['/time-entry', timeEntry.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </a>
+        <button mat-icon-button color="warn" (click)="delete.emit(timeEntry)" data-cy="entityDeleteButton" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

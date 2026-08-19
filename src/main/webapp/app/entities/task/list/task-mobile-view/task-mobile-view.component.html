@@ -1,0 +1,58 @@
+<div class="task-mobile-list">
+  @for (task of tasks(); track task.id) {
+    <mat-card class="task-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ task.title }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="task-card-row">
+          <span class="priority-chip" [class]="'priority-' + (task.priority ?? 'null')">
+            {{ priorityLabelFn(task.priority) }}
+          </span>
+          <span class="status-chip" [class]="'status-' + (task.status ?? 'null')">
+            {{ statusLabelFn(task.status) }}
+          </span>
+        </div>
+
+        <div class="task-card-row task-meta">
+          @if (task.assignedTo) {
+            <a [routerLink]="['/employee', task.assignedTo.id, 'view']" class="meta-link">
+              <mat-icon class="meta-icon">person</mat-icon>
+              <span>{{ task.assignedTo.firstName }}&nbsp;{{ task.assignedTo.lastName }}</span>
+            </a>
+          }
+          @if (task.sprint) {
+            <a [routerLink]="['/sprint', task.sprint.id, 'view']" class="meta-link">
+              <mat-icon class="meta-icon">flag</mat-icon>
+              <span>{{ task.sprint.name }}</span>
+            </a>
+          }
+          @if (task.dueDate) {
+            <span class="task-due-date">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ task.dueDate | formatMediumDate }}
+            </span>
+          }
+        </div>
+
+        <div class="task-card-progress">
+          <mat-progress-bar mode="determinate" [value]="task.completionPercentage ?? 0"></mat-progress-bar>
+          <span class="progress-label">{{ task.completionPercentage ?? 0 }}%</span>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <a mat-icon-button color="primary" [routerLink]="['/task', task.id, 'view']" data-cy="entityDetailsButton" matTooltip="View">
+          <mat-icon>visibility</mat-icon>
+        </a>
+        <a mat-icon-button color="accent" [routerLink]="['/task', task.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </a>
+        <button mat-icon-button color="warn" (click)="delete.emit(task)" data-cy="entityDeleteButton" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

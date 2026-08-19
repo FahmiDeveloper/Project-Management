@@ -1,11 +1,13 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import SharedModule from 'app/shared/shared.module';
-import { SortByDirective, SortDirective, SortService, SortState, sortStateSignal } from 'app/shared/sort';
+import { SortService, SortState, sortStateSignal } from 'app/shared/sort';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { SORT } from 'app/config/navigation.constants';
 import { AccountService } from 'app/core/auth/account.service';
@@ -17,10 +19,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule } from '@angular/forms';
+import { SetActiveEvent, UserManagementDesktopViewComponent } from './user-management-desktop-view/user-management-desktop-view.component';
+import { UserManagementMobileViewComponent } from './user-management-mobile-view/user-management-mobile-view.component';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -29,16 +32,15 @@ import { FormsModule } from '@angular/forms';
   imports: [
     RouterModule,
     SharedModule,
-    SortDirective,
-    SortByDirective,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    MatTableModule,
     MatPaginatorModule,
-    MatTooltipModule,
+    MatExpansionModule,
     FormsModule,
+    UserManagementDesktopViewComponent,
+    UserManagementMobileViewComponent,
   ],
 })
 export default class UserManagementComponent implements OnInit, OnDestroy {
@@ -50,18 +52,11 @@ export default class UserManagementComponent implements OnInit, OnDestroy {
   page!: number;
   sortState = sortStateSignal({});
 
-  displayedColumns: string[] = [
-    'id',
-    'login',
-    'email',
-    'activated',
-    'langKey',
-    'profiles',
-    'createdDate',
-    'lastModifiedBy',
-    'lastModifiedDate',
-    'actions',
-  ];
+  // ---- Responsive layout ----
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  isMobile = toSignal(this.breakpointObserver.observe(['(max-width: 767px)']).pipe(map(result => result.matches)), {
+    initialValue: this.breakpointObserver.isMatched('(max-width: 767px)'),
+  });
 
   // ---- Login filter (debounced text input) ----
   filterLogin = signal<string>('');
@@ -72,6 +67,14 @@ export default class UserManagementComponent implements OnInit, OnDestroy {
   filterEmail = signal<string>('');
   private readonly emailInput$ = new Subject<string>();
   private emailSubscription: Subscription | null = null;
+
+  // Number of currently active filters, shown as a badge on the mobile filter toggle.
+  activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.filterLogin().trim()) count++;
+    if (this.filterEmail().trim()) count++;
+    return count;
+  });
 
   private readonly userService = inject(UserManagementService);
   private readonly activatedRoute = inject(ActivatedRoute);
@@ -113,6 +116,10 @@ export default class UserManagementComponent implements OnInit, OnDestroy {
     this.filterEmail.set('');
     this.page = 1;
     this.loadAll();
+  }
+
+  onSetActive(event: SetActiveEvent): void {
+    this.setActive(event.user, event.isActivated);
   }
 
   setActive(user: User, isActivated: boolean): void {

@@ -1,166 +1,92 @@
 <div>
-  <h2>
+  <h2 id="page-heading">
     <span id="user-management-page-heading" data-cy="userManagementPageHeading" jhiTranslate="userManagement.home.title">Users</span>
 
     <div class="d-flex justify-content-end">
       <button mat-stroked-button color="primary" class="me-2" (click)="loadAll()" [disabled]="isLoading()">
         <mat-icon [class.spin]="isLoading()">refresh</mat-icon>
-        <span jhiTranslate="userManagement.home.refreshListLabel">Refresh list</span>
+        <span class="btn-label" jhiTranslate="userManagement.home.refreshListLabel">Refresh list</span>
       </button>
       <button mat-flat-button color="primary" class="jh-create-entity" [routerLink]="['./new']">
         <mat-icon>add</mat-icon>
-        <span jhiTranslate="userManagement.home.createLabel">Create a new user</span>
+        <span class="btn-label" jhiTranslate="userManagement.home.createLabel">Create a new user</span>
       </button>
     </div>
   </h2>
 
-  <div class="user-filter-container">
-    <mat-form-field appearance="outline" class="user-login-field" subscriptSizing="dynamic">
-      <mat-label>Login</mat-label>
-      <input matInput type="text" [ngModel]="filterLogin()" (ngModelChange)="onLoginInput($event)" />
-    </mat-form-field>
+  @if (isMobile()) {
+    <mat-expansion-panel class="user-filter-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>filter_list</mat-icon>
+          <span class="filter-panel-label">Filters</span>
+          @if (activeFilterCount() > 0) {
+            <span class="filter-count-badge">{{ activeFilterCount() }}</span>
+          }
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <mat-form-field appearance="outline" class="user-email-field" subscriptSizing="dynamic">
-      <mat-label>Email</mat-label>
-      <input matInput type="text" [ngModel]="filterEmail()" (ngModelChange)="onEmailInput($event)" />
-    </mat-form-field>
+      <div class="user-filter-container user-filter-container-mobile">
+        <mat-form-field appearance="outline" class="user-login-field" subscriptSizing="dynamic">
+          <mat-label>Login</mat-label>
+          <input matInput type="text" [ngModel]="filterLogin()" (ngModelChange)="onLoginInput($event)" />
+        </mat-form-field>
 
-    @if (filterLogin() || filterEmail()) {
-      <button mat-icon-button aria-label="Clear filters" class="user-filter-clear-btn" (click)="clearSearch()">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </div>
+        <mat-form-field appearance="outline" class="user-email-field" subscriptSizing="dynamic">
+          <mat-label>Email</mat-label>
+          <input matInput type="text" [ngModel]="filterEmail()" (ngModelChange)="onEmailInput($event)" />
+        </mat-form-field>
+
+        @if (activeFilterCount() > 0) {
+          <button mat-stroked-button class="user-filter-clear-btn-mobile" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+            Clear filters
+          </button>
+        }
+      </div>
+    </mat-expansion-panel>
+  } @else {
+    <div class="user-filter-container">
+      <mat-form-field appearance="outline" class="user-login-field" subscriptSizing="dynamic">
+        <mat-label>Login</mat-label>
+        <input matInput type="text" [ngModel]="filterLogin()" (ngModelChange)="onLoginInput($event)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="user-email-field" subscriptSizing="dynamic">
+        <mat-label>Email</mat-label>
+        <input matInput type="text" [ngModel]="filterEmail()" (ngModelChange)="onEmailInput($event)" />
+      </mat-form-field>
+
+      @if (activeFilterCount() > 0) {
+        <button mat-icon-button aria-label="Clear filters" class="user-filter-clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  }
 
   <jhi-alert-error />
 
   <jhi-alert />
 
   @if (users()) {
-    <div class="mat-elevation-z1 user-table-container">
-      <table mat-table [dataSource]="users()!" jhiSort [(sortState)]="sortState" (sortChange)="transition($event)" class="user-mat-table">
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="id">
-            <span jhiTranslate="global.field.id">ID</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let user">
-            <a [routerLink]="['./', user.login, 'view']">{{ user.id }}</a>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="login">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="login">
-            <span jhiTranslate="userManagement.login">Login</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let user">{{ user.login }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="email">
-            <span jhiTranslate="userManagement.email">Email</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let user">{{ user.email }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="activated">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let user">
-            @if (!user.activated) {
-              <button
-                mat-flat-button
-                color="warn"
-                class="status-btn"
-                (click)="setActive(user, true)"
-                jhiTranslate="userManagement.deactivated"
-              >
-                Deactivated
-              </button>
-            } @else {
-              <button
-                mat-flat-button
-                color="primary"
-                class="status-btn status-active"
-                (click)="setActive(user, false)"
-                [disabled]="!currentAccount() || currentAccount()?.login === user.login"
-                jhiTranslate="userManagement.activated"
-              >
-                Activated
-              </button>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="langKey">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="langKey">
-            <span jhiTranslate="userManagement.langKey">Language</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let user">{{ user.langKey }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="profiles">
-          <th mat-header-cell *matHeaderCellDef>
-            <span jhiTranslate="userManagement.profiles">Profiles</span>
-          </th>
-          <td mat-cell *matCellDef="let user">
-            @for (authority of user.authorities; track $index) {
-              <span class="profile-chip">{{ authority }}</span>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="createdDate">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="createdDate">
-            <span jhiTranslate="userManagement.createdDate">Created date</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let user">{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="lastModifiedBy">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="lastModifiedBy">
-            <span jhiTranslate="userManagement.lastModifiedBy">Modified by</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let user">{{ user.lastModifiedBy }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="lastModifiedDate">
-          <th mat-header-cell *matHeaderCellDef jhiSortBy="lastModifiedDate">
-            <span jhiTranslate="userManagement.lastModifiedDate">Modified date</span>
-            <mat-icon class="sort-icon">unfold_more</mat-icon>
-          </th>
-          <td mat-cell *matCellDef="let user">{{ user.lastModifiedDate | date: 'dd/MM/yy HH:mm' }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let user" class="text-end actions-cell">
-            <a mat-icon-button color="primary" [routerLink]="['./', user.login, 'view']" matTooltip="View">
-              <mat-icon>visibility</mat-icon>
-            </a>
-            <a mat-icon-button color="accent" [routerLink]="['./', user.login, 'edit']" queryParamsHandling="merge" matTooltip="Edit">
-              <mat-icon>edit</mat-icon>
-            </a>
-            <button
-              mat-icon-button
-              color="warn"
-              (click)="deleteUser(user)"
-              [disabled]="!currentAccount() || currentAccount()?.login === user.login"
-              matTooltip="Delete"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </div>
+    @if (isMobile()) {
+      <jhi-user-management-mobile-view
+        [users]="users"
+        [currentAccount]="currentAccount"
+        (setActive)="onSetActive($event)"
+        (delete)="deleteUser($event)"
+      />
+    } @else {
+      <jhi-user-management-desktop-view
+        [users]="users"
+        [sortStateSignal]="sortState"
+        [currentAccount]="currentAccount"
+        (sortChange)="transition($event)"
+        (setActive)="onSetActive($event)"
+        (delete)="deleteUser($event)"
+      />
+    }
 
     <mat-paginator
       class="user-paginator"

@@ -1,12 +1,13 @@
 import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap, map } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import SharedModule from 'app/shared/shared.module';
-import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { FormatMediumDatetimePipe } from 'app/shared/date';
+import { SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
@@ -23,9 +24,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+
+import { ChecklistDesktopViewComponent } from './checklist-desktop-view/checklist-desktop-view.component';
+import { ChecklistMobileViewComponent } from './checklist-mobile-view/checklist-mobile-view.component';
 
 @Component({
   selector: 'jhi-checklist',
@@ -35,17 +38,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RouterModule,
     FormsModule,
     SharedModule,
-    SortDirective,
-    SortByDirective,
-    FormatMediumDatetimePipe,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatAutocompleteModule,
-    MatTableModule,
     MatPaginatorModule,
-    MatTooltipModule,
+    MatExpansionModule,
+    ChecklistDesktopViewComponent,
+    ChecklistMobileViewComponent,
   ],
 })
 export class ChecklistComponent implements OnInit, OnDestroy {
@@ -53,7 +54,11 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   checklists = signal<IChecklist[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['title', 'createdDate', 'task', 'actions'];
+  // ---- Responsive layout ----
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  isMobile = toSignal(this.breakpointObserver.observe(['(max-width: 767px)']).pipe(map(result => result.matches)), {
+    initialValue: this.breakpointObserver.isMatched('(max-width: 767px)'),
+  });
 
   // ---- Title filter (debounced text input) ----
   filterTitle = signal<string>('');
@@ -77,6 +82,14 @@ export class ChecklistComponent implements OnInit, OnDestroy {
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+
+  // Number of currently active filters, shown as a badge on the mobile filter toggle.
+  activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.filterTitle().trim()) count++;
+    if (this.filterTaskId()) count++;
+    return count;
+  });
 
   public readonly router = inject(Router);
   protected readonly checklistService = inject(ChecklistService);
@@ -126,6 +139,13 @@ export class ChecklistComponent implements OnInit, OnDestroy {
     const task: ITask | null = event.option.value;
     this.filterTaskId.set(task ? task.id : null);
     this.taskSearchTerm.set(this.displayTaskTitle(task));
+    this.page = 1;
+    this.load();
+  }
+
+  clearTaskFilter(): void {
+    this.filterTaskId.set(null);
+    this.taskSearchTerm.set('');
     this.page = 1;
     this.load();
   }

@@ -6,6 +6,13 @@
   flex-wrap: wrap;
 }
 
+.task-filter-container-mobile {
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 0;
+  padding-top: 8px;
+}
+
 .task-status-field,
 .task-priority-field {
   width: 180px;
@@ -16,123 +23,60 @@
   width: 220px;
 }
 
+.task-title-field {
+  width: 200px;
+}
+
+.task-created-by-field {
+  width: 220px;
+}
+
+.task-filter-container-mobile .task-title-field,
+.task-filter-container-mobile .task-priority-field,
+.task-filter-container-mobile .task-status-field,
+.task-filter-container-mobile .task-sprint-field,
+.task-filter-container-mobile .task-assigned-field,
+.task-filter-container-mobile .task-created-by-field {
+  width: 100%;
+}
+
 .task-filter-clear-btn {
   height: 56px;
   width: 56px;
 }
 
-.task-table-container {
-  overflow-x: auto;
-  border-radius: 4px;
+.task-filter-clear-btn-mobile {
+  align-self: flex-start;
+  margin-top: 4px;
 }
 
-.task-mat-table {
-  width: 100%;
+.task-filter-panel {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
 
-  th.mat-mdc-header-cell {
-    font-weight: 600;
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
+  mat-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filter-panel-label {
+    font-weight: 500;
+  }
+
+  .filter-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
     background-color: #3f51b5;
     color: white;
-  }
-
-  .sort-icon {
-    font-size: 16px;
-    height: 16px;
-    width: 16px;
-    vertical-align: middle;
-    margin-left: 4px;
-    color: inherit; /* Automatically inherits the header text color */
-    opacity: 1; /* Keeps full opacity to match the bold white text */
-  }
-
-  .description-cell {
-    max-width: 280px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .effort-cell,
-  .dates-cell {
-    white-space: nowrap;
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-
-  .effort-line,
-  .date-line {
-    display: block;
-    font-size: 12px;
-    line-height: 1.6;
-    color: #37474f;
-
-    strong {
-      font-weight: 600;
-      margin-right: 4px;
-      color: #263238;
-    }
-  }
-
-  .actions-cell {
-    white-space: nowrap;
-  }
-
-  .status-chip,
-  .priority-chip {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-    background-color: #eceff1;
-    color: #37474f;
-    white-space: nowrap;
-  }
-
-  .status-TODO {
-    background-color: #eceff1;
-    color: #455a64;
-  }
-  .status-IN_PROGRESS {
-    background-color: #e3edfa;
-    color: #1a5fb4;
-  }
-  .status-IN_REVIEW {
-    background-color: #f3e8fd;
-    color: #7b2ff7;
-  }
-  .status-TESTING {
-    background-color: #fff4e0;
-    color: #b9770e;
-  }
-  .status-DONE {
-    background-color: #e3f2e6;
-    color: #1e7e34;
-  }
-  .status-BLOCKED {
-    background-color: #fbe4e4;
-    color: #b02a2a;
-  }
-
-  .priority-LOW {
-    background-color: #e3f2e6;
-    color: #1e7e34;
-  }
-  .priority-MEDIUM {
-    background-color: #fff4e0;
-    color: #b9770e;
-  }
-  .priority-HIGH {
-    background-color: #fde4d0;
-    color: #c9540c;
-  }
-  .priority-CRITICAL {
-    background-color: #fbe4e4;
-    color: #b02a2a;
+    font-size: 11px;
+    font-weight: 600;
   }
 }
 
@@ -156,14 +100,42 @@
   }
 }
 
-.task-title-field {
-  width: 200px;
-}
+// Mobile-only: stack the "Tasks" title above the Refresh/Create buttons
+// (on desktop these sit side by side via the app's global heading layout),
+// stretch buttons full-width stacked vertically so text never wraps.
+// Mobile-only: keep Refresh/Create buttons side by side in one row,
+// truncating label text with an ellipsis instead of wrapping/stacking.
+@media (max-width: 767px) {
+  #page-heading {
+    display: flex;
+    flex-direction: column;
 
-.task-created-by-field {
-  width: 220px;
-}
+    > .d-flex {
+      margin-top: 1.25rem;
+      flex-direction: row;
+      justify-content: flex-start !important;
+      width: 100%;
+      gap: 8px;
 
-::ng-deep .mat-mdc-tooltip .mdc-tooltip__surface {
-  font-size: 14px;
+      > button {
+        flex: 1 1 0;
+        min-width: 0;
+        margin-right: 0 !important;
+
+        .btn-label {
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          vertical-align: middle;
+          max-width: 100%;
+        }
+      }
+    }
+  }
+
+  .notification-filter-panel,
+  .notification-filter-container {
+    margin-top: 0.75rem;
+  }
 }

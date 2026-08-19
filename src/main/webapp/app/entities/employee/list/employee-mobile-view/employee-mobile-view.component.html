@@ -1,0 +1,71 @@
+<div class="employee-mobile-list">
+  @for (employee of employees(); track employee.id) {
+    <mat-card class="employee-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ employee.firstName }} {{ employee.lastName }}</mat-card-title>
+        <mat-card-subtitle *ngIf="employee.jobTitle">{{ employee.jobTitle }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="employee-card-row employee-meta">
+          @if (employee.department) {
+            <a [routerLink]="['/department', employee.department.id, 'view']" class="meta-link">
+              <mat-icon class="meta-icon">apartment</mat-icon>
+              <span>{{ employee.department.name }}</span>
+            </a>
+          }
+          @if (employee.phone) {
+            <span class="employee-phone">
+              <mat-icon class="meta-icon">phone</mat-icon>
+              {{ employee.phone }}
+            </span>
+          }
+        </div>
+
+        <div class="employee-card-row employee-meta">
+          @if (employee.employeeNumber) {
+            <span class="employee-number">
+              <mat-icon class="meta-icon">badge</mat-icon>
+              {{ employee.employeeNumber }}
+            </span>
+          }
+          @if (employee.hireDate) {
+            <span class="employee-hire-date">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ employee.hireDate | formatMediumDate }}
+            </span>
+          }
+        </div>
+
+        @if (employee.user && employee.user.login) {
+          <div class="employee-card-row">
+            <mat-icon class="meta-icon">person</mat-icon>
+            <span>{{ employee.user.login }}</span>
+          </div>
+        }
+
+        @if (employee.note) {
+          <p class="employee-note">{{ employee.note }}</p>
+        }
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <a
+          mat-icon-button
+          color="primary"
+          [routerLink]="['/employee', employee.id, 'view']"
+          data-cy="entityDetailsButton"
+          matTooltip="View"
+        >
+          <mat-icon>visibility</mat-icon>
+        </a>
+        <a mat-icon-button color="accent" [routerLink]="['/employee', employee.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </a>
+        <button mat-icon-button color="warn" (click)="delete.emit(employee)" data-cy="entityDeleteButton" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

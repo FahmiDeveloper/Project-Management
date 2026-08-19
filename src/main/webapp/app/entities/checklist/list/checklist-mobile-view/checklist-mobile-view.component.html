@@ -1,0 +1,44 @@
+<div class="checklist-mobile-list">
+  @for (checklist of checklists(); track checklist.id) {
+    <mat-card class="checklist-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ checklist.title }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="checklist-card-row checklist-meta">
+          @if (checklist.task) {
+            <a [routerLink]="['/task', checklist.task.id, 'view']" class="meta-link">
+              <mat-icon class="meta-icon">assignment</mat-icon>
+              <span>{{ checklist.task.title }}</span>
+            </a>
+          }
+          @if (checklist.createdDate) {
+            <span class="checklist-created-date">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ checklist.createdDate | formatMediumDatetime }}
+            </span>
+          }
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <a
+          mat-icon-button
+          color="primary"
+          [routerLink]="['/checklist', checklist.id, 'view']"
+          data-cy="entityDetailsButton"
+          matTooltip="View"
+        >
+          <mat-icon>visibility</mat-icon>
+        </a>
+        <a mat-icon-button color="accent" [routerLink]="['/checklist', checklist.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </a>
+        <button mat-icon-button color="warn" (click)="delete.emit(checklist)" data-cy="entityDeleteButton" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>
