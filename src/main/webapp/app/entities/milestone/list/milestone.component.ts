@@ -1,12 +1,13 @@
 import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap, map } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import SharedModule from 'app/shared/shared.module';
-import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { FormatMediumDatePipe } from 'app/shared/date';
+import { SortService, type SortState, sortStateSignal } from 'app/shared/sort';
 import { FormsModule } from '@angular/forms';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
@@ -26,9 +27,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MilestoneDesktopViewComponent } from './milestone-desktop-view/milestone-desktop-view.component';
+import { MilestoneMobileViewComponent } from './milestone-mobile-view/milestone-mobile-view.component';
 
 @Component({
   selector: 'jhi-milestone',
@@ -38,18 +40,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RouterModule,
     FormsModule,
     SharedModule,
-    SortDirective,
-    SortByDirective,
-    FormatMediumDatePipe,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatSelectModule,
     MatAutocompleteModule,
-    MatTableModule,
     MatPaginatorModule,
-    MatTooltipModule,
+    MatExpansionModule,
+    MilestoneDesktopViewComponent,
+    MilestoneMobileViewComponent,
   ],
 })
 export class MilestoneComponent implements OnInit, OnDestroy {
@@ -57,7 +57,11 @@ export class MilestoneComponent implements OnInit, OnDestroy {
   milestones = signal<IMilestone[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['title', 'description', 'startDate', 'dueDate', 'status', 'project', 'actions'];
+  // ---- Responsive layout ----
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  isMobile = toSignal(this.breakpointObserver.observe(['(max-width: 767px)']).pipe(map(result => result.matches)), {
+    initialValue: this.breakpointObserver.isMatched('(max-width: 767px)'),
+  });
 
   private readonly statusLabels: Record<string, string> = {
     null: '',
@@ -99,6 +103,18 @@ export class MilestoneComponent implements OnInit, OnDestroy {
   totalItems = 0;
   page = 1;
 
+  // Number of currently active filters, shown as a badge on the mobile filter toggle.
+  activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.filterTitle().trim()) count++;
+    if (this.filterStatus()) count++;
+    if (this.filterProjectId()) count++;
+    return count;
+  });
+
+  // Arrow property (not a method) so `this` stays bound when passed by reference to child components.
+  statusLabel = (status: string | null | undefined): string => this.statusLabels[status ?? 'null'];
+
   public readonly router = inject(Router);
   protected readonly milestoneService = inject(MilestoneService);
   protected readonly activatedRoute = inject(ActivatedRoute);
@@ -109,10 +125,6 @@ export class MilestoneComponent implements OnInit, OnDestroy {
   protected readonly projectService = inject(ProjectService);
 
   trackId = (item: IMilestone): number => this.milestoneService.getMilestoneIdentifier(item);
-
-  statusLabel(status: string | null | undefined): string {
-    return this.statusLabels[status ?? 'null'];
-  }
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -158,6 +170,13 @@ export class MilestoneComponent implements OnInit, OnDestroy {
     const project: IProject | null = event.option.value;
     this.filterProjectId.set(project ? project.id : null);
     this.projectSearchTerm.set(this.displayProjectName(project));
+    this.page = 1;
+    this.load();
+  }
+
+  clearProjectFilter(): void {
+    this.filterProjectId.set(null);
+    this.projectSearchTerm.set('');
     this.page = 1;
     this.load();
   }
