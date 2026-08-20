@@ -69,6 +69,13 @@ export class EmployeeUpdateComponent implements OnInit {
       this.employee = employee;
       if (employee) {
         this.updateForm(employee);
+        // Employee number is generated once at creation time and never editable afterwards.
+      } else {
+        // New employee: generate the next sequential employee number for the current year,
+        // then lock the field so the user can't override it.
+        this.generateNextEmployeeNumber().subscribe(employeeNumber => {
+          this.editForm.patchValue({ employeeNumber });
+        });
       }
 
       this.loadRelationshipsOptions();
@@ -135,5 +142,31 @@ export class EmployeeUpdateComponent implements OnInit {
         ),
       )
       .subscribe((departments: IDepartment[]) => (this.departmentsSharedCollection = departments));
+  }
+
+  /**
+   * Generates the next employee number in the format EMP-001, EMP-002, etc.
+   * The sequence is based on the highest existing sequence number (i.e. the
+   * last employee added) across all employees.
+   */
+  protected generateNextEmployeeNumber(): Observable<string> {
+    const numberPattern = /^EMP-(\d{4})$/;
+
+    return this.employeeService.query().pipe(
+      map((res: HttpResponse<IEmployee[]>) => res.body ?? []),
+      map((employees: IEmployee[]) => {
+        const sequences = employees
+          .map(e => e.employeeNumber)
+          .filter((employeeNumber): employeeNumber is string => !!employeeNumber)
+          .map(employeeNumber => numberPattern.exec(employeeNumber))
+          .filter((match): match is RegExpExecArray => match !== null)
+          .map(match => parseInt(match[1], 10));
+
+        const nextSequence = sequences.length > 0 ? Math.max(...sequences) + 1 : 1;
+        const paddedSequence = String(nextSequence).padStart(4, '0');
+
+        return `EMP-${paddedSequence}`;
+      }),
+    );
   }
 }

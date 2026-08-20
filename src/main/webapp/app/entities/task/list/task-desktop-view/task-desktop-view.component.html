@@ -134,7 +134,7 @@
         <mat-icon class="sort-icon">unfold_more</mat-icon>
       </th>
       <td mat-cell *matCellDef="let task" class="description-cell" [matTooltip]="task.note ?? ''" [matTooltipDisabled]="!task.note">
-        {{ task.note }}
+        {{ task.note ?? '-' }}
       </td>
     </ng-container>
 

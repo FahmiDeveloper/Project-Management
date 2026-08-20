@@ -129,7 +129,7 @@
             [matTooltip]="client.note ?? ''"
             [matTooltipDisabled]="!client.note"
           >
-            {{ client.note }}
+            {{ client.note ?? '-' }}
           </td>
         </ng-container>
 

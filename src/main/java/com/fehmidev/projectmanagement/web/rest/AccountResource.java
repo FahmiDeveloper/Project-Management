@@ -60,7 +60,9 @@ public class AccountResource {
         if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
-        User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
+        // NEW: forward the phone number captured on the registration form so it can be
+        // copied onto the Employee record that gets auto-created for this user.
+        User user = userService.registerUser(managedUserVM, managedUserVM.getPassword(), managedUserVM.getPhone());
         mailService.sendActivationEmail(user);
     }
 

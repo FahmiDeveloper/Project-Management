@@ -74,6 +74,9 @@
             {{ employee.department.name }}
           </a>
         }
+        @if (!employee.department) {
+          Not assigned
+        }
       </td>
     </ng-container>
 
@@ -89,7 +92,7 @@
         [matTooltip]="employee.note ?? ''"
         [matTooltipDisabled]="!employee.note"
       >
-        {{ employee.note }}
+        {{ employee.note ?? '-' }}
       </td>
     </ng-container>
 

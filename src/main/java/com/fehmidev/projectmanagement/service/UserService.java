@@ -2,8 +2,10 @@ package com.fehmidev.projectmanagement.service;
 
 import com.fehmidev.projectmanagement.config.Constants;
 import com.fehmidev.projectmanagement.domain.Authority;
+import com.fehmidev.projectmanagement.domain.Employee;
 import com.fehmidev.projectmanagement.domain.User;
 import com.fehmidev.projectmanagement.repository.AuthorityRepository;
+import com.fehmidev.projectmanagement.repository.EmployeeRepository;
 import com.fehmidev.projectmanagement.repository.UserRepository;
 import com.fehmidev.projectmanagement.repository.UserSpecification;
 import com.fehmidev.projectmanagement.security.AuthoritiesConstants;
@@ -11,8 +13,11 @@ import com.fehmidev.projectmanagement.security.SecurityUtils;
 import com.fehmidev.projectmanagement.service.dto.AdminUserDTO;
 import com.fehmidev.projectmanagement.service.dto.UserDTO;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +40,14 @@ public class UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
+    // NEW: pattern used to parse existing employee numbers ("EMP-001", "EMP-0042", ...)
+    // when computing the next sequence value for auto-created employees.
+    private static final Pattern EMPLOYEE_NUMBER_PATTERN = Pattern.compile("^EMP-(\\d+)$");
+
+    // NEW: default job title assigned to employees auto-created at registration time,
+    // since the registration form does not collect one. An administrator can update it later.
+    private static final String DEFAULT_EMPLOYEE_JOB_TITLE = "Not assigned";
+
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -43,16 +56,21 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    // NEW: needed to auto-create an Employee record for every self-registered User.
+    private final EmployeeRepository employeeRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        EmployeeRepository employeeRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.employeeRepository = employeeRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -96,6 +114,12 @@ public class UserService {
     }
 
     public User registerUser(AdminUserDTO userDTO, String password) {
+        return registerUser(userDTO, password, null);
+    }
+
+    // NEW: overload accepting the phone number captured on the registration form,
+    // forwarded to the auto-created Employee record.
+    public User registerUser(AdminUserDTO userDTO, String password, String phone) {
         userRepository
             .findOneByLogin(userDTO.getLogin().toLowerCase())
             .ifPresent(existingUser -> {
@@ -133,6 +157,9 @@ public class UserService {
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
+        // NEW: automatically create the matching Employee record for the newly registered user,
+        // in the same transaction so we never end up with a User without an Employee.
+        createEmployeeForNewUser(newUser, userDTO, phone);
         LOG.debug("Created Information for User: {}", newUser);
         return newUser;
     }
@@ -329,5 +356,92 @@ public class UserService {
     public Page<AdminUserDTO> getAllManagedUsers(String login, String email, Pageable pageable) {
         Specification<User> spec = UserSpecification.withFilters(login, email);
         return userRepository.findAll(spec, pageable).map(AdminUserDTO::new);
+    }
+
+    // NEW: auto-provisioning of an Employee record for every self-registered user.
+
+    /**
+     * Creates the Employee record automatically linked to a freshly registered User, using the
+     * details captured on the registration form. Fields not collected at registration time
+     * (job title, hire date, department) are given sensible defaults that an administrator
+     * can update later from the Employee management screen.
+     *
+     * @param user    the newly persisted User (already has an id).
+     * @param userDTO the registration payload, used to source firstName/lastName.
+     * @param phone   the phone number captured on the registration form, may be null/blank.
+     */
+    private void createEmployeeForNewUser(User user, AdminUserDTO userDTO, String phone) {
+        Employee employee = new Employee();
+        employee.setUser(user);
+        employee.setEmployeeNumber(generateNextEmployeeNumber());
+        employee.setFirstName(resolveEmployeeFirstName(userDTO));
+        employee.setLastName(resolveEmployeeLastName(userDTO));
+        employee.setJobTitle(DEFAULT_EMPLOYEE_JOB_TITLE);
+        employee.setHireDate(LocalDate.now());
+        if (phone != null && !phone.isBlank()) {
+            employee.setPhone(phone.trim());
+        }
+        // Department is intentionally left unassigned; an administrator assigns it later.
+        employeeRepository.save(employee);
+        LOG.debug("Created Employee for self-registered User: {}", employee);
+    }
+
+    /**
+     * The registration form's firstName is optional (no @NotNull/minlength on the client),
+     * but Employee.firstName requires at least 2 characters. Fall back to a value derived
+     * from the login when the submitted firstName doesn't satisfy that constraint.
+     */
+    private String resolveEmployeeFirstName(AdminUserDTO userDTO) {
+        String firstName = userDTO.getFirstName();
+        if (firstName != null && firstName.trim().length() >= 2) {
+            return firstName.trim();
+        }
+        return capitalizeForFallback(userDTO.getLogin());
+    }
+
+    /**
+     * Same rationale as {@link #resolveEmployeeFirstName(AdminUserDTO)}, but lastName has no
+     * natural source to derive from (the login already backs firstName), so a fixed
+     * placeholder is used instead.
+     */
+    private String resolveEmployeeLastName(AdminUserDTO userDTO) {
+        String lastName = userDTO.getLastName();
+        if (lastName != null && lastName.trim().length() >= 2) {
+            return lastName.trim();
+        }
+        return "N/A";
+    }
+
+    private static String capitalizeForFallback(String value) {
+        if (value == null || value.isBlank()) {
+            return "NA";
+        }
+        String trimmed = value.trim();
+        if (trimmed.length() < 2) {
+            // pad up to satisfy Employee's 2-character minimum
+            trimmed = trimmed + "x";
+        }
+        String lower = trimmed.toLowerCase();
+        return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
+    }
+
+    /**
+     * Generates the next employee number in the format EMP-001, EMP-002, etc., matching the
+     * same scheme used by the manual Employee creation form. The sequence is based on the
+     * highest existing numeric suffix across all employees.
+     */
+    private String generateNextEmployeeNumber() {
+        int nextSequence =
+            employeeRepository
+                .findAllEmployeeNumbers()
+                .stream()
+                .filter(Objects::nonNull)
+                .map(EMPLOYEE_NUMBER_PATTERN::matcher)
+                .filter(Matcher::matches)
+                .mapToInt(matcher -> Integer.parseInt(matcher.group(1)))
+                .max()
+                .orElse(0) +
+            1;
+        return String.format("EMP-%04d", nextSequence);
     }
 }

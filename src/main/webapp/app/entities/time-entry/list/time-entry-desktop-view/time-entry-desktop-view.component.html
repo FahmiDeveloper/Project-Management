@@ -85,7 +85,7 @@
         [matTooltip]="timeEntry.note ?? ''"
         [matTooltipDisabled]="!timeEntry.note"
       >
-        {{ timeEntry.note }}
+        {{ timeEntry.note ?? '-' }}
       </td>
     </ng-container>
 
