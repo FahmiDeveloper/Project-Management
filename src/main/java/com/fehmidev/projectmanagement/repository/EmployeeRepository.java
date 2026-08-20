@@ -44,4 +44,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
     Optional<Employee> findOneWithToOneRelationships(@Param("id") Long id);
 
     long countByDepartmentId(Long departmentId);
+
+    // NEW: lightweight projection used to compute the next EMP-XXX sequence number
+    // without loading full Employee entities (or their relationships).
+    @Query("select employee.employeeNumber from Employee employee")
+    List<String> findAllEmployeeNumbers();
+
+    boolean existsByUserId(Long userId);
 }

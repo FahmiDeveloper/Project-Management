@@ -3,7 +3,7 @@
     <mat-card class="employee-card" appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ employee.firstName }} {{ employee.lastName }}</mat-card-title>
-        <mat-card-subtitle *ngIf="employee.jobTitle">{{ employee.jobTitle }}</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="employee.jobTitle !== 'Not assigned'">{{ employee.jobTitle }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>

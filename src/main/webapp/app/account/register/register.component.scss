@@ -1,33 +1,68 @@
 // Variables
 $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
-// Full viewport container with flex centering
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Full-page container. IMPORTANT: this used to be `position: fixed` combined with
+// `align-items: center`, which vertically centers content via flexbox. That works
+// fine when the card is shorter than the viewport, but once the form grew taller
+// than the screen (extra fields, mobile viewport, etc.) flexbox centered it by
+// pushing half the overflow ABOVE `scrollTop: 0`, where it can never be scrolled
+// to - clipping the title at the top and the bottom alert at the bottom, even with
+// `overflow-y: auto`. Using normal document flow (no fixed position, no vertical
+// flex centering) lets the page scroll naturally from the real top, so nothing is
+// ever clipped, on any viewport height.
 .register-page-viewport {
-  width: 100% !important;
-  height: 100vh !important;
-  min-height: 100vh !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 1rem;
+  width: 100%;
+  min-height: 100dvh; // dvh (not vh) accounts for mobile browser chrome resizing the viewport
   background: #f5f7fa;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-y: auto;
+  padding: 3rem 1rem;
+  padding-top: max(3rem, env(safe-area-inset-top));
+  padding-bottom: max(3rem, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+// Desktop: the two-column form rows (see .form-row) make the card short
+// enough to fit a normal viewport, so lock the page to exactly 100dvh and
+// hide overflow to guarantee no vertical scrollbar ever appears. Mobile
+// keeps the default document-flow scrolling above/below (no override here),
+// since the form stacks back to one column there and can legitimately run
+// taller than the screen.
+@media (min-width: 769px) {
+  .register-page-viewport {
+    height: 100dvh;
+    overflow: hidden;
+  }
 }
 
 .register-box-container {
   width: 460px !important;
   max-width: 100% !important;
+  margin: 0 auto; // horizontal centering only - vertical position follows normal document flow
   background: white;
   border-radius: 16px;
   padding: 2.5rem;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.04);
   animation: fadeIn 0.4s ease;
+
+  // Two-column row for pairing related fields (first/last name, email/phone,
+  // password/confirm password). Stacks back to a single column on mobile
+  // (see the max-width: 768px media query below).
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+
+    .form-group {
+      flex: 1 1 0;
+      min-width: 0; // let inputs shrink instead of overflowing the row
+      margin-bottom: 0;
+    }
+  }
 
   h1 {
     font-size: 1.8rem;
@@ -288,28 +323,53 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 }
 
+// Desktop / tablet: give the card extra width so the two-column
+// form-rows (first/last name, email/phone, password/confirm) have
+// comfortable room instead of squeezing the inputs.
+@media (min-width: 769px) {
+  .register-box-container {
+    width: 620px !important;
+  }
+}
+
 // Responsive
 @media (max-width: 768px) {
+  .register-page-viewport {
+    padding: 2rem 1rem;
+    padding-top: max(2rem, env(safe-area-inset-top));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+
   .register-box-container {
     width: 100% !important;
     max-width: 420px !important;
     padding: 2rem;
     border-radius: 12px;
-    margin: 1rem;
+
+    // Stack paired fields back into a single column on mobile.
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 0;
+
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+    }
   }
 }
 
 @media (max-width: 480px) {
   .register-page-viewport {
-    padding: 0.5rem;
-    align-items: center !important;
+    padding: 1.25rem 0.75rem;
+    padding-top: max(1.25rem, env(safe-area-inset-top));
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
   }
 
   .register-box-container {
     padding: 1.5rem;
     border-radius: 10px;
     max-width: 100% !important;
-    margin: 0.5rem;
 
     h1 {
       font-size: 1.4rem;

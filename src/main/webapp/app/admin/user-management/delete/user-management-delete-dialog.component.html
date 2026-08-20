@@ -7,9 +7,22 @@
     <div class="modal-body">
       <jhi-alert-error />
 
-      <p jhiTranslate="userManagement.delete.question" [translateValues]="{ login: user.login }">
-        Are you sure you want to delete user {{ user.login }}?
-      </p>
+      @if (!checkingEmployeeLink && !hasLinkedEmployee) {
+        <p jhiTranslate="userManagement.delete.question" [translateValues]="{ login: user.login }">
+          Are you sure you want to delete user {{ user.login }}?
+        </p>
+      }
+
+      @if (checkingEmployeeLink) {
+        <p class="text-muted mb-0">
+          <fa-icon icon="spinner" class="fa-spin"></fa-icon>&nbsp;
+          <span jhiTranslate="userManagement.delete.checkingEmployee">Checking related employees...</span>
+        </p>
+      } @else if (hasLinkedEmployee) {
+        <div class="alert alert-danger mb-0" role="alert">
+          <span>This user has an assigned employee record. Delete that employee first.</span>
+        </div>
+      }
     </div>
 
     <div class="modal-footer">
@@ -17,9 +30,11 @@
         <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
       </button>
 
-      <button type="submit" class="btn btn-danger">
-        <fa-icon icon="times"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
-      </button>
+      @if (!checkingEmployeeLink && !hasLinkedEmployee) {
+        <button type="submit" class="btn btn-danger">
+          <fa-icon icon="times"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+        </button>
+      }
     </div>
   </form>
 }

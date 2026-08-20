@@ -75,7 +75,7 @@
 
     <ng-container matColumnDef="note">
       <th mat-header-cell *matHeaderCellDef jhiSortBy="note">
-        <span jhiTranslate="projectManagementApp.project.note">Note</span>
+        <span jhiTranslate="projectManagementApp.timeEntry.note">Note</span>
         <mat-icon class="sort-icon">unfold_more</mat-icon>
       </th>
       <td
@@ -85,7 +85,7 @@
         [matTooltip]="timeEntry.note ?? ''"
         [matTooltipDisabled]="!timeEntry.note"
       >
-        {{ timeEntry.note }}
+        {{ timeEntry.note ?? '-' }}
       </td>
     </ng-container>
 
