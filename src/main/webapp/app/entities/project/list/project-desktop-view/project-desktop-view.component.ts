@@ -34,6 +34,7 @@ export class ProjectDesktopViewComponent {
     'status',
     'client',
     'manager',
+    'note',
     'actions',
   ];
 

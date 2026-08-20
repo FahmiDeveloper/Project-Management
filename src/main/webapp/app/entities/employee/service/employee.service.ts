@@ -83,6 +83,10 @@ export class EmployeeService {
     return o1 && o2 ? this.getEmployeeIdentifier(o1) === this.getEmployeeIdentifier(o2) : o1 === o2;
   }
 
+  existsForUser(userId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.resourceUrl}/exists-for-user/${userId}`);
+  }
+
   addEmployeeToCollectionIfMissing<Type extends Pick<IEmployee, 'id'>>(
     employeeCollection: Type[],
     ...employeesToCheck: (Type | null | undefined)[]

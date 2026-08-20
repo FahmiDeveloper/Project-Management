@@ -49,4 +49,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
     // without loading full Employee entities (or their relationships).
     @Query("select employee.employeeNumber from Employee employee")
     List<String> findAllEmployeeNumbers();
+
+    boolean existsByUserId(Long userId);
 }

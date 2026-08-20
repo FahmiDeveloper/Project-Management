@@ -204,4 +204,10 @@ public class EmployeeResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("/exists-for-user/{userId}")
+    public ResponseEntity<Boolean> employeeExistsForUser(@PathVariable Long userId) {
+        boolean exists = employeeRepository.existsByUserId(userId);
+        return ResponseEntity.ok(exists);
+    }
 }
