@@ -10,13 +10,13 @@
 
     <form class="form" (ngSubmit)="login()" [formGroup]="loginForm">
       <div class="mb-3">
-        <label class="username-label" for="username" jhiTranslate="global.form.username.label">Username</label>
+        <label class="username-label" for="username" jhiTranslate="global.form.email.label">Email</label>
         <input
-          type="text"
+          type="email"
           class="form-control"
           name="username"
           id="username"
-          placeholder="{{ 'global.form.username.placeholder' | translate }}"
+          placeholder="{{ 'global.form.email.placeholder' | translate }}"
           formControlName="username"
           data-cy="username"
         />

@@ -6,6 +6,7 @@ import passwordResetFinishRoute from './password-reset/finish/password-reset-fin
 import passwordResetInitRoute from './password-reset/init/password-reset-init.route';
 import registerRoute from './register/register.route';
 import settingsRoute from './settings/settings.route';
+import verifyCodeRoute from './verify-code/verify-code.route';
 
 const accountRoutes: Routes = [
   activateRoute,
@@ -14,6 +15,7 @@ const accountRoutes: Routes = [
   passwordResetInitRoute,
   registerRoute,
   settingsRoute,
+  verifyCodeRoute,
 ];
 
 export default accountRoutes;

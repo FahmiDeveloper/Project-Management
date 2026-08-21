@@ -31,6 +31,8 @@ public class MailService {
 
     private static final String BASE_URL = "baseUrl";
 
+    private static final String VERIFICATION_CODE_VAR = "code";
+
     private final JHipsterProperties jHipsterProperties;
 
     private final JavaMailSender javaMailSender;
@@ -116,5 +118,24 @@ public class MailService {
     public void sendPasswordResetMail(User user) {
         LOG.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplateSync(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    private static final String CODE = "code";
+
+    @Async
+    public void sendVerificationCodeEmail(User user, String code) {
+        LOG.debug("Sending verification code email to '{}'", user.getEmail());
+        if (user.getEmail() == null) {
+            LOG.debug("Email doesn't exist for user '{}'", user.getLogin());
+            return;
+        }
+        Locale locale = Locale.forLanguageTag(user.getLangKey());
+        Context context = new Context(locale);
+        context.setVariable(USER, user);
+        context.setVariable(VERIFICATION_CODE_VAR, code);
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        String content = templateEngine.process("mail/verificationCodeEmail", context);
+        String subject = messageSource.getMessage("email.verification.title", null, locale);
+        sendEmailSync(user.getEmail(), subject, content, false, true);
     }
 }
