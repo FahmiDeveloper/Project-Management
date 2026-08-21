@@ -21,7 +21,13 @@ public class VerificationCode implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "verificationCodeSequenceGenerator")
+    @SequenceGenerator(
+        name = "verificationCodeSequenceGenerator",
+        sequenceName = "verification_code_sequence_generator",
+        allocationSize = 50
+    )
+    @Column(name = "id")
     private Long id;
 
     @NotNull

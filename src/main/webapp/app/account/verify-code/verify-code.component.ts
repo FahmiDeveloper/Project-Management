@@ -17,6 +17,7 @@ export default class VerifyCodeComponent implements OnInit {
   error = signal(false);
   resent = signal(false);
   login = signal<string | null>(null);
+  submitting = signal(false);
 
   private readonly fb = inject(FormBuilder);
   private readonly registerService = inject(RegisterService);
@@ -35,15 +36,20 @@ export default class VerifyCodeComponent implements OnInit {
     this.error.set(false);
     const login = this.login();
     const code = this.codeForm.get('code')!.value;
-    if (!login || !code) {
+    if (!login || !code || this.submitting()) {
+      // NEW guard
       return;
     }
+    this.submitting.set(true); // NEW
     this.registerService.verifyCode({ login, code }).subscribe({
       next: () => {
         this.success.set(true);
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
-      error: () => this.error.set(true),
+      error: () => {
+        this.error.set(true);
+        this.submitting.set(false); // NEW
+      },
     });
   }
 

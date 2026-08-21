@@ -56,7 +56,7 @@
           </div>
         }
 
-        <button type="submit" class="btn-primary" [disabled]="codeForm.invalid">Verify</button>
+        <button type="submit" class="btn-primary" [disabled]="codeForm.invalid || submitting()">Verify</button>
         <button type="button" class="btn-secondary-link" (click)="resend()">Resend code</button>
       </form>
     }

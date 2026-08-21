@@ -34,9 +34,16 @@ public class VerificationCodeService {
 
     private final UserRepository userRepository;
 
-    public VerificationCodeService(VerificationCodeRepository verificationCodeRepository, UserRepository userRepository) {
+    private final UserService userService;
+
+    public VerificationCodeService(
+        VerificationCodeRepository verificationCodeRepository,
+        UserRepository userRepository,
+        UserService userService
+    ) {
         this.verificationCodeRepository = verificationCodeRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     /**
@@ -75,6 +82,7 @@ public class VerificationCodeService {
                     verificationCodeRepository.save(vc);
                     user.setActivated(true);
                     userRepository.save(user);
+                    userService.clearUserCaches(user);
                     LOG.debug("Verified code and activated user '{}'", user.getLogin());
                     return user;
                 })
