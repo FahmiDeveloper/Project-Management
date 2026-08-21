@@ -27,21 +27,21 @@ public class PushResource {
         service.add(subscription);
     }
 
-    // NEW: Send from desktop - saves WEB_PUSH and sends to all
+    // Send from desktop - saves WEB_PUSH and sends to all, attributed to the current user
     @PostMapping("/send-from-desktop")
     public void sendFromDesktop(@RequestBody PushMessageDTO message) {
-        // Save desktop notification
-        notificationService.saveNotification(message.getTitle(), message.getBody(), "desktop", null);
+        // Save desktop notification, linked to the currently authenticated user's Employee
+        notificationService.saveNotificationForCurrentUser(message.getTitle(), message.getBody(), "desktop");
 
         // Send to all devices (both desktop and mobile)
         webPushService.sendToAllDevices(message.getTitle(), message.getBody(), message.getUrl(), message.getImage());
     }
 
-    // NEW: Send from mobile - saves FCM and sends to all
+    // Send from mobile - saves FCM and sends to all, attributed to the current user
     @PostMapping("/send-from-mobile")
     public void sendFromMobile(@RequestBody PushMessageDTO message) {
-        // Save mobile notification
-        notificationService.saveNotification(message.getTitle(), message.getBody(), "mobile", null);
+        // Save mobile notification, linked to the currently authenticated user's Employee
+        notificationService.saveNotificationForCurrentUser(message.getTitle(), message.getBody(), "mobile");
 
         // Send to all devices (both desktop and mobile)
         webPushService.sendToAllDevices(message.getTitle(), message.getBody(), message.getUrl(), message.getImage());

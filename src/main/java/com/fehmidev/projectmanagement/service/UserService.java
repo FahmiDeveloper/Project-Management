@@ -120,14 +120,13 @@ public class UserService {
     // NEW: overload accepting the phone number captured on the registration form,
     // forwarded to the auto-created Employee record.
     public User registerUser(AdminUserDTO userDTO, String password, String phone) {
-        userRepository
-            .findOneByLogin(userDTO.getLogin().toLowerCase())
-            .ifPresent(existingUser -> {
-                boolean removed = removeNonActivatedUser(existingUser);
-                if (!removed) {
-                    throw new UsernameAlreadyUsedException();
-                }
-            });
+        // NEW: the frontend now auto-generates the login as "firstname.lastname" instead of the
+        // user typing one, so two people with the same name produce the same candidate login.
+        // Rather than reject the second registration outright, append a numeric suffix
+        // (john.doe, john.doe2, john.doe3, ...) until a free login is found. An active user
+        // still holding the base login blocks reuse of that exact candidate; a stale,
+        // never-activated registration is freed up and reused immediately, exactly as before.
+        String resolvedLogin = resolveUniqueLogin(userDTO.getLogin().toLowerCase());
         userRepository
             .findOneByEmailIgnoreCase(userDTO.getEmail())
             .ifPresent(existingUser -> {
@@ -138,7 +137,7 @@ public class UserService {
             });
         User newUser = new User();
         String encryptedPassword = passwordEncoder.encode(password);
-        newUser.setLogin(userDTO.getLogin().toLowerCase());
+        newUser.setLogin(resolvedLogin);
         // new user gets initially a generated password
         newUser.setPassword(encryptedPassword);
         newUser.setFirstName(userDTO.getFirstName());
@@ -150,8 +149,6 @@ public class UserService {
         newUser.setLangKey(userDTO.getLangKey());
         // new user is not active
         newUser.setActivated(false);
-        // new user gets registration key
-        newUser.setActivationKey(RandomUtil.generateActivationKey());
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
@@ -162,6 +159,35 @@ public class UserService {
         createEmployeeForNewUser(newUser, userDTO, phone);
         LOG.debug("Created Information for User: {}", newUser);
         return newUser;
+    }
+
+    /**
+     * Finds the first available login starting from {@code baseLogin}, appending an
+     * incrementing numeric suffix (login, login2, login3, ...) whenever the candidate is
+     * already held by an activated user.
+     */
+    private String resolveUniqueLogin(String baseLogin) {
+        String candidate = baseLogin;
+        int suffix = 1;
+        while (isLoginTaken(candidate)) {
+            suffix++;
+            candidate = baseLogin + suffix;
+        }
+        return candidate;
+    }
+
+    private boolean isLoginTaken(String login) {
+        return userRepository
+            .findOneByLogin(login)
+            .map(existingUser -> {
+                if (existingUser.isActivated()) {
+                    return true;
+                }
+                // stale, never-activated registration holding this login - free it up, same as before
+                removeNonActivatedUser(existingUser);
+                return false;
+            })
+            .orElse(false);
     }
 
     private boolean removeNonActivatedUser(User existingUser) {
@@ -344,7 +370,7 @@ public class UserService {
         return authorityRepository.findAll().stream().map(Authority::getName).toList();
     }
 
-    private void clearUserCaches(User user) {
+    public void clearUserCaches(User user) {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evictIfPresent(user.getLogin());
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evictIfPresent(user.getEmail());

@@ -31,12 +31,6 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 // keeps the default document-flow scrolling above/below (no override here),
 // since the form stacks back to one column there and can legitimately run
 // taller than the screen.
-@media (min-width: 769px) {
-  .register-page-viewport {
-    height: 100dvh;
-    overflow: hidden;
-  }
-}
 
 .register-box-container {
   width: 460px !important;
@@ -325,8 +319,31 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
 // Desktop / tablet: give the card extra width so the two-column
 // form-rows (first/last name, email/phone, password/confirm) have
-// comfortable room instead of squeezing the inputs.
+// comfortable room instead of squeezing the inputs. The two-column
+// layout also keeps the card short enough to safely apply the same
+// position: fixed + flex-centering technique used on the login page
+// (no scrollbar, always dead-center) without clipping anything.
+// Mobile intentionally keeps normal document-flow scrolling (see the
+// comment on .register-page-viewport above) since the form stacks
+// back to a single column there and can legitimately run taller than
+// the screen - locking it with overflow: hidden would clip content,
+// exactly like the original bug this file was fixed for.
 @media (min-width: 769px) {
+  .register-page-viewport {
+    width: 100% !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
   .register-box-container {
     width: 620px !important;
   }

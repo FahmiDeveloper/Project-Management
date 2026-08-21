@@ -5,17 +5,21 @@ import com.fehmidev.projectmanagement.repository.UserRepository;
 import com.fehmidev.projectmanagement.security.SecurityUtils;
 import com.fehmidev.projectmanagement.service.MailService;
 import com.fehmidev.projectmanagement.service.UserService;
+import com.fehmidev.projectmanagement.service.VerificationCodeService;
 import com.fehmidev.projectmanagement.service.dto.AdminUserDTO;
 import com.fehmidev.projectmanagement.service.dto.PasswordChangeDTO;
 import com.fehmidev.projectmanagement.web.rest.errors.*;
 import com.fehmidev.projectmanagement.web.rest.vm.KeyAndPasswordVM;
 import com.fehmidev.projectmanagement.web.rest.vm.ManagedUserVM;
+import com.fehmidev.projectmanagement.web.rest.vm.ResendCodeVM;
+import com.fehmidev.projectmanagement.web.rest.vm.VerifyCodeVM;
 import jakarta.validation.Valid;
 import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -40,10 +44,18 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+    private final VerificationCodeService verificationCodeService;
+
+    public AccountResource(
+        UserRepository userRepository,
+        UserService userService,
+        MailService mailService,
+        VerificationCodeService verificationCodeService
+    ) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.verificationCodeService = verificationCodeService;
     }
 
     /**
@@ -56,18 +68,48 @@ public class AccountResource {
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
+    public ResponseEntity<Map<String, String>> registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
         if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
-        // NEW: forward the phone number captured on the registration form so it can be
-        // copied onto the Employee record that gets auto-created for this user.
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword(), managedUserVM.getPhone());
-        mailService.sendActivationEmail(user);
+        String code = verificationCodeService.generateCodeFor(user);
+        mailService.sendVerificationCodeEmail(user, code);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("login", user.getLogin(), "email", user.getEmail()));
     }
 
     /**
-     * {@code GET  /activate} : activate the registered user.
+     * {@code POST  /account/verify-code} : verify the 6-digit code sent at registration and activate the account.
+     *
+     * @param verifyCodeVM the login/email and the submitted code.
+     * @throws RuntimeException {@code 500 (Internal Server Error)} if the code is invalid, expired, or already used.
+     */
+    @PostMapping("/account/verify-code")
+    public void verifyCode(@Valid @RequestBody VerifyCodeVM verifyCodeVM) {
+        Optional<User> user = verificationCodeService.verifyCode(verifyCodeVM.getLogin(), verifyCodeVM.getCode());
+        if (!user.isPresent()) {
+            throw new AccountResourceException("Invalid or expired verification code");
+        }
+    }
+
+    /**
+     * {@code POST  /account/resend-verification-code} : issue and email a fresh verification code.
+     * Always returns 200 regardless of whether the login/email exists, to avoid leaking account existence.
+     *
+     * @param resendCodeVM the login/email to resend a code to.
+     */
+    @PostMapping("/account/resend-verification-code")
+    public void resendVerificationCode(@Valid @RequestBody ResendCodeVM resendCodeVM) {
+        verificationCodeService
+            .resendCodeFor(resendCodeVM.getLogin())
+            .ifPresentOrElse(
+                userAndCode -> mailService.sendVerificationCodeEmail(userAndCode.getUser(), userAndCode.getCode()),
+                () -> LOG.warn("Verification code resend requested for unknown or already-activated account")
+            );
+    }
+
+    /**
+     * {@code GET  /activate} : activate the registered user (legacy link-based flow, left in place but unused by the new frontend).
      *
      * @param key the activation key.
      * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be activated.
@@ -147,8 +189,6 @@ public class AccountResource {
         if (user.isPresent()) {
             mailService.sendPasswordResetMail(user.orElseThrow());
         } else {
-            // Pretend the request has been successful to prevent checking which emails really exist
-            // but log that an invalid attempt has been made
             LOG.warn("Password reset requested for non existing mail");
         }
     }

@@ -3,16 +3,6 @@
     <h1 data-cy="registerTitle" jhiTranslate="register.title">Create Account</h1>
     <p class="register-subtitle">Join us and start managing your projects</p>
 
-    @if (success()) {
-      <div class="alert alert-success">
-        <mat-icon>check_circle</mat-icon>
-        <div>
-          <strong jhiTranslate="register.messages.success">Registration saved!</strong>
-          <a class="alert-link" routerLink="/login" jhiTranslate="global.messages.info.authenticated.link">sign in</a>
-        </div>
-      </div>
-    }
-
     @if (error()) {
       <div class="alert alert-danger" jhiTranslate="register.messages.error.fail">
         <mat-icon>error</mat-icon>
@@ -41,276 +31,217 @@
       </div>
     }
 
-    @if (!success()) {
-      <form name="form" (ngSubmit)="register()" [formGroup]="registerForm">
+    <form name="form" (ngSubmit)="register()" [formGroup]="registerForm">
+      <div class="form-row">
         <div class="form-group">
-          <label class="form-label" for="login" jhiTranslate="global.form.username.label">Username</label>
+          <label class="form-label" for="firstName" jhiTranslate="userManagement.firstName">First name</label>
           <div class="input-wrapper">
-            <mat-icon class="input-icon">person</mat-icon>
+            <mat-icon class="input-icon">badge</mat-icon>
             <input
+              #firstNameInput
               type="text"
               class="form-control"
-              id="login"
-              name="login"
-              placeholder="{{ 'global.form.username.placeholder' | translate }}"
-              formControlName="login"
-              data-cy="username"
+              id="firstName"
+              name="firstName"
+              placeholder="{{ 'userManagement.firstName' | translate }}"
+              formControlName="firstName"
+              data-cy="firstName"
             />
           </div>
 
-          @let loginRef = registerForm.get('login')!;
-          @if (loginRef.invalid && (loginRef.dirty || loginRef.touched)) {
+          @let firstNameRef = registerForm.get('firstName')!;
+          @if (firstNameRef.invalid && (firstNameRef.dirty || firstNameRef.touched)) {
             <div class="validation-errors">
-              @if (loginRef?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="register.messages.validate.login.required"
-                  >Your username is required.</small
-                >
+              @if (firstNameRef?.errors?.required) {
+                <small class="form-text text-danger">Your first name is required.</small>
               }
-
-              @if (loginRef?.errors?.minlength) {
-                <small class="form-text text-danger" jhiTranslate="register.messages.validate.login.minlength"
-                  >Your username is required to be at least 1 character.</small
-                >
-              }
-
-              @if (loginRef?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="register.messages.validate.login.maxlength"
-                  >Your username cannot be longer than 50 characters.</small
-                >
-              }
-
-              @if (loginRef?.errors?.pattern) {
-                <small class="form-text text-danger" jhiTranslate="register.messages.validate.login.pattern"
-                  >Your username is invalid.</small
-                >
+              @if (firstNameRef?.errors?.maxlength) {
+                <small class="form-text text-danger">This field cannot be longer than 50 characters.</small>
               }
             </div>
           }
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="firstName" jhiTranslate="userManagement.firstName">First name</label>
-            <div class="input-wrapper">
-              <mat-icon class="input-icon">badge</mat-icon>
-              <input
-                type="text"
-                class="form-control"
-                id="firstName"
-                name="firstName"
-                placeholder="{{ 'userManagement.firstName' | translate }}"
-                formControlName="firstName"
-                data-cy="firstName"
-              />
-            </div>
-
-            @let firstNameRef = registerForm.get('firstName')!;
-            @if (firstNameRef.invalid && (firstNameRef.dirty || firstNameRef.touched)) {
-              <div class="validation-errors">
-                @if (firstNameRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
-                    >This field cannot be longer than 50 characters.</small
-                  >
-                }
-              </div>
-            }
+        <div class="form-group">
+          <label class="form-label" for="lastName" jhiTranslate="userManagement.lastName">Last name</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">badge</mat-icon>
+            <input
+              type="text"
+              class="form-control"
+              id="lastName"
+              name="lastName"
+              placeholder="{{ 'userManagement.lastName' | translate }}"
+              formControlName="lastName"
+              data-cy="lastName"
+            />
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="lastName" jhiTranslate="userManagement.lastName">Last name</label>
-            <div class="input-wrapper">
-              <mat-icon class="input-icon">badge</mat-icon>
-              <input
-                type="text"
-                class="form-control"
-                id="lastName"
-                name="lastName"
-                placeholder="{{ 'userManagement.lastName' | translate }}"
-                formControlName="lastName"
-                data-cy="lastName"
-              />
+          @let lastNameRef = registerForm.get('lastName')!;
+          @if (lastNameRef.invalid && (lastNameRef.dirty || lastNameRef.touched)) {
+            <div class="validation-errors">
+              @if (lastNameRef?.errors?.required) {
+                <small class="form-text text-danger">Your last name is required.</small>
+              }
+              @if (lastNameRef?.errors?.maxlength) {
+                <small class="form-text text-danger">This field cannot be longer than 50 characters.</small>
+              }
             </div>
+          }
+        </div>
+      </div>
 
-            @let lastNameRef = registerForm.get('lastName')!;
-            @if (lastNameRef.invalid && (lastNameRef.dirty || lastNameRef.touched)) {
-              <div class="validation-errors">
-                @if (lastNameRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
-                    >This field cannot be longer than 50 characters.</small
-                  >
-                }
-              </div>
-            }
+      <!-- <div class="form-group">
+        <label class="form-label" for="login" jhiTranslate="global.form.username.label">Username</label>
+        <div class="input-wrapper">
+          <mat-icon class="input-icon">person</mat-icon>
+          <input type="text" class="form-control" id="login" name="login" formControlName="login" readonly data-cy="username" />
+        </div>
+        <small class="form-text text-muted">Generated automatically from your first and last name.</small>
+      </div> -->
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="email" jhiTranslate="global.form.email.label">Email</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">email</mat-icon>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              placeholder="{{ 'global.form.email.placeholder' | translate }}"
+              formControlName="email"
+              data-cy="email"
+            />
           </div>
+
+          @let emailRef = registerForm.get('email')!;
+          @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
+            <div class="validation-errors">
+              @if (emailRef?.errors?.required) {
+                <small class="form-text text-danger">Your email is required.</small>
+              }
+              @if (emailRef?.errors?.invalid) {
+                <small class="form-text text-danger">Your email is invalid.</small>
+              }
+              @if (emailRef?.errors?.minlength) {
+                <small class="form-text text-danger">Your email is required to be at least 5 characters.</small>
+              }
+              @if (emailRef?.errors?.maxlength) {
+                <small class="form-text text-danger">Your email cannot be longer than 50 characters.</small>
+              }
+            </div>
+          }
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="email" jhiTranslate="global.form.email.label">Email</label>
-            <div class="input-wrapper">
-              <mat-icon class="input-icon">email</mat-icon>
-              <input
-                type="email"
-                class="form-control"
-                id="email"
-                name="email"
-                placeholder="{{ 'global.form.email.placeholder' | translate }}"
-                formControlName="email"
-                data-cy="email"
-              />
-            </div>
-
-            @let emailRef = registerForm.get('email')!;
-            @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
-              <div class="validation-errors">
-                @if (emailRef?.errors?.required) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.email.required"
-                    >Your email is required.</small
-                  >
-                }
-
-                @if (emailRef?.errors?.invalid) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.email.invalid">Your email is invalid.</small>
-                }
-
-                @if (emailRef?.errors?.minlength) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.email.minlength"
-                    >Your email is required to be at least 5 characters.</small
-                  >
-                }
-
-                @if (emailRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.email.maxlength"
-                    >Your email cannot be longer than 50 characters.</small
-                  >
-                }
-              </div>
-            }
+        <div class="form-group">
+          <label class="form-label" for="phone" jhiTranslate="projectManagementApp.employee.phone">Phone</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">phone</mat-icon>
+            <input
+              type="text"
+              class="form-control"
+              id="phone"
+              name="phone"
+              placeholder="{{ 'projectManagementApp.employee.phone' | translate }}"
+              formControlName="phone"
+              data-cy="phone"
+              inputmode="numeric"
+              maxlength="8"
+              pattern="[0-9]{8}"
+              (keydown)="blockNonDigit($event)"
+              (paste)="sanitizePhonePaste($event)"
+            />
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="phone" jhiTranslate="projectManagementApp.employee.phone">Phone</label>
-            <div class="input-wrapper">
-              <mat-icon class="input-icon">phone</mat-icon>
-              <input
-                type="tel"
-                class="form-control"
-                id="phone"
-                name="phone"
-                placeholder="{{ 'projectManagementApp.employee.phone' | translate }}"
-                formControlName="phone"
-                data-cy="phone"
-              />
+          @let phoneRef = registerForm.get('phone')!;
+          @if (phoneRef.invalid && (phoneRef.dirty || phoneRef.touched)) {
+            <div class="validation-errors">
+              @if (phoneRef?.errors?.pattern) {
+                <small class="form-text text-danger">Your phone number must contain exactly 8 digits.</small>
+              }
             </div>
+          }
+        </div>
+      </div>
 
-            @let phoneRef = registerForm.get('phone')!;
-            @if (phoneRef.invalid && (phoneRef.dirty || phoneRef.touched)) {
-              <div class="validation-errors">
-                @if (phoneRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
-                    >This field cannot be longer than 20 characters.</small
-                  >
-                }
-              </div>
-            }
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="password" jhiTranslate="global.form.newpassword.label">New password</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">lock</mat-icon>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="{{ 'global.form.newpassword.placeholder' | translate }}"
+              formControlName="password"
+              data-cy="firstPassword"
+            />
           </div>
+
+          @let passwordRef = registerForm.get('password')!;
+          @if (passwordRef.invalid && (passwordRef.dirty || passwordRef.touched)) {
+            <div class="validation-errors">
+              @if (passwordRef?.errors?.required) {
+                <small class="form-text text-danger">Your password is required.</small>
+              }
+              @if (passwordRef?.errors?.minlength) {
+                <small class="form-text text-danger">Your password is required to be at least 4 characters.</small>
+              }
+              @if (passwordRef?.errors?.maxlength) {
+                <small class="form-text text-danger">Your password cannot be longer than 50 characters.</small>
+              }
+            </div>
+          }
+
+          <!-- <jhi-password-strength-bar [passwordToCheck]="passwordRef.value" /> -->
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="password" jhiTranslate="global.form.newpassword.label">New password</label>
-            <div class="input-wrapper">
-              <mat-icon class="input-icon">lock</mat-icon>
-              <input
-                type="password"
-                class="form-control"
-                id="password"
-                name="password"
-                placeholder="{{ 'global.form.newpassword.placeholder' | translate }}"
-                formControlName="password"
-                data-cy="firstPassword"
-              />
-            </div>
-
-            @let passwordRef = registerForm.get('password')!;
-            @if (passwordRef.invalid && (passwordRef.dirty || passwordRef.touched)) {
-              <div class="validation-errors">
-                @if (passwordRef?.errors?.required) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.newpassword.required"
-                    >Your password is required.</small
-                  >
-                }
-
-                @if (passwordRef?.errors?.minlength) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.newpassword.minlength"
-                    >Your password is required to be at least 4 characters.</small
-                  >
-                }
-
-                @if (passwordRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.newpassword.maxlength"
-                    >Your password cannot be longer than 50 characters.</small
-                  >
-                }
-              </div>
-            }
-
-            <jhi-password-strength-bar [passwordToCheck]="passwordRef.value" />
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword" jhiTranslate="global.form.confirmpassword.label">New password confirmation</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">lock_outline</mat-icon>
+            <input
+              type="password"
+              class="form-control"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="{{ 'global.form.confirmpassword.placeholder' | translate }}"
+              formControlName="confirmPassword"
+              data-cy="secondPassword"
+            />
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="confirmPassword" jhiTranslate="global.form.confirmpassword.label"
-              >New password confirmation</label
-            >
-            <div class="input-wrapper">
-              <mat-icon class="input-icon">lock_outline</mat-icon>
-              <input
-                type="password"
-                class="form-control"
-                id="confirmPassword"
-                name="confirmPassword"
-                placeholder="{{ 'global.form.confirmpassword.placeholder' | translate }}"
-                formControlName="confirmPassword"
-                data-cy="secondPassword"
-              />
+          @let confirmPasswordRef = registerForm.get('confirmPassword')!;
+          @if (confirmPasswordRef.invalid && (confirmPasswordRef.dirty || confirmPasswordRef.touched)) {
+            <div class="validation-errors">
+              @if (confirmPasswordRef?.errors?.required) {
+                <small class="form-text text-danger">Your confirmation password is required.</small>
+              }
+              @if (confirmPasswordRef?.errors?.minlength) {
+                <small class="form-text text-danger">Your confirmation password is required to be at least 4 characters.</small>
+              }
+              @if (confirmPasswordRef?.errors?.maxlength) {
+                <small class="form-text text-danger">Your confirmation password cannot be longer than 50 characters.</small>
+              }
             </div>
-
-            @let confirmPasswordRef = registerForm.get('confirmPassword')!;
-            @if (confirmPasswordRef.invalid && (confirmPasswordRef.dirty || confirmPasswordRef.touched)) {
-              <div class="validation-errors">
-                @if (confirmPasswordRef?.errors?.required) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.confirmpassword.required"
-                    >Your confirmation password is required.</small
-                  >
-                }
-
-                @if (confirmPasswordRef?.errors?.minlength) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.confirmpassword.minlength"
-                    >Your confirmation password is required to be at least 4 characters.</small
-                  >
-                }
-
-                @if (confirmPasswordRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.confirmpassword.maxlength"
-                    >Your confirmation password cannot be longer than 50 characters.</small
-                  >
-                }
-              </div>
-            }
-          </div>
+          }
         </div>
+      </div>
 
-        <button
-          type="submit"
-          [disabled]="registerForm.invalid"
-          class="btn btn-primary w-100"
-          data-cy="submit"
-          jhiTranslate="register.form.button"
-        >
-          <mat-icon>person_add</mat-icon>
-          Register
-        </button>
-      </form>
-    }
+      <button
+        type="submit"
+        [disabled]="registerForm.invalid"
+        class="btn btn-primary w-100"
+        data-cy="submit"
+        jhiTranslate="register.form.button"
+      >
+        <mat-icon>person_add</mat-icon>
+        Register
+      </button>
+    </form>
   </div>
 </div>

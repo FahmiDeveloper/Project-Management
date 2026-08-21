@@ -1,0 +1,166 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="en">
+  <head>
+    <title th:text="#{email.verification.title}">Verify your account</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" th:href="@{|${baseUrl}/projmanag.ico|}" />
+    <style>
+      * {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      @media only screen and (max-width: 480px) {
+        .header-brand {
+          font-size: 26px !important;
+        }
+        .verify-title {
+          font-size: 26px !important;
+        }
+        .greeting-text {
+          font-size: 22px !important;
+        }
+        .body-text {
+          font-size: 21px !important;
+        }
+        .verify-code {
+          font-size: 34px !important;
+          letter-spacing: 6px !important;
+        }
+        .expiry-text {
+          font-size: 19px !important;
+        }
+        .footer-text {
+          font-size: 19px !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+      -webkit-text-size-adjust: 100%;
+    "
+  >
+    <!-- Outer wrapper: centers the card on every screen size -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f7fa">
+      <tr>
+        <td align="center" style="padding: 32px 16px">
+          <!-- Card -->
+          <table
+            role="presentation"
+            width="480"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              width: 480px;
+              max-width: 100%;
+              background-color: #ffffff;
+              border-radius: 16px;
+              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+              border: 1px solid rgba(0, 0, 0, 0.04);
+              overflow: hidden;
+            "
+          >
+            <!-- Gradient header -->
+            <tr>
+              <td align="center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 28px 24px">
+                <span class="header-brand" style="color: #ffffff; font-size: 30px; font-weight: 700; letter-spacing: 0.3px"
+                  >ProjectManagement</span
+                >
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding: 32px 32px 24px 32px" align="center">
+                <!-- Icon badge -->
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td
+                      align="center"
+                      valign="middle"
+                      style="width: 64px; height: 64px; border-radius: 50%; background-color: #eef1fd; font-size: 35px; color: #667eea"
+                    >
+                      &#128274;
+                    </td>
+                  </tr>
+                </table>
+
+                <h1
+                  class="verify-title"
+                  style="margin: 20px 0 8px 0; font-size: 32px; font-weight: 700; color: #2d3748; text-align: center"
+                  th:text="#{email.verification.title}"
+                >
+                  Verify your account
+                </h1>
+
+                <p
+                  class="greeting-text"
+                  style="margin: 0 0 4px 0; font-size: 26px; color: #4a5568; text-align: center"
+                  th:text="#{email.verification.greeting(${user.login})}"
+                >
+                  Dear
+                </p>
+
+                <p
+                  class="body-text"
+                  style="margin: 8px 0 24px 0; font-size: 24px; line-height: 1.6; color: #718096; text-align: center"
+                  th:text="#{email.verification.text1}"
+                >
+                  Your verification code is:
+                </p>
+
+                <!-- Verification code tile -->
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td
+                      align="center"
+                      style="background-color: #f7fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 32px"
+                    >
+                      <span
+                        class="verify-code"
+                        th:text="${code}"
+                        style="
+                          font-size: 44px;
+                          font-weight: 700;
+                          letter-spacing: 8px;
+                          color: #2d3748;
+                          font-family: 'Courier New', monospace;
+                        "
+                        >123456</span
+                      >
+                    </td>
+                  </tr>
+                </table>
+
+                <p
+                  class="expiry-text"
+                  style="margin: 20px 0 0 0; font-size: 23px; color: #a0aec0; text-align: center"
+                  th:text="#{email.verification.text2}"
+                >
+                  This code expires in 10 minutes.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style="padding: 20px 32px 28px 32px; border-top: 1px solid #edf2f7" align="center">
+                <p class="footer-text" style="margin: 0; font-size: 23px; color: #a0aec0; text-align: center">
+                  <span th:text="#{email.activation.text2}">Regards,</span>
+                  <br />
+                  <em th:text="#{email.signature}" style="font-style: normal; font-weight: 500; color: #718096">ProjectManagement Team.</em>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

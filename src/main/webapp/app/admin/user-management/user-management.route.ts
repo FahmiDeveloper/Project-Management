@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 
 import { IUser } from './user-management.model';
 import { UserManagementService } from './service/user-management.service';
+import { DESC } from 'app/config/navigation.constants';
 
 export const userManagementResolve: ResolveFn<IUser | null> = (route: ActivatedRouteSnapshot) => {
   const login = route.paramMap.get('login');
@@ -18,7 +19,7 @@ const userManagementRoute: Routes = [
     path: '',
     loadComponent: () => import('./list/user-management.component'),
     data: {
-      defaultSort: 'id,asc',
+      defaultSort: `id,${DESC}`,
     },
   },
   {

@@ -2,8 +2,10 @@ package com.fehmidev.projectmanagement.service;
 
 import com.fehmidev.projectmanagement.domain.Employee;
 import com.fehmidev.projectmanagement.domain.Notification;
+import com.fehmidev.projectmanagement.repository.EmployeeRepository;
 import com.fehmidev.projectmanagement.repository.NotificationRepository;
 import com.fehmidev.projectmanagement.repository.NotificationSpecification;
+import com.fehmidev.projectmanagement.security.SecurityUtils;
 import com.fehmidev.projectmanagement.service.dto.NotificationDTO;
 import com.fehmidev.projectmanagement.service.mapper.NotificationMapper;
 import java.time.Instant;
@@ -16,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,9 +34,17 @@ public class NotificationService {
 
     private final NotificationMapper notificationMapper;
 
-    public NotificationService(NotificationRepository notificationRepository, NotificationMapper notificationMapper) {
+    // NEW: needed to resolve the current user's Employee record.
+    private final EmployeeRepository employeeRepository;
+
+    public NotificationService(
+        NotificationRepository notificationRepository,
+        NotificationMapper notificationMapper,
+        EmployeeRepository employeeRepository
+    ) {
         this.notificationRepository = notificationRepository;
         this.notificationMapper = notificationMapper;
+        this.employeeRepository = employeeRepository;
     }
 
     /**
@@ -158,30 +166,22 @@ public class NotificationService {
     }
 
     /**
-     * Save a notification for the current user
+     * Save a notification for the current user, automatically resolving and attaching
+     * their linked Employee record (if any).
      */
     public Notification saveNotificationForCurrentUser(String title, String message, String type) {
-        // You'll need to get the current user's employee
-        // This is a placeholder - implement based on your security context
-        Employee currentEmployee = getCurrentEmployee(); // You need to implement this
+        Employee currentEmployee = getCurrentEmployee();
         return saveNotification(title, message, type, currentEmployee);
     }
 
     /**
-     * Get current employee - implement this based on your authentication
+     * Resolves the Employee linked to the currently authenticated user, if any.
+     *
+     * @return the current user's Employee, or {@code null} if unauthenticated or the
+     *         authenticated user has no linked Employee record.
      */
     private Employee getCurrentEmployee() {
-        // Using Spring Security
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
-        }
-
-        // Get current user
-        String username = authentication.getName();
-        // Fetch Employee by username - you'll need to inject UserService or similar
-        // return employeeRepository.findByUserLogin(username).orElse(null);
-        return null; // Placeholder
+        return SecurityUtils.getCurrentUserLogin().flatMap(employeeRepository::findOneByUserLogin).orElse(null);
     }
 
     /**
