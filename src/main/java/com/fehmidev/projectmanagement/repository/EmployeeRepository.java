@@ -51,4 +51,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
     List<String> findAllEmployeeNumbers();
 
     boolean existsByUserId(Long userId);
+
+    // NEW: resolves the Employee linked to a given User's login. Used to attribute
+    // actions performed by the currently authenticated user (e.g. test push notifications)
+    // to their Employee record.
+    Optional<Employee> findOneByUserLogin(String login);
 }
