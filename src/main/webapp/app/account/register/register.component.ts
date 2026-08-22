@@ -9,6 +9,11 @@ import SharedModule from 'app/shared/shared.module';
 import { RegisterService } from './register.service';
 import { MatIconModule } from '@angular/material/icon';
 
+// NEW: kept in sync with AccountResource's MAX_PICTURE_SIZE_BYTES / ALLOWED_PICTURE_CONTENT_TYPES
+// so the user gets instant feedback instead of waiting on a round-trip to hit the same limits.
+const MAX_PICTURE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+const ALLOWED_PICTURE_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+
 @Component({
   selector: 'jhi-register',
   imports: [SharedModule, RouterModule, FormsModule, ReactiveFormsModule, MatIconModule],
@@ -22,6 +27,12 @@ export default class RegisterComponent implements AfterViewInit {
   error = signal(false);
   errorEmailExists = signal(false);
   errorUserExists = signal(false);
+
+  // NEW: profile picture upload state.
+  pictureAttachmentId = signal<number | null>(null);
+  picturePreviewUrl = signal<string | null>(null); // local object URL, shown instantly on select
+  pictureUploading = signal(false);
+  pictureError = signal<string | null>(null);
 
   registerForm = new FormGroup({
     // Read-only in the template, but a normal enabled control - so its value still flows
@@ -79,15 +90,32 @@ export default class RegisterComponent implements AfterViewInit {
     this.errorEmailExists.set(false);
     this.errorUserExists.set(false);
 
+    // Guard against submitting mid-upload: pictureAttachmentId would still be null at that
+    // point, so the picture would silently be dropped from the registration instead of just
+    // being delayed. The submit button is also disabled while pictureUploading() is true, so
+    // this is a backstop rather than the primary defense.
+    if (this.pictureUploading()) {
+      return;
+    }
+
     const { password, confirmPassword } = this.registerForm.getRawValue();
     if (password !== confirmPassword) {
       this.doNotMatch.set(true);
     } else {
       const { login, firstName, lastName, email, phone } = this.registerForm.getRawValue();
       this.registerService
-        .save({ login, firstName, lastName, email, phone, password, langKey: this.translateService.currentLang })
+        .save({
+          login,
+          firstName,
+          lastName,
+          email,
+          phone,
+          password,
+          langKey: this.translateService.currentLang,
+          pictureAttachmentId: this.pictureAttachmentId() ?? undefined,
+        })
         .subscribe({
-          next: () => this.router.navigate(['/account/verify-code'], { queryParams: { login: email } }),
+          next: () => this.router.navigate(['/account/verify-code'], { queryParams: { email: email } }),
           error: response => this.processError(response),
         });
     }
@@ -142,6 +170,70 @@ export default class RegisterComponent implements AfterViewInit {
     control.setValue(digitsOnly);
     control.markAsDirty();
     control.markAsTouched();
+  }
+
+  /**
+   * Triggered when the user picks a file in the profile picture input. Validates client-side
+   * (size/type) for instant feedback, shows a local preview immediately via an object URL, and
+   * kicks off the actual upload to the backend. On success, stores the returned attachmentId
+   * to be sent along with the registration payload; the local preview stays showing regardless
+   * (it doesn't depend on the upload finishing) for a snappier feel.
+   */
+  onPictureSelected(event: Event): void {
+    this.pictureError.set(null);
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!ALLOWED_PICTURE_CONTENT_TYPES.includes(file.type)) {
+      this.pictureError.set('Only PNG, JPEG, or WEBP images are allowed.');
+      input.value = '';
+      return;
+    }
+    if (file.size > MAX_PICTURE_SIZE_BYTES) {
+      this.pictureError.set('Image must be smaller than 5MB.');
+      input.value = '';
+      return;
+    }
+
+    // Revoke any previous preview's object URL before creating a new one, to avoid leaking
+    // memory if the user picks several files in a row before submitting.
+    const previousPreview = this.picturePreviewUrl();
+    if (previousPreview) {
+      URL.revokeObjectURL(previousPreview);
+    }
+    this.picturePreviewUrl.set(URL.createObjectURL(file));
+    this.pictureAttachmentId.set(null);
+    this.pictureUploading.set(true);
+
+    this.registerService.uploadPicture(file).subscribe({
+      next: response => {
+        this.pictureAttachmentId.set(response.attachmentId);
+        this.pictureUploading.set(false);
+      },
+      error: () => {
+        this.pictureError.set('Upload failed. Please try again.');
+        this.pictureUploading.set(false);
+      },
+    });
+  }
+
+  /**
+   * Clears the currently selected/uploaded picture, so the user can pick a different one or
+   * register without a picture at all. Doesn't attempt to delete the orphaned Attachment
+   * server-side - an unlinked, never-registered-against attachment is harmless and can be
+   * garbage-collected server-side later if desired (not implemented yet).
+   */
+  removePicture(): void {
+    const previousPreview = this.picturePreviewUrl();
+    if (previousPreview) {
+      URL.revokeObjectURL(previousPreview);
+    }
+    this.picturePreviewUrl.set(null);
+    this.pictureAttachmentId.set(null);
+    this.pictureError.set(null);
   }
 
   private processError(response: HttpErrorResponse): void {

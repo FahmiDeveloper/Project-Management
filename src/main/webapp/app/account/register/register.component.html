@@ -136,7 +136,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="phone" jhiTranslate="projectManagementApp.employee.phone">Phone</label>
+          <label class="form-label" for="phone">Phone (optional)</label>
           <div class="input-wrapper">
             <mat-icon class="input-icon">phone</mat-icon>
             <input
@@ -232,9 +232,59 @@
         </div>
       </div>
 
+      <!-- Profile picture upload, placed after the password fields, right before submit. -->
+      <div class="form-group picture-upload-group">
+        <label class="form-label">Profile picture (optional)</label>
+
+        <div class="picture-upload-row">
+          <div class="picture-preview" [class.picture-preview--empty]="!picturePreviewUrl()">
+            @if (picturePreviewUrl()) {
+              <img [src]="picturePreviewUrl()" alt="Profile picture preview" />
+            } @else {
+              <mat-icon>person</mat-icon>
+            }
+
+            @if (pictureUploading()) {
+              <div class="picture-preview__overlay">
+                <span class="picture-spinner"></span>
+              </div>
+            }
+          </div>
+
+          <div class="picture-upload-actions">
+            <label class="picture-upload-btn" for="picture">
+              <mat-icon>upload</mat-icon>
+              <span>{{ picturePreviewUrl() ? 'Change photo' : 'Upload photo' }}</span>
+            </label>
+            <input
+              type="file"
+              id="picture"
+              name="picture"
+              accept="image/png,image/jpeg,image/webp"
+              class="picture-upload-input"
+              data-cy="picture"
+              (change)="onPictureSelected($event)"
+            />
+
+            @if (picturePreviewUrl()) {
+              <button type="button" class="picture-remove-btn" (click)="removePicture()">
+                <mat-icon>close</mat-icon>
+                <span>Remove</span>
+              </button>
+            }
+
+            <small class="form-text text-muted picture-hint">PNG, JPEG, or WEBP · max 5MB</small>
+
+            @if (pictureError()) {
+              <small class="form-text text-danger">{{ pictureError() }}</small>
+            }
+          </div>
+        </div>
+      </div>
+
       <button
         type="submit"
-        [disabled]="registerForm.invalid"
+        [disabled]="registerForm.invalid || pictureUploading()"
         class="btn btn-primary w-100"
         data-cy="submit"
         jhiTranslate="register.form.button"

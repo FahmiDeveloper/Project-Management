@@ -21,6 +21,12 @@ public class ManagedUserVM extends AdminUserDTO {
     @Size(max = 20)
     private String phone;
 
+    // NEW: id of the unlinked Attachment created by POST /account/upload-picture, if the user
+    // uploaded a profile picture before submitting the registration form. Null if no picture
+    // was uploaded. Used to link that Attachment to the auto-created Employee and to populate
+    // User.imageUrl once registration completes.
+    private Long pictureAttachmentId;
+
     public ManagedUserVM() {
         // Empty constructor needed for Jackson.
     }
@@ -39,6 +45,14 @@ public class ManagedUserVM extends AdminUserDTO {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Long getPictureAttachmentId() {
+        return pictureAttachmentId;
+    }
+
+    public void setPictureAttachmentId(Long pictureAttachmentId) {
+        this.pictureAttachmentId = pictureAttachmentId;
     }
 
     // prettier-ignore

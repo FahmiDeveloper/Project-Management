@@ -112,6 +112,11 @@ jhipster:
 
 # application:
 
+# NEW: base directory (relative to the app's working directory in dev) where uploaded files
+# (e.g. profile pictures) are stored on disk. Read by FileStorageService and WebConfigurer.
+file:
+  upload-dir: uploads
+
 webpush:
   public-key: 'BMBClrCEAlJsrqvJWkhGtj69HjRdWwPMyD9-PA0HL3AX33fnf1w3K8frwLPUJJhE3Qv-urWm3TcimtVmNsVwu-E'
   private-key: 'N_3D_UvtjjvW2lTfckpCm4L6KGOBKwyt1NN0Dx3DCbQ'

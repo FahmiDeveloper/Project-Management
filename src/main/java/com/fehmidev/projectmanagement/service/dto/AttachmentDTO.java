@@ -1,5 +1,6 @@
 package com.fehmidev.projectmanagement.service.dto;
 
+import com.fehmidev.projectmanagement.domain.enumeration.AttachmentCategory;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -25,6 +26,9 @@ public class AttachmentDTO implements Serializable {
 
     @NotNull
     private Instant uploadedDate;
+
+    @NotNull
+    private AttachmentCategory category;
 
     private TaskDTO task;
 
@@ -78,6 +82,14 @@ public class AttachmentDTO implements Serializable {
         this.uploadedDate = uploadedDate;
     }
 
+    public AttachmentCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(AttachmentCategory category) {
+        this.category = category;
+    }
+
     public TaskDTO getTask() {
         return task;
     }
@@ -125,6 +137,7 @@ public class AttachmentDTO implements Serializable {
             ", fileType='" + getFileType() + "'" +
             ", fileSize=" + getFileSize() +
             ", uploadedDate='" + getUploadedDate() + "'" +
+            ", category='" + getCategory() + "'" +
             ", task=" + getTask() +
             ", employee=" + getEmployee() +
             "}";

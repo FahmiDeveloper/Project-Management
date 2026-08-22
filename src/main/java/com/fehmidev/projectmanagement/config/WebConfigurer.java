@@ -6,8 +6,10 @@ import jakarta.servlet.*;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.*;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
@@ -18,19 +20,26 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import tech.jhipster.config.JHipsterProperties;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.
  */
 @Configuration
-public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<WebServerFactory> {
+public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<WebServerFactory>, WebMvcConfigurer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebConfigurer.class);
 
     private final Environment env;
 
     private final JHipsterProperties jHipsterProperties;
+
+    // NEW: base directory where uploaded files (e.g. profile pictures) are stored on disk.
+    // Same property FileStorageService reads from, kept in sync via application.yml.
+    @Value("${file.upload-dir:uploads}")
+    private String uploadDir;
 
     public WebConfigurer(Environment env, JHipsterProperties jHipsterProperties) {
         this.env = env;
@@ -78,6 +87,14 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             return "";
         }
         return extractedPath.substring(0, extractionEndIndex);
+    }
+
+    // NEW: serves files stored by FileStorageService (e.g. profile pictures) back over HTTP.
+    // "/content/uploads/**" must match FileStorageService.PUBLIC_URL_PREFIX.
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize().toUri().toString();
+        registry.addResourceHandler("/content/uploads/**").addResourceLocations(uploadPath);
     }
 
     @Bean

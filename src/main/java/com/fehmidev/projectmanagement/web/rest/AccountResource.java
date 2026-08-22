@@ -1,8 +1,13 @@
 package com.fehmidev.projectmanagement.web.rest;
 
+import com.fehmidev.projectmanagement.domain.Attachment;
 import com.fehmidev.projectmanagement.domain.User;
+import com.fehmidev.projectmanagement.domain.enumeration.AttachmentCategory;
+import com.fehmidev.projectmanagement.repository.AttachmentRepository;
 import com.fehmidev.projectmanagement.repository.UserRepository;
 import com.fehmidev.projectmanagement.security.SecurityUtils;
+import com.fehmidev.projectmanagement.service.FileStorageService;
+import com.fehmidev.projectmanagement.service.FileStorageService.StoredFile;
 import com.fehmidev.projectmanagement.service.MailService;
 import com.fehmidev.projectmanagement.service.UserService;
 import com.fehmidev.projectmanagement.service.VerificationCodeService;
@@ -14,6 +19,7 @@ import com.fehmidev.projectmanagement.web.rest.vm.ManagedUserVM;
 import com.fehmidev.projectmanagement.web.rest.vm.ResendCodeVM;
 import com.fehmidev.projectmanagement.web.rest.vm.VerifyCodeVM;
 import jakarta.validation.Valid;
+import java.time.Instant;
 import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * REST controller for managing the current user's account.
@@ -38,6 +45,10 @@ public class AccountResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AccountResource.class);
 
+    private static final long MAX_PICTURE_SIZE_BYTES = 5L * 1024 * 1024; // 5 MB
+
+    private static final Set<String> ALLOWED_PICTURE_CONTENT_TYPES = Set.of("image/png", "image/jpeg", "image/webp");
+
     private final UserRepository userRepository;
 
     private final UserService userService;
@@ -46,16 +57,66 @@ public class AccountResource {
 
     private final VerificationCodeService verificationCodeService;
 
+    // NEW: needed to store the raw file bytes for an uploaded profile picture.
+    private final FileStorageService fileStorageService;
+
+    // NEW: needed to create the unlinked Attachment row for an uploaded profile picture,
+    // ahead of the Employee/User existing.
+    private final AttachmentRepository attachmentRepository;
+
     public AccountResource(
         UserRepository userRepository,
         UserService userService,
         MailService mailService,
-        VerificationCodeService verificationCodeService
+        VerificationCodeService verificationCodeService,
+        FileStorageService fileStorageService,
+        AttachmentRepository attachmentRepository
     ) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
         this.verificationCodeService = verificationCodeService;
+        this.fileStorageService = fileStorageService;
+        this.attachmentRepository = attachmentRepository;
+    }
+
+    /**
+     * {@code POST  /account/upload-picture} : upload a profile picture ahead of registration.
+     * <p>
+     * Stores the file and creates an unlinked {@link Attachment} (no employee yet, since
+     * registration hasn't completed). The returned {@code attachmentId} must be sent back with
+     * the {@code /register} call (as {@code ManagedUserVM.pictureAttachmentId}) so the backend
+     * can link it to the newly created Employee and populate the new User's imageUrl.
+     *
+     * @param file the uploaded image (PNG, JPEG, or WEBP, max 5MB).
+     * @return the created attachment's id and public URL.
+     */
+    @PostMapping("/account/upload-picture")
+    public ResponseEntity<Map<String, Object>> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new AccountResourceException("No file provided");
+        }
+        if (file.getSize() > MAX_PICTURE_SIZE_BYTES) {
+            throw new AccountResourceException("File exceeds the maximum allowed size of 5MB");
+        }
+        if (file.getContentType() == null || !ALLOWED_PICTURE_CONTENT_TYPES.contains(file.getContentType())) {
+            throw new AccountResourceException("Only PNG, JPEG, or WEBP images are allowed");
+        }
+
+        StoredFile stored = fileStorageService.store(file, "profile-pictures");
+
+        Attachment attachment = new Attachment();
+        attachment.setFileName(stored.originalFilename());
+        attachment.setFileUrl(stored.publicUrl());
+        attachment.setFileType(stored.contentType());
+        attachment.setFileSize(stored.size());
+        attachment.setUploadedDate(Instant.now());
+        attachment.setCategory(AttachmentCategory.PROFILE_PICTURE);
+        // employee intentionally left null - linked later once registration creates the Employee.
+        attachment = attachmentRepository.save(attachment);
+
+        LOG.debug("Stored profile picture attachment {} at {}", attachment.getId(), attachment.getFileUrl());
+        return ResponseEntity.ok(Map.of("attachmentId", attachment.getId(), "fileUrl", attachment.getFileUrl()));
     }
 
     /**
@@ -72,7 +133,12 @@ public class AccountResource {
         if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
-        User user = userService.registerUser(managedUserVM, managedUserVM.getPassword(), managedUserVM.getPhone());
+        User user = userService.registerUser(
+            managedUserVM,
+            managedUserVM.getPassword(),
+            managedUserVM.getPhone(),
+            managedUserVM.getPictureAttachmentId()
+        );
         String code = verificationCodeService.generateCodeFor(user);
         mailService.sendVerificationCodeEmail(user, code);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("login", user.getLogin(), "email", user.getEmail()));

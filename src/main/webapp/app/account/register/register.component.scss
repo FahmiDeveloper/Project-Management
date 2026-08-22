@@ -146,6 +146,171 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
   }
 
+  // Profile picture upload - styled to match the .form-control inputs (same
+  // background, border, radius, and focus/hover treatment) instead of the
+  // browser-default file input look.
+  .picture-upload-group {
+    .picture-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    // Avatar preview circle, sized and bordered like a compact version of a .form-control.
+    .picture-preview {
+      position: relative;
+      flex-shrink: 0;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      mat-icon {
+        color: #a0aec0;
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+
+      &--empty {
+        border-style: dashed;
+      }
+
+      &__overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .picture-spinner {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #e2e8f0;
+      border-top-color: #667eea;
+      animation: pictureSpin 0.7s linear infinite;
+    }
+
+    .picture-upload-actions {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    // The visible "Upload photo" control - same visual language as .form-control
+    // (background, border, radius, transition) but built from a <label> so the
+    // native file input can stay hidden and fully accessible.
+    .picture-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #f7fafc;
+      color: #2d3748;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      mat-icon {
+        color: #a0aec0;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        transition: color 0.3s ease;
+      }
+
+      &:hover {
+        border-color: #667eea;
+        background: white;
+
+        mat-icon {
+          color: #667eea;
+        }
+      }
+    }
+
+    // Native file input stays functionally present (so the <label for="picture">
+    // still opens the file picker and stays keyboard/screen-reader accessible)
+    // but visually hidden in favor of .picture-upload-btn.
+    .picture-upload-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+
+      &:focus-visible + .picture-upload-btn,
+      &:focus-visible ~ .picture-upload-btn {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+    }
+
+    .picture-remove-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #f56565;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      &:hover {
+        background: #fff5f5;
+        border-color: #feb2b2;
+      }
+    }
+
+    .picture-hint {
+      flex-basis: 100%;
+      color: #a0aec0;
+      font-size: 0.8rem;
+    }
+
+    .text-danger {
+      flex-basis: 100%;
+      color: #f56565;
+      font-size: 0.8rem;
+      display: block;
+    }
+  }
+
   // Password strength bar
   jhi-password-strength-bar {
     display: block;
@@ -317,6 +482,12 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 }
 
+@keyframes pictureSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 // Desktop / tablet: give the card extra width so the two-column
 // form-rows (first/last name, email/phone, password/confirm) have
 // comfortable room instead of squeezing the inputs. The two-column
@@ -329,19 +500,21 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 // the screen - locking it with overflow: hidden would clip content,
 // exactly like the original bug this file was fixed for.
 @media (min-width: 769px) {
+  // NOTE: this used to set `position: fixed` + `justify-content/align-items: center`
+  // here, which is the exact pattern the comment on .register-page-viewport above
+  // warns against - it reintroduced the clipping bug on desktop whenever the card
+  // (title + up to 4 alert banners + 3 form-rows + button) grows taller than the
+  // viewport (small laptop window, browser zoom, dev tools open, etc.). Centering
+  // via `min-height: 100vh` + flex on a normally-flowed element gives the same
+  // dead-center look when it fits, but naturally falls back to scrollable document
+  // flow instead of clipping when it doesn't.
   .register-page-viewport {
     width: 100% !important;
-    height: 100vh !important;
     min-height: 100vh !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
     padding: 1rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
   }
 
   .register-box-container {
@@ -433,6 +606,19 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         height: 18px;
       }
     }
+
+    .picture-upload-group {
+      .picture-preview {
+        width: 52px;
+        height: 52px;
+      }
+
+      .picture-upload-btn,
+      .picture-remove-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+      }
+    }
   }
 }
 
@@ -522,6 +708,55 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       }
 
       .validation-errors .text-danger {
+        color: #fc8181;
+      }
+    }
+
+    .picture-upload-group {
+      .picture-preview {
+        background: #1a202c;
+        border-color: #4a5568;
+
+        mat-icon {
+          color: #4a5568;
+        }
+
+        &__overlay {
+          background: rgba(45, 55, 72, 0.7);
+        }
+      }
+
+      .picture-upload-btn {
+        background: #1a202c;
+        border-color: #4a5568;
+        color: #e2e8f0;
+
+        mat-icon {
+          color: #718096;
+        }
+
+        &:hover {
+          background: #2d3748;
+          border-color: #667eea;
+
+          mat-icon {
+            color: #667eea;
+          }
+        }
+      }
+
+      .picture-remove-btn {
+        &:hover {
+          background: #742a2a;
+          border-color: #9b2c2c;
+        }
+      }
+
+      .picture-hint {
+        color: #718096;
+      }
+
+      .text-danger {
         color: #fc8181;
       }
     }
