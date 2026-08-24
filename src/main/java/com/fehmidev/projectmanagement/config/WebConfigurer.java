@@ -18,13 +18,14 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import tech.jhipster.config.JHipsterProperties;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.
  */
 @Configuration
-public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<WebServerFactory> {
+public class WebConfigurer implements ServletContextInitializer, WebServerFactoryCustomizer<WebServerFactory>, WebMvcConfigurer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebConfigurer.class);
 
@@ -79,6 +80,10 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         }
         return extractedPath.substring(0, extractionEndIndex);
     }
+
+    // Uploaded files (e.g. profile pictures) are now served by UploadedFileResource instead of
+    // a ResourceHandlerRegistry mapping here - see that class's Javadoc for why the previous
+    // approach was unreliable on Windows.
 
     @Bean
     public CorsFilter corsFilter() {

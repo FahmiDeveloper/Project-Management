@@ -29,7 +29,7 @@ export default class VerifyCodeComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => this.login.set(params.login ?? null));
+    this.route.queryParams.subscribe(params => this.login.set(params.email ?? null));
   }
 
   verify(): void {

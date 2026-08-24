@@ -1,9 +1,12 @@
 package com.fehmidev.projectmanagement.service;
 
 import com.fehmidev.projectmanagement.config.Constants;
+import com.fehmidev.projectmanagement.domain.Attachment;
 import com.fehmidev.projectmanagement.domain.Authority;
 import com.fehmidev.projectmanagement.domain.Employee;
 import com.fehmidev.projectmanagement.domain.User;
+import com.fehmidev.projectmanagement.domain.enumeration.AttachmentCategory;
+import com.fehmidev.projectmanagement.repository.AttachmentRepository;
 import com.fehmidev.projectmanagement.repository.AuthorityRepository;
 import com.fehmidev.projectmanagement.repository.EmployeeRepository;
 import com.fehmidev.projectmanagement.repository.UserRepository;
@@ -59,18 +62,24 @@ public class UserService {
     // NEW: needed to auto-create an Employee record for every self-registered User.
     private final EmployeeRepository employeeRepository;
 
+    // NEW: needed to link an already-uploaded profile picture Attachment to the Employee
+    // auto-created at registration time.
+    private final AttachmentRepository attachmentRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
         CacheManager cacheManager,
-        EmployeeRepository employeeRepository
+        EmployeeRepository employeeRepository,
+        AttachmentRepository attachmentRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
         this.employeeRepository = employeeRepository;
+        this.attachmentRepository = attachmentRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -114,12 +123,19 @@ public class UserService {
     }
 
     public User registerUser(AdminUserDTO userDTO, String password) {
-        return registerUser(userDTO, password, null);
+        return registerUser(userDTO, password, null, null);
     }
 
     // NEW: overload accepting the phone number captured on the registration form,
     // forwarded to the auto-created Employee record.
     public User registerUser(AdminUserDTO userDTO, String password, String phone) {
+        return registerUser(userDTO, password, phone, null);
+    }
+
+    // NEW: overload additionally accepting the id of a profile-picture Attachment already
+    // uploaded via POST /account/upload-picture, forwarded to the auto-created Employee record
+    // and used to populate the new User's imageUrl.
+    public User registerUser(AdminUserDTO userDTO, String password, String phone, Long pictureAttachmentId) {
         // NEW: the frontend now auto-generates the login as "firstname.lastname" instead of the
         // user typing one, so two people with the same name produce the same candidate login.
         // Rather than reject the second registration outright, append a numeric suffix
@@ -155,8 +171,9 @@ public class UserService {
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
         // NEW: automatically create the matching Employee record for the newly registered user,
-        // in the same transaction so we never end up with a User without an Employee.
-        createEmployeeForNewUser(newUser, userDTO, phone);
+        // in the same transaction so we never end up with a User without an Employee. Also
+        // links the uploaded profile picture (if any) and populates newUser.imageUrl from it.
+        createEmployeeForNewUser(newUser, userDTO, phone, pictureAttachmentId);
         LOG.debug("Created Information for User: {}", newUser);
         return newUser;
     }
@@ -370,7 +387,9 @@ public class UserService {
         return authorityRepository.findAll().stream().map(Authority::getName).toList();
     }
 
-    public void clearUserCaches(User user) {
+    // package-private (was private) so VerificationCodeService, in the same package, can call it
+    // after activating a user via the email verification-code flow.
+    void clearUserCaches(User user) {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evictIfPresent(user.getLogin());
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evictIfPresent(user.getEmail());
@@ -391,12 +410,19 @@ public class UserService {
      * details captured on the registration form. Fields not collected at registration time
      * (job title, hire date, department) are given sensible defaults that an administrator
      * can update later from the Employee management screen.
+     * <p>
+     * If {@code pictureAttachmentId} references a valid, still-unlinked profile-picture
+     * Attachment (created by {@code POST /account/upload-picture}), it is linked to this
+     * Employee and its URL is copied onto {@code user.imageUrl}. An invalid, already-linked,
+     * or wrong-category id is silently ignored rather than failing registration - the picture
+     * is a nice-to-have, not something that should block account creation.
      *
      * @param user    the newly persisted User (already has an id).
      * @param userDTO the registration payload, used to source firstName/lastName.
      * @param phone   the phone number captured on the registration form, may be null/blank.
+     * @param pictureAttachmentId id of an already-uploaded profile-picture Attachment, or null.
      */
-    private void createEmployeeForNewUser(User user, AdminUserDTO userDTO, String phone) {
+    private void createEmployeeForNewUser(User user, AdminUserDTO userDTO, String phone, Long pictureAttachmentId) {
         Employee employee = new Employee();
         employee.setUser(user);
         employee.setEmployeeNumber(generateNextEmployeeNumber());
@@ -408,8 +434,36 @@ public class UserService {
             employee.setPhone(phone.trim());
         }
         // Department is intentionally left unassigned; an administrator assigns it later.
-        employeeRepository.save(employee);
+        employee = employeeRepository.save(employee);
         LOG.debug("Created Employee for self-registered User: {}", employee);
+
+        linkProfilePictureIfPresent(user, employee, pictureAttachmentId);
+    }
+
+    /**
+     * Links an already-uploaded, still-unlinked profile-picture Attachment to the given
+     * Employee, and copies its URL onto the User. No-ops (with a debug log) for any id that
+     * doesn't resolve to a valid, unlinked, PROFILE_PICTURE attachment, so a bad/missing id
+     * never blocks registration itself.
+     */
+    private void linkProfilePictureIfPresent(User user, Employee employee, Long pictureAttachmentId) {
+        if (pictureAttachmentId == null) {
+            return;
+        }
+        attachmentRepository
+            .findById(pictureAttachmentId)
+            .filter(attachment -> attachment.getCategory() == AttachmentCategory.PROFILE_PICTURE)
+            .filter(attachment -> attachment.getEmployee() == null)
+            .ifPresentOrElse(
+                (Attachment attachment) -> {
+                    attachment.setEmployee(employee);
+                    attachmentRepository.save(attachment);
+                    user.setImageUrl(attachment.getFileUrl());
+                    userRepository.save(user);
+                    LOG.debug("Linked profile picture attachment {} to employee {}", attachment.getId(), employee.getId());
+                },
+                () -> LOG.debug("Ignoring invalid or already-linked pictureAttachmentId {} at registration", pictureAttachmentId)
+            );
     }
 
     /**

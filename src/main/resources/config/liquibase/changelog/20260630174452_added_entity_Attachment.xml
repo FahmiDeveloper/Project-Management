@@ -40,6 +40,19 @@
         <dropDefaultValue tableName="attachment" columnName="uploaded_date" columnDataType="${datetimeType}"/>
     </changeSet>
 
+    <!--
+        Added the category column to Attachment, distinguishing a profile picture
+        from any other file attached to an Employee (e.g. documents, resumes).
+        Existing rows default to GENERAL since they predate this concept.
+    -->
+    <changeSet id="20260822000000-2" author="fehmi">
+        <addColumn tableName="attachment">
+            <column name="category" type="varchar(50)" defaultValue="GENERAL">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
 
     <!--

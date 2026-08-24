@@ -1,6 +1,7 @@
 package com.fehmidev.projectmanagement.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fehmidev.projectmanagement.domain.enumeration.AttachmentCategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -42,6 +43,14 @@ public class Attachment implements Serializable {
     @NotNull
     @Column(name = "uploaded_date", nullable = false)
     private Instant uploadedDate;
+
+    // NEW: distinguishes a profile picture from any other file attached to an Employee/Task,
+    // so both can live in the same table without ambiguity. Defaults to GENERAL in the DB for
+    // existing rows (see the 20260822000000-2 changeSet).
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    private AttachmentCategory category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "sprint", "milestone", "assignedTo", "createdBy" }, allowSetters = true)
@@ -131,6 +140,19 @@ public class Attachment implements Serializable {
         this.uploadedDate = uploadedDate;
     }
 
+    public AttachmentCategory getCategory() {
+        return this.category;
+    }
+
+    public Attachment category(AttachmentCategory category) {
+        this.setCategory(category);
+        return this;
+    }
+
+    public void setCategory(AttachmentCategory category) {
+        this.category = category;
+    }
+
     public Task getTask() {
         return this.task;
     }
@@ -186,6 +208,7 @@ public class Attachment implements Serializable {
             ", fileType='" + getFileType() + "'" +
             ", fileSize=" + getFileSize() +
             ", uploadedDate='" + getUploadedDate() + "'" +
+            ", category='" + getCategory() + "'" +
             "}";
     }
 }

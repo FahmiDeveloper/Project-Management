@@ -43,10 +43,17 @@ spring:
   liquibase:
     contexts: prod
   mail:
-    host: localhost
-    port: 25
-    username:
-    password:
+    host: smtp.gmail.com
+    port: 587
+    username: coursangularfahmi@gmail.com
+    password: ouif qykh hzfe jalz
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   thymeleaf:
     cache: true
 
@@ -122,6 +129,14 @@ jhipster:
 # ===================================================================
 
 # application:
+
+# NEW: base directory where uploaded files (e.g. profile pictures) are stored on disk. Read
+# by FileStorageService and WebConfigurer. Kept relative here to match dev, but in a real
+# deployment you'll likely want an absolute path outside the app's working/deploy directory
+# (e.g. /var/projectmanagement/uploads) so uploads survive redeploys and aren't wiped when the
+# JAR/build directory is replaced.
+file:
+  upload-dir: uploads
 
 webpush:
   public-key: 'BMBClrCEAlJsrqvJWkhGtj69HjRdWwPMyD9-PA0HL3AX33fnf1w3K8frwLPUJJhE3Qv-urWm3TcimtVmNsVwu-E'

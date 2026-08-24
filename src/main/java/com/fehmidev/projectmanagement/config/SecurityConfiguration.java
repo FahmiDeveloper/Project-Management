@@ -52,7 +52,7 @@ public class SecurityConfiguration {
                             "frame-src 'self' data:; " +
                             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; " +
                             "style-src 'self' 'unsafe-inline'; " +
-                            "img-src 'self' data:; " +
+                            "img-src 'self' data: blob:; " +
                             "font-src 'self' data: https://fonts.gstatic.com; " +
                             "connect-src 'self' https://outburst-rocket-provoke.ngrok-free.dev capacitor://localhost http://localhost;"
                         )
@@ -105,6 +105,11 @@ public class SecurityConfiguration {
                     .requestMatchers(mvc.pattern("/api/account/verify-code"))
                     .permitAll()
                     .requestMatchers(mvc.pattern("/api/account/resend-verification-code"))
+                    .permitAll()
+                    // Registration-time profile picture upload happens before the user has a JWT
+                    // (account isn't created/activated yet), so it must be reachable anonymously
+                    // just like the other pre-auth registration endpoints above.
+                    .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/account/upload-picture"))
                     .permitAll()
                     .requestMatchers(mvc.pattern("/api/account/reset-password/init"))
                     .permitAll()
