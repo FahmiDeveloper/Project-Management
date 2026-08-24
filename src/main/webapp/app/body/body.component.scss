@@ -190,33 +190,30 @@ $radius: 12px;
 
     // User Button
     .user-btn {
-      padding: 2px;
-      border-radius: 50%;
+      padding: 0 !important;
+      border-radius: 50% !important;
       flex-shrink: 0;
       position: relative;
-      width: 40px;
-      height: 40px;
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      line-height: normal !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      transition: none;
-      padding: 0 !important;
-      min-width: 40px !important;
-      line-height: 40px !important;
+      overflow: hidden !important; // Clips image corners to the button border
 
       .user-avatar {
-        width: 36px;
-        height: 36px;
+        width: 100% !important;
+        height: 100% !important;
         border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid transparent;
-        transition: none;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        object-fit: cover !important; // Prevents distortion while filling the entire space
+        border: none;
+        box-shadow: none;
       }
 
       &:hover .user-avatar {
-        border-color: #667eea;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        border-color: transparent;
       }
     }
   }

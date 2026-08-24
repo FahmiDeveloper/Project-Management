@@ -22,7 +22,7 @@
 
       <!-- User -->
       <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn" matTooltip="User profile">
-        <img src="./../../content/images/user-picture.png" class="user-avatar" />
+        <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="user-avatar" />
       </button>
     </div>
   </div>
@@ -71,7 +71,7 @@
 <!-- User Menu -->
 <mat-menu #userMenu="matMenu" class="modern-user-menu">
   <div class="user-profile">
-    <img src="./../../content/images/user-picture.png" class="profile-avatar" />
+    <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="profile-avatar" />
     <div class="profile-info">
       <h4>
         @if (account() !== null) {
@@ -118,7 +118,7 @@
     <div class="sidebar-header">
       <div class="user-card">
         <div class="user-avatar-wrapper">
-          <img src="./../../content/images/user-picture.png" class="sidebar-avatar" />
+          <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="sidebar-avatar" />
           <div class="status-indicator online"></div>
         </div>
         <h3 class="user-fullname">
