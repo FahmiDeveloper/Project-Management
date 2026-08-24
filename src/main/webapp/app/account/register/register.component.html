@@ -237,12 +237,8 @@
         <label class="form-label">Profile picture (optional)</label>
 
         <div class="picture-upload-row">
-          <div class="picture-preview" [class.picture-preview--empty]="!picturePreviewUrl()">
-            @if (picturePreviewUrl()) {
-              <img [src]="picturePreviewUrl()" alt="Profile picture preview" />
-            } @else {
-              <mat-icon>person</mat-icon>
-            }
+          <div class="picture-preview" [class.picture-preview--empty]="!hasCustomPicture">
+            <img [src]="displayedImageUrl" alt="Profile picture preview" />
 
             @if (pictureUploading()) {
               <div class="picture-preview__overlay">

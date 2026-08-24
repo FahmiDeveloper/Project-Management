@@ -1,0 +1,153 @@
+<div class="profile-page">
+  <mat-card class="profile-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>My Profile</mat-card-title>
+      <mat-card-subtitle>Update your personal information and photo</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (success()) {
+        <div class="alert alert-success"><strong>Profile updated!</strong></div>
+      }
+      @if (error()) {
+        <div class="alert alert-danger"><strong>Something went wrong.</strong> Please try again.</div>
+      }
+
+      <form name="form" (ngSubmit)="save()" [formGroup]="profileForm" novalidate>
+        <div class="picture-upload-row">
+          <div class="picture-preview" [class.picture-preview--empty]="!hasCustomPicture">
+            <img [src]="displayedImageUrl" alt="Profile picture" />
+
+            @if (pictureUploading()) {
+              <div class="picture-preview__overlay">
+                <span class="picture-spinner"></span>
+              </div>
+            }
+          </div>
+
+          <div class="picture-upload-actions">
+            <label class="picture-upload-btn" for="picture">
+              <mat-icon>upload</mat-icon>
+              <span>Change photo</span>
+            </label>
+            <input
+              type="file"
+              id="picture"
+              name="picture"
+              accept="image/png,image/jpeg,image/webp"
+              class="picture-upload-input"
+              data-cy="picture"
+              (change)="onPictureSelected($event)"
+            />
+
+            <span class="picture-hint">PNG, JPEG, or WEBP · max 5MB</span>
+
+            @if (pictureError()) {
+              <span class="picture-error">{{ pictureError() }}</span>
+            }
+          </div>
+        </div>
+
+        @if (hasEmployeeRecord()) {
+          <div class="employee-meta">
+            <span><strong>Employee #</strong> {{ employeeNumber() }}</span>
+            <span><strong>Role</strong> {{ jobTitle() }}</span>
+          </div>
+        }
+
+        <mat-divider class="section-divider" />
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="field">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" data-cy="firstname" />
+            @let firstNameRef = profileForm.get('firstName')!;
+            @if (firstNameRef?.errors?.required) {
+              <ng-container>
+                <mat-error>Your first name is required.</mat-error>
+              </ng-container>
+            }
+            @if (firstNameRef?.errors?.minlength) {
+              <ng-container>
+                <mat-error>Your first name is required to be at least 1 character.</mat-error>
+              </ng-container>
+            }
+            @if (firstNameRef?.errors?.maxlength) {
+              <ng-container>
+                <mat-error>Your first name cannot be longer than 50 characters.</mat-error>
+              </ng-container>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="field">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" data-cy="lastname" />
+            @let lastNameRef = profileForm.get('lastName')!;
+            @if (lastNameRef?.errors?.required) {
+              <ng-container>
+                <mat-error>Your last name is required.</mat-error>
+              </ng-container>
+            }
+            @if (lastNameRef?.errors?.minlength) {
+              <ng-container>
+                <mat-error>Your last name is required to be at least 1 character.</mat-error>
+              </ng-container>
+            }
+            @if (lastNameRef?.errors?.maxlength) {
+              <ng-container>
+                <mat-error>Your last name cannot be longer than 50 characters.</mat-error>
+              </ng-container>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="field">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" data-cy="email" />
+            @let emailRef = profileForm.get('email')!;
+            @if (emailRef?.errors?.required) {
+              <ng-container>
+                <mat-error>Your email is required.</mat-error>
+              </ng-container>
+            }
+            @if (emailRef?.errors?.email) {
+              <ng-container>
+                <mat-error>Your email is invalid.</mat-error>
+              </ng-container>
+            }
+            @if (emailRef?.errors?.minlength) {
+              <ng-container>
+                <mat-error>Your email is required to be at least 5 characters.</mat-error>
+              </ng-container>
+            }
+            @if (emailRef?.errors?.maxlength) {
+              <ng-container>
+                <mat-error>Your email cannot be longer than 50 characters.</mat-error>
+              </ng-container>
+            }
+          </mat-form-field>
+
+          @if (hasEmployeeRecord()) {
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Phone</mat-label>
+              <input matInput formControlName="phone" data-cy="phone" inputmode="numeric" maxlength="8" />
+              @let phoneRef = profileForm.get('phone')!;
+              @if (phoneRef?.errors?.pattern) {
+                <ng-container>
+                  <mat-error>Your phone number must contain exactly 8 digits.</mat-error>
+                </ng-container>
+              }
+            </mat-form-field>
+          }
+        </div>
+
+        <div class="actions-row">
+          <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid || pictureUploading()">
+            Save changes
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

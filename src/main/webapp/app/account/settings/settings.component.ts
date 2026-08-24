@@ -43,7 +43,9 @@ export default class SettingsComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
 
   ngOnInit(): void {
-    this.accountService.identity().subscribe(account => {
+    // force=true bypasses accountCache$ so we never patch the form with a stale imageUrl
+    // (e.g. right after ProfileComponent updated the picture but didn't touch this cache).
+    this.accountService.identity(true).subscribe(account => {
       if (account) {
         this.settingsForm.patchValue(account);
       }
