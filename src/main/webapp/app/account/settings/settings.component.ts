@@ -1,6 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
 
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
@@ -11,8 +17,20 @@ const initialAccount: Account = {} as Account;
 
 @Component({
   selector: 'jhi-settings',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDividerModule,
+    MatSelectModule,
+  ],
   templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.scss'],
 })
 export default class SettingsComponent implements OnInit {
   success = signal(false);
@@ -43,8 +61,9 @@ export default class SettingsComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
 
   ngOnInit(): void {
-    // force=true bypasses accountCache$ so we never patch the form with a stale imageUrl
-    // (e.g. right after ProfileComponent updated the picture but didn't touch this cache).
+    // force=true bypasses accountCache$ so we never patch the form (and later
+    // POST back) a stale imageUrl - e.g. right after ProfileComponent updated
+    // the picture but before anything else refreshed the cached account.
     this.accountService.identity(true).subscribe(account => {
       if (account) {
         this.settingsForm.patchValue(account);

@@ -1,155 +1,113 @@
-<div>
-  <div class="d-flex justify-content-center">
-    <div class="col-md-8">
-      @if (settingsForm.value.login) {
-        <h2 jhiTranslate="settings.title" [translateValues]="{ username: settingsForm.value.login }">
-          User settings for [<strong>{{ settingsForm.value.login }}</strong
-          >]
-        </h2>
-      }
+<div class="settings-page">
+  <mat-card class="settings-card" appearance="outlined">
+    @if (settingsForm.value.login) {
+      <mat-card-header>
+        <mat-card-title>Account Settings</mat-card-title>
+        <mat-card-subtitle>
+          Settings for <strong>{{ settingsForm.value.login }}</strong>
+        </mat-card-subtitle>
+      </mat-card-header>
+    }
 
+    <mat-card-content>
       @if (success()) {
-        <div class="alert alert-success" jhiTranslate="settings.messages.success"><strong>Settings saved!</strong></div>
+        <div class="alert alert-success"><strong>Settings saved!</strong></div>
       }
 
       <jhi-alert-error />
 
       @if (settingsForm.value.login) {
         <form name="form" (ngSubmit)="save()" [formGroup]="settingsForm" novalidate>
-          <div class="mb-3">
-            <label class="form-label" for="firstName" jhiTranslate="settings.form.firstname">First Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="firstName"
-              name="firstName"
-              placeholder="{{ 'settings.form.firstname.placeholder' | translate }}"
-              formControlName="firstName"
-              data-cy="firstname"
-            />
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" data-cy="firstname" />
+              @let firstNameRef = settingsForm.get('firstName')!;
+              @if (firstNameRef?.errors?.required) {
+                <ng-container>
+                  <mat-error>Your first name is required.</mat-error>
+                </ng-container>
+              }
+              @if (firstNameRef?.errors?.minlength) {
+                <ng-container>
+                  <mat-error>Your first name is required to be at least 1 character.</mat-error>
+                </ng-container>
+              }
+              @if (firstNameRef?.errors?.maxlength) {
+                <ng-container>
+                  <mat-error>Your first name cannot be longer than 50 characters.</mat-error>
+                </ng-container>
+              }
+            </mat-form-field>
 
-            @let firstNameRef = settingsForm.get('firstName')!;
-            @if (firstNameRef.invalid && (firstNameRef.dirty || firstNameRef.touched)) {
-              <div>
-                @if (firstNameRef?.errors?.required) {
-                  <small class="form-text text-danger" jhiTranslate="settings.messages.validate.firstname.required"
-                    >Your first name is required.</small
-                  >
-                }
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" data-cy="lastname" />
+              @let lastNameRef = settingsForm.get('lastName')!;
+              @if (lastNameRef?.errors?.required) {
+                <ng-container>
+                  <mat-error>Your last name is required.</mat-error>
+                </ng-container>
+              }
+              @if (lastNameRef?.errors?.minlength) {
+                <ng-container>
+                  <mat-error>Your last name is required to be at least 1 character.</mat-error>
+                </ng-container>
+              }
+              @if (lastNameRef?.errors?.maxlength) {
+                <ng-container>
+                  <mat-error>Your last name cannot be longer than 50 characters.</mat-error>
+                </ng-container>
+              }
+            </mat-form-field>
+          </div>
 
-                @if (firstNameRef?.errors?.minlength) {
-                  <small class="form-text text-danger" jhiTranslate="settings.messages.validate.firstname.minlength"
-                    >Your first name is required to be at least 1 character</small
-                  >
-                }
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" data-cy="email" />
+              @let emailRef = settingsForm.get('email')!;
+              @if (emailRef?.errors?.required) {
+                <ng-container>
+                  <mat-error>Your email is required.</mat-error>
+                </ng-container>
+              }
+              @if (emailRef?.errors?.email) {
+                <ng-container>
+                  <mat-error>Your email is invalid.</mat-error>
+                </ng-container>
+              }
+              @if (emailRef?.errors?.minlength) {
+                <ng-container>
+                  <mat-error>Your email is required to be at least 5 characters.</mat-error>
+                </ng-container>
+              }
+              @if (emailRef?.errors?.maxlength) {
+                <ng-container>
+                  <mat-error>Your email cannot be longer than 50 characters.</mat-error>
+                </ng-container>
+              }
+            </mat-form-field>
 
-                @if (firstNameRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="settings.messages.validate.firstname.maxlength"
-                    >Your first name cannot be longer than 50 characters</small
-                  >
-                }
-              </div>
+            @if (languages && languages.length > 0) {
+              <mat-form-field appearance="outline" class="field">
+                <mat-label>Language</mat-label>
+                <mat-select formControlName="langKey" data-cy="langKey">
+                  @for (language of languages; track language) {
+                    <mat-option [value]="language">{{ language | findLanguageFromKey }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             }
           </div>
 
-          <div class="mb-3">
-            <label class="form-label" for="lastName" jhiTranslate="settings.form.lastname">Last Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="lastName"
-              name="lastName"
-              placeholder="{{ 'settings.form.lastname.placeholder' | translate }}"
-              formControlName="lastName"
-              data-cy="lastname"
-            />
+          <mat-divider class="section-divider" />
 
-            @let lastNameRef = settingsForm.get('lastName')!;
-            @if (lastNameRef.invalid && (lastNameRef.dirty || lastNameRef.touched)) {
-              <div>
-                @if (lastNameRef?.errors?.required) {
-                  <small class="form-text text-danger" jhiTranslate="settings.messages.validate.lastname.required"
-                    >Your last name is required.</small
-                  >
-                }
-
-                @if (lastNameRef?.errors?.minlength) {
-                  <small class="form-text text-danger" jhiTranslate="settings.messages.validate.lastname.minlength"
-                    >Your last name is required to be at least 1 character</small
-                  >
-                }
-
-                @if (lastNameRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="settings.messages.validate.lastname.maxlength"
-                    >Your last name cannot be longer than 50 characters</small
-                  >
-                }
-              </div>
-            }
+          <div class="actions-row">
+            <button mat-raised-button color="primary" type="submit" [disabled]="settingsForm.invalid" data-cy="submit">Save</button>
           </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="email" jhiTranslate="global.form.email.label">Email</label>
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              name="email"
-              placeholder="{{ 'global.form.email.placeholder' | translate }}"
-              formControlName="email"
-              data-cy="email"
-            />
-
-            @let emailRef = settingsForm.get('email')!;
-            @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
-              <div>
-                @if (emailRef?.errors?.required) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.email.required"
-                    >Your email is required.</small
-                  >
-                }
-
-                @if (emailRef?.errors?.email) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.email.invalid">Your email is invalid.</small>
-                }
-
-                @if (emailRef?.errors?.minlength) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.email.minlength"
-                    >Your email is required to be at least 5 characters.</small
-                  >
-                }
-
-                @if (emailRef?.errors?.maxlength) {
-                  <small class="form-text text-danger" jhiTranslate="global.messages.validate.email.maxlength"
-                    >Your email cannot be longer than 50 characters.</small
-                  >
-                }
-              </div>
-            }
-          </div>
-
-          @if (languages && languages.length > 0) {
-            <div class="mb-3">
-              <label for="langKey" jhiTranslate="settings.form.language">Language</label>
-              <select class="form-control" id="langKey" name="langKey" formControlName="langKey" data-cy="langKey">
-                @for (language of languages; track $index) {
-                  <option [value]="language">{{ language | findLanguageFromKey }}</option>
-                }
-              </select>
-            </div>
-          }
-
-          <button
-            type="submit"
-            [disabled]="settingsForm.invalid"
-            class="btn btn-primary"
-            data-cy="submit"
-            jhiTranslate="settings.form.button"
-          >
-            Save
-          </button>
         </form>
       }
-    </div>
-  </div>
+    </mat-card-content>
+  </mat-card>
 </div>

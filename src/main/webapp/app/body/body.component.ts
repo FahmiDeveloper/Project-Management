@@ -245,6 +245,10 @@ export class BodyComponent implements OnInit, OnDestroy {
     this.router.navigate(['/account/profile']);
   }
 
+  goToSettings(): void {
+    this.router.navigate(['/account/settings']);
+  }
+
   isActiveRoute(link: string): boolean {
     return this.router.url === link || this.router.url.startsWith(link + '/');
   }
