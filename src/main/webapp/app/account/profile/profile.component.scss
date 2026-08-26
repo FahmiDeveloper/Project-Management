@@ -183,3 +183,7 @@
     transform: rotate(360deg);
   }
 }
+
+::ng-deep .ng-invalid:not(form) {
+  border-left: none !important;
+}

@@ -1,0 +1,32 @@
+{
+  "projectManagementApp": {
+    "dashboard": {
+      "home": {
+        "title": "لوحة التحكم",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء لوحة تحكم جديدة",
+        "createOrEditLabel": "إنشاء أو تعديل لوحة تحكم",
+        "notFound": "لا يوجد لوحة التحكم"
+      },
+      "created": "تم إنشاء لوحة التحكم جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث لوحة التحكم بالمعرّف {{ param }}",
+      "deleted": "تم حذف لوحة التحكم بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف لوحة التحكم {{ id }}؟"
+      },
+      "detail": {
+        "title": "لوحة التحكم"
+      },
+      "id": "المعرّف",
+      "name": "الاسم",
+      "description": "الوصف",
+      "layout": "التخطيط",
+      "config": "الإعداد",
+      "isDefault": "افتراضي",
+      "createdDate": "تاريخ الإنشاء",
+      "updatedDate": "تاريخ التحديث",
+      "employee": "الموظف",
+      "project": "المشروع"
+    }
+  }
+}

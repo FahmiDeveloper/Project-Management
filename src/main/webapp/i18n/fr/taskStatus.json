@@ -1,0 +1,13 @@
+{
+  "projectManagementApp": {
+    "TaskStatus": {
+      "null": "",
+      "TODO": "À faire",
+      "IN_PROGRESS": "En cours",
+      "IN_REVIEW": "En révision",
+      "TESTING": "En test",
+      "DONE": "Terminé",
+      "BLOCKED": "Bloqué"
+    }
+  }
+}

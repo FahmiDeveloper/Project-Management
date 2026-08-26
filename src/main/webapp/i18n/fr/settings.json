@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "title": "Paramètres du compte pour [<strong>{{username}}</strong>]",
+    "form": {
+      "firstname": "Prénom",
+      "firstname.placeholder": "Votre prénom",
+      "lastname": "Nom",
+      "lastname.placeholder": "Votre nom",
+      "language": "Langue",
+      "button": "Enregistrer"
+    },
+    "messages": {
+      "error": {
+        "fail": "<strong>Une erreur est survenue !</strong> Les paramètres n'ont pas pu être enregistrés.",
+        "emailexists": "<strong>Cet e-mail est déjà utilisé !</strong> Veuillez en choisir un autre."
+      },
+      "success": "<strong>Paramètres enregistrés !</strong>",
+      "validate": {
+        "firstname": {
+          "required": "Votre prénom est requis.",
+          "minlength": "Votre prénom doit contenir au moins 1 caractère",
+          "maxlength": "Votre prénom ne peut pas dépasser 50 caractères"
+        },
+        "lastname": {
+          "required": "Votre nom est requis.",
+          "minlength": "Votre nom doit contenir au moins 1 caractère",
+          "maxlength": "Votre nom ne peut pas dépasser 50 caractères"
+        }
+      }
+    }
+  }
+}

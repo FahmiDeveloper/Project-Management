@@ -1,0 +1,11 @@
+{
+  "projectManagementApp": {
+    "MilestoneStatus": {
+      "null": "",
+      "PLANNED": "Planifié",
+      "IN_PROGRESS": "En cours",
+      "COMPLETED": "Terminé",
+      "CANCELLED": "Annulé"
+    }
+  }
+}

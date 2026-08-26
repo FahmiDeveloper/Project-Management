@@ -1,0 +1,9 @@
+{
+  "activate": {
+    "title": "التفعيل",
+    "messages": {
+      "success": "<strong>تم تفعيل حسابك.</strong> يرجى ",
+      "error": "<strong>تعذّر تفعيل حسابك.</strong> يرجى استخدام نموذج التسجيل."
+    }
+  }
+}

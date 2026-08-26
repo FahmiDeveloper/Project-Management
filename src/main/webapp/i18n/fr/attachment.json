@@ -1,0 +1,30 @@
+{
+  "projectManagementApp": {
+    "attachment": {
+      "home": {
+        "title": "Pièces jointes",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer une nouvelle pièce jointe",
+        "createOrEditLabel": "Créer ou modifier une pièce jointe",
+        "notFound": "Aucun Pièce jointe trouvé"
+      },
+      "created": "Un nouveau Pièce jointe a été créé avec l'identifiant {{ param }}",
+      "updated": "Pièce jointe a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Pièce jointe a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Pièce jointe {{ id }} ?"
+      },
+      "detail": {
+        "title": "Pièce jointe"
+      },
+      "id": "ID",
+      "fileName": "Nom du fichier",
+      "fileUrl": "URL du fichier",
+      "fileType": "Type de fichier",
+      "fileSize": "Taille du fichier",
+      "uploadedDate": "Date de téléversement",
+      "task": "Tâche",
+      "employee": "Employé"
+    }
+  }
+}

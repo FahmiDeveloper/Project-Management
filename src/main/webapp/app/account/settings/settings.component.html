@@ -1,94 +1,21 @@
 <div class="settings-page">
-  <mat-card class="settings-card" appearance="outlined">
-    @if (settingsForm.value.login) {
-      <mat-card-header>
-        <mat-card-title>Account Settings</mat-card-title>
-        <mat-card-subtitle>
-          Settings for <strong>{{ settingsForm.value.login }}</strong>
-        </mat-card-subtitle>
+  <div class="settings-stack">
+    <!-- Preferences: language + theme -->
+    <mat-card class="settings-card" appearance="outlined">
+      <mat-card-header class="settings-header">
+        <mat-card-title>Preferences</mat-card-title>
+        <mat-card-subtitle>Language and appearance</mat-card-subtitle>
       </mat-card-header>
-    }
 
-    <mat-card-content>
-      @if (success()) {
-        <div class="alert alert-success"><strong>Settings saved!</strong></div>
-      }
+      <mat-card-content>
+        @if (success()) {
+          <div class="alert alert-success"><strong>Preferences saved!</strong></div>
+        }
 
-      <jhi-alert-error />
+        <jhi-alert-error />
 
-      @if (settingsForm.value.login) {
-        <form name="form" (ngSubmit)="save()" [formGroup]="settingsForm" novalidate>
+        <form name="preferencesForm" (ngSubmit)="save()" [formGroup]="settingsForm" novalidate>
           <div class="field-row">
-            <mat-form-field appearance="outline" class="field">
-              <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" data-cy="firstname" />
-              @let firstNameRef = settingsForm.get('firstName')!;
-              @if (firstNameRef?.errors?.required) {
-                <ng-container>
-                  <mat-error>Your first name is required.</mat-error>
-                </ng-container>
-              }
-              @if (firstNameRef?.errors?.minlength) {
-                <ng-container>
-                  <mat-error>Your first name is required to be at least 1 character.</mat-error>
-                </ng-container>
-              }
-              @if (firstNameRef?.errors?.maxlength) {
-                <ng-container>
-                  <mat-error>Your first name cannot be longer than 50 characters.</mat-error>
-                </ng-container>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field">
-              <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" data-cy="lastname" />
-              @let lastNameRef = settingsForm.get('lastName')!;
-              @if (lastNameRef?.errors?.required) {
-                <ng-container>
-                  <mat-error>Your last name is required.</mat-error>
-                </ng-container>
-              }
-              @if (lastNameRef?.errors?.minlength) {
-                <ng-container>
-                  <mat-error>Your last name is required to be at least 1 character.</mat-error>
-                </ng-container>
-              }
-              @if (lastNameRef?.errors?.maxlength) {
-                <ng-container>
-                  <mat-error>Your last name cannot be longer than 50 characters.</mat-error>
-                </ng-container>
-              }
-            </mat-form-field>
-          </div>
-
-          <div class="field-row">
-            <mat-form-field appearance="outline" class="field">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" data-cy="email" />
-              @let emailRef = settingsForm.get('email')!;
-              @if (emailRef?.errors?.required) {
-                <ng-container>
-                  <mat-error>Your email is required.</mat-error>
-                </ng-container>
-              }
-              @if (emailRef?.errors?.email) {
-                <ng-container>
-                  <mat-error>Your email is invalid.</mat-error>
-                </ng-container>
-              }
-              @if (emailRef?.errors?.minlength) {
-                <ng-container>
-                  <mat-error>Your email is required to be at least 5 characters.</mat-error>
-                </ng-container>
-              }
-              @if (emailRef?.errors?.maxlength) {
-                <ng-container>
-                  <mat-error>Your email cannot be longer than 50 characters.</mat-error>
-                </ng-container>
-              }
-            </mat-form-field>
-
             @if (languages && languages.length > 0) {
               <mat-form-field appearance="outline" class="field">
                 <mat-label>Language</mat-label>
@@ -99,15 +26,158 @@
                 </mat-select>
               </mat-form-field>
             }
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Theme</mat-label>
+              <mat-select [value]="themeService.preference()" (selectionChange)="setTheme($event.value)" data-cy="theme">
+                <mat-option value="light">Light</mat-option>
+                <mat-option value="dark">Dark</mat-option>
+                <mat-option value="system">System</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
 
           <mat-divider class="section-divider" />
 
           <div class="actions-row">
-            <button mat-raised-button color="primary" type="submit" [disabled]="settingsForm.invalid" data-cy="submit">Save</button>
+            <button mat-raised-button color="primary" type="submit" data-cy="submit">Save</button>
           </div>
         </form>
-      }
-    </mat-card-content>
-  </mat-card>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Notifications -->
+    <mat-card class="settings-card" appearance="outlined">
+      <mat-card-header class="settings-header">
+        <mat-card-title>Notifications</mat-card-title>
+        <mat-card-subtitle>Choose what you get notified about</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (notificationSuccess()) {
+          <div class="alert alert-success"><strong>Notification preferences saved!</strong></div>
+        }
+
+        <form name="notificationForm" (ngSubmit)="saveNotificationPreferences()" [formGroup]="notificationForm" novalidate>
+          <div class="toggle-row">
+            <div class="toggle-text">
+              <span class="toggle-title">Deadline reminders</span>
+              <span class="toggle-hint">Email me when a task or milestone deadline is approaching</span>
+            </div>
+            <mat-slide-toggle formControlName="deadlineReminders" data-cy="notif-deadline" />
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-text">
+              <span class="toggle-title">New task assigned</span>
+              <span class="toggle-hint">Email me when I'm assigned to a new task</span>
+            </div>
+            <mat-slide-toggle formControlName="newTaskAssigned" data-cy="notif-new-task" />
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-text">
+              <span class="toggle-title">Team changes</span>
+              <span class="toggle-hint">Show an in-app notification when a team's membership changes</span>
+            </div>
+            <mat-slide-toggle formControlName="teamChanges" data-cy="notif-team-changes" />
+          </div>
+
+          <mat-divider class="section-divider" />
+
+          <div class="actions-row">
+            <button mat-raised-button color="primary" type="submit" data-cy="notif-submit">Save</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Change password -->
+    <mat-card class="settings-card" appearance="outlined">
+      <mat-card-header class="settings-header">
+        <mat-card-title>Password</mat-card-title>
+        <mat-card-subtitle>Change your password</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (passwordSuccess()) {
+          <div class="alert alert-success"><strong>Password changed!</strong></div>
+        }
+        @if (passwordError()) {
+          <div class="alert alert-danger"><strong>Could not change your password.</strong> Check your current password and try again.</div>
+        }
+        @if (passwordDoNotMatch()) {
+          <div class="alert alert-danger">The new password and its confirmation do not match.</div>
+        }
+
+        <form name="passwordForm" (ngSubmit)="changePassword()" [formGroup]="passwordForm" novalidate>
+          <mat-form-field appearance="outline" class="field field--full">
+            <mat-label>Current password</mat-label>
+            <input matInput type="password" formControlName="currentPassword" data-cy="currentPassword" />
+            @let currentPasswordRef = passwordForm.get('currentPassword')!;
+            @if (
+              currentPasswordRef?.invalid &&
+              (currentPasswordRef?.touched || currentPasswordRef?.dirty) &&
+              currentPasswordRef?.errors?.required
+            ) {
+              <ng-container>
+                <mat-error>Your current password is required.</mat-error>
+              </ng-container>
+            }
+          </mat-form-field>
+
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>New password</mat-label>
+              <input matInput type="password" formControlName="newPassword" data-cy="newPassword" />
+              @let newPasswordRef = passwordForm.get('newPassword')!;
+              @if (newPasswordRef?.invalid && (newPasswordRef?.touched || newPasswordRef?.dirty) && newPasswordRef?.errors?.required) {
+                <ng-container>
+                  <mat-error>Your new password is required.</mat-error>
+                </ng-container>
+              }
+              @if (newPasswordRef?.invalid && (newPasswordRef?.touched || newPasswordRef?.dirty) && newPasswordRef?.errors?.minlength) {
+                <ng-container>
+                  <mat-error>Your password is required to be at least 4 characters.</mat-error>
+                </ng-container>
+              }
+              @if (newPasswordRef?.invalid && (newPasswordRef?.touched || newPasswordRef?.dirty) && newPasswordRef?.errors?.maxlength) {
+                <ng-container>
+                  <mat-error>Your password cannot be longer than 50 characters.</mat-error>
+                </ng-container>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Confirm new password</mat-label>
+              <input matInput type="password" formControlName="confirmPassword" data-cy="confirmPassword" />
+              @let confirmPasswordRef = passwordForm.get('confirmPassword')!;
+              @if (
+                confirmPasswordRef?.invalid &&
+                (confirmPasswordRef?.touched || confirmPasswordRef?.dirty) &&
+                confirmPasswordRef?.errors?.required
+              ) {
+                <ng-container>
+                  <mat-error>Please confirm your new password.</mat-error>
+                </ng-container>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="password-reset-link">
+            <span>Forgot your current password?</span>
+            <a routerLink="/account/reset/request">Reset it by email</a>
+          </div>
+
+          <mat-divider class="section-divider" />
+
+          <div class="actions-row">
+            <button mat-raised-button color="primary" type="submit" [disabled]="passwordForm.invalid" data-cy="password-submit">
+              Change password
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

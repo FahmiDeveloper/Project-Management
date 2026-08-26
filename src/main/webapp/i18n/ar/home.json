@@ -1,0 +1,19 @@
+{
+  "home": {
+    "title": "الرئيسية",
+    "subtitle": "هذه هي صفحتك الرئيسية",
+    "logged": {
+      "message": "لقد سجّلت الدخول باسم المستخدم \"{{username}}\"."
+    },
+    "question": "إذا كان لديك سؤال حول JHipster:",
+    "link": {
+      "homepage": "الصفحة الرئيسية لـ JHipster",
+      "stackoverflow": "JHipster على Stack Overflow",
+      "bugtracker": "متتبّع الأخطاء لـ JHipster",
+      "chat": "غرفة الدردشة العامة لـ JHipster",
+      "follow": "تابع ⁧@jhipster⁩ على تويتر"
+    },
+    "like": "إذا أعجبك JHipster، لا تنسَ منحنا نجمة على",
+    "github": "GitHub"
+  }
+}

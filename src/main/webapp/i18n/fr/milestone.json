@@ -1,0 +1,29 @@
+{
+  "projectManagementApp": {
+    "milestone": {
+      "home": {
+        "title": "Jalons",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Nouveau jalon",
+        "createOrEditLabel": "Créer ou modifier un jalon",
+        "notFound": "Aucun Jalon trouvé"
+      },
+      "created": "Un nouveau Jalon a été créé avec l'identifiant {{ param }}",
+      "updated": "Jalon a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Jalon a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Jalon {{ id }} ?"
+      },
+      "detail": {
+        "title": "Jalon"
+      },
+      "id": "ID",
+      "title": "Titre",
+      "description": "Description",
+      "startDate": "Date de début",
+      "dueDate": "Date d'échéance",
+      "status": "Statut",
+      "project": "Projet"
+    }
+  }
+}

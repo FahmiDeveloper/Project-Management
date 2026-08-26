@@ -1,0 +1,32 @@
+{
+  "projectManagementApp": {
+    "client": {
+      "home": {
+        "title": "العملاء",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء عميل جديد",
+        "createOrEditLabel": "إنشاء أو تعديل عميل",
+        "notFound": "لا يوجد العميل"
+      },
+      "created": "تم إنشاء العميل جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث العميل بالمعرّف {{ param }}",
+      "deleted": "تم حذف العميل بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف العميل {{ id }}؟"
+      },
+      "detail": {
+        "title": "العميل"
+      },
+      "id": "المعرّف",
+      "companyName": "اسم الشركة",
+      "contactName": "اسم جهة الاتصال",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "address": "العنوان",
+      "city": "المدينة",
+      "country": "الدولة",
+      "website": "الموقع الإلكتروني",
+      "note": "ملاحظة"
+    }
+  }
+}

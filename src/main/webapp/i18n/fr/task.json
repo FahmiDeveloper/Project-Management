@@ -1,0 +1,38 @@
+{
+  "projectManagementApp": {
+    "task": {
+      "home": {
+        "title": "Tâches",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Nouvelle tâche",
+        "createOrEditLabel": "Créer ou modifier une tâche",
+        "notFound": "Aucun Tâche trouvé"
+      },
+      "created": "Un nouveau Tâche a été créé avec l'identifiant {{ param }}",
+      "updated": "Tâche a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Tâche a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Tâche {{ id }} ?"
+      },
+      "detail": {
+        "title": "Tâche"
+      },
+      "id": "ID",
+      "title": "Titre",
+      "description": "Description",
+      "priority": "Priorité",
+      "status": "Statut",
+      "storyPoints": "Points d'histoire",
+      "estimatedHours": "Heures estimées",
+      "spentHours": "Heures passées",
+      "startDate": "Date de début",
+      "dueDate": "Date d'échéance",
+      "completionPercentage": "Pourcentage d'achèvement",
+      "sprint": "Sprint",
+      "milestone": "Jalon",
+      "assignedTo": "Assigné à",
+      "createdBy": "Créé par",
+      "note": "Note"
+    }
+  }
+}

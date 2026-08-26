@@ -1,0 +1,12 @@
+{
+  "projectManagementApp": {
+    "ProjectStatus": {
+      "null": "",
+      "PLANNED": "مخطّط له",
+      "ACTIVE": "نشط",
+      "ON_HOLD": "معلّق",
+      "COMPLETED": "مكتمل",
+      "CANCELLED": "ملغى"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "projectManagementApp": {
+    "taskComment": {
+      "home": {
+        "title": "Commentaires de tâches",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau commentaire de tâche",
+        "createOrEditLabel": "Créer ou modifier un commentaire de tâche",
+        "notFound": "Aucun Commentaire de tâche trouvé"
+      },
+      "created": "Un nouveau Commentaire de tâche a été créé avec l'identifiant {{ param }}",
+      "updated": "Commentaire de tâche a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Commentaire de tâche a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Commentaire de tâche {{ id }} ?"
+      },
+      "detail": {
+        "title": "Commentaire de tâche"
+      },
+      "id": "ID",
+      "content": "Contenu",
+      "createdDate": "Date de création",
+      "task": "Tâche",
+      "employee": "Employé"
+    }
+  }
+}

@@ -62,17 +62,17 @@
             <mat-label>First Name</mat-label>
             <input matInput formControlName="firstName" data-cy="firstname" />
             @let firstNameRef = profileForm.get('firstName')!;
-            @if (firstNameRef?.errors?.required) {
+            @if (firstNameRef?.invalid && (firstNameRef?.touched || firstNameRef?.dirty) && firstNameRef?.errors?.required) {
               <ng-container>
                 <mat-error>Your first name is required.</mat-error>
               </ng-container>
             }
-            @if (firstNameRef?.errors?.minlength) {
+            @if (firstNameRef?.invalid && (firstNameRef?.touched || firstNameRef?.dirty) && firstNameRef?.errors?.minlength) {
               <ng-container>
                 <mat-error>Your first name is required to be at least 1 character.</mat-error>
               </ng-container>
             }
-            @if (firstNameRef?.errors?.maxlength) {
+            @if (firstNameRef?.invalid && (firstNameRef?.touched || firstNameRef?.dirty) && firstNameRef?.errors?.maxlength) {
               <ng-container>
                 <mat-error>Your first name cannot be longer than 50 characters.</mat-error>
               </ng-container>

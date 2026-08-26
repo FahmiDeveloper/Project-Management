@@ -1,0 +1,165 @@
+{
+  "global": {
+    "title": "ProjectManagement",
+    "browsehappy": "أنت تستخدم متصفحًا <strong>قديمًا</strong>. يرجى <a href=\"http://browsehappy.com/?locale=ar\">تحديث متصفحك</a> لتحسين تجربتك.",
+    "menu": {
+      "home": "الرئيسية",
+      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
+      "entities": {
+        "main": "الكيانات",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "adminAuthority": "الصلاحية",
+        "department": "القسم",
+        "employee": "الموظف",
+        "client": "العميل",
+        "project": "المشروع",
+        "projectMember": "عضو المشروع",
+        "milestone": "المرحلة الرئيسية",
+        "sprint": "السبرنت",
+        "task": "المهمة",
+        "taskComment": "تعليق المهمة",
+        "attachment": "المرفق",
+        "checklist": "قائمة التحقق",
+        "checklistItem": "عنصر قائمة التحقق",
+        "timeEntry": "إدخال الوقت",
+        "notification": "الإشعار",
+        "activityLog": "سجل النشاط",
+        "reportSnapshot": "لقطة التقرير",
+        "dashboard": "لوحة التحكم"
+      },
+      "account": {
+        "main": "الحساب",
+        "settings": "الإعدادات",
+        "password": "كلمة المرور",
+        "sessions": "الجلسات",
+        "login": "تسجيل الدخول",
+        "logout": "تسجيل الخروج",
+        "register": "إنشاء حساب"
+      },
+      "admin": {
+        "main": "الإدارة",
+        "userManagement": "إدارة المستخدمين",
+        "tracker": "متتبّع المستخدمين",
+        "metrics": "المقاييس",
+        "health": "الحالة",
+        "configuration": "الإعدادات",
+        "logs": "السجلات",
+        "apidocs": "API",
+        "database": "قاعدة البيانات",
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+      },
+      "language": "اللغة"
+    },
+    "form": {
+      "username.label": "اسم المستخدم",
+      "username.placeholder": "اسم المستخدم الخاص بك",
+      "currentpassword.label": "كلمة المرور الحالية",
+      "currentpassword.placeholder": "كلمة المرور الحالية",
+      "newpassword.label": "كلمة المرور الجديدة",
+      "newpassword.placeholder": "كلمة المرور الجديدة",
+      "confirmpassword.label": "تأكيد كلمة المرور الجديدة",
+      "confirmpassword.placeholder": "أكّد كلمة المرور الجديدة",
+      "email.label": "البريد الإلكتروني",
+      "email.placeholder": "بريدك الإلكتروني"
+    },
+    "messages": {
+      "info": {
+        "authenticated": {
+          "prefix": "إذا كنت ترغب في ",
+          "link": "تسجيل الدخول",
+          "suffix": "، يمكنك تجربة الحسابات الافتراضية:<br/>- المسؤول (اسم الدخول=\"admin\" وكلمة المرور=\"admin\") <br/>- المستخدم (اسم الدخول=\"user\" وكلمة المرور=\"user\")."
+        },
+        "register": {
+          "noaccount": "ليس لديك حساب بعد؟",
+          "link": "إنشاء حساب جديد"
+        }
+      },
+      "error": {
+        "dontmatch": "كلمة المرور وتأكيدها غير متطابقين!"
+      },
+      "validate": {
+        "newpassword": {
+          "required": "كلمة المرور مطلوبة.",
+          "minlength": "يجب أن تتكوّن كلمة المرور من 4 أحرف على الأقل.",
+          "maxlength": "لا يمكن أن تتجاوز كلمة المرور 50 حرفًا.",
+          "strength": "قوة كلمة المرور:"
+        },
+        "confirmpassword": {
+          "required": "تأكيد كلمة المرور مطلوب.",
+          "minlength": "يجب أن يتكوّن تأكيد كلمة المرور من 4 أحرف على الأقل.",
+          "maxlength": "لا يمكن أن يتجاوز تأكيد كلمة المرور 50 حرفًا."
+        },
+        "email": {
+          "required": "البريد الإلكتروني مطلوب.",
+          "invalid": "البريد الإلكتروني غير صالح.",
+          "minlength": "يجب أن يتكوّن البريد الإلكتروني من 5 أحرف على الأقل.",
+          "maxlength": "لا يمكن أن يتجاوز البريد الإلكتروني 50 حرفًا."
+        }
+      }
+    },
+    "field": {
+      "id": "المعرّف"
+    },
+    "ribbon": {
+      "dev": "بيئة التطوير"
+    },
+    "item-count": "عرض {{first}} - {{second}} من أصل {{total}} عنصر."
+  },
+  "entity": {
+    "action": {
+      "addblob": "إضافة ملف",
+      "addimage": "إضافة صورة",
+      "back": "رجوع",
+      "cancel": "إلغاء",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "open": "فتح",
+      "save": "حفظ",
+      "view": "عرض",
+      "show": "عرض {{otherEntity}}"
+    },
+    "detail": {
+      "field": "الحقل",
+      "value": "القيمة"
+    },
+    "delete": {
+      "title": "تأكيد عملية الحذف"
+    },
+    "validation": {
+      "required": "هذا الحقل مطلوب.",
+      "minlength": "يجب أن يتكوّن هذا الحقل من {{ min }} حرفًا على الأقل.",
+      "maxlength": "لا يمكن أن يتجاوز هذا الحقل {{ max }} حرفًا.",
+      "min": "يجب أن يكون هذا الحقل {{ min }} على الأقل.",
+      "max": "لا يمكن أن يتجاوز هذا الحقل {{ max }}.",
+      "minbytes": "يجب أن يكون هذا الحقل {{ min }} بايت على الأقل.",
+      "maxbytes": "لا يمكن أن يتجاوز هذا الحقل {{ max }} بايت.",
+      "pattern": "يجب أن يتبع هذا الحقل النمط الخاص بـ {{ pattern }}.",
+      "number": "يجب أن يكون هذا الحقل رقمًا.",
+      "datetimelocal": "يجب أن يكون هذا الحقل تاريخًا ووقتًا.",
+      "patternLogin": "يمكن أن يحتوي هذا الحقل على أحرف وأرقام وعناوين بريد إلكتروني فقط."
+    },
+    "filters": {
+      "set": "التصفيات التالية مفعّلة",
+      "clear": "مسح التصفية",
+      "clearAll": "مسح جميع التصفيات"
+    }
+  },
+  "error": {
+    "internalServerError": "خطأ داخلي في الخادم",
+    "server.not.reachable": "تعذّر الوصول إلى الخادم",
+    "url.not.found": "غير موجود",
+    "NotNull": "الحقل {{ fieldName }} لا يمكن أن يكون فارغًا!",
+    "Size": "الحقل {{ fieldName }} لا يستوفي متطلبات الحد الأدنى/الأقصى للحجم!",
+    "userexists": "اسم المستخدم مستخدَم بالفعل!",
+    "emailexists": "البريد الإلكتروني مستخدَم بالفعل!",
+    "idexists": "لا يمكن لـ {{ entityName }} جديد أن يكون له معرّف مسبقًا",
+    "idnull": "معرّف غير صالح",
+    "idinvalid": "معرّف غير صالح",
+    "idnotfound": "تعذّر العثور على المعرّف",
+    "file": {
+      "could.not.extract": "تعذّر استخراج الملف",
+      "not.image": "كان من المتوقع أن يكون الملف صورة، لكن تبيّن أن نوعه \"{{ fileType }}\""
+    }
+  },
+  "footer": "هذا هو تذييل الصفحة الخاص بك"
+}

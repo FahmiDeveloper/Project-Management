@@ -1,0 +1,31 @@
+{
+  "projectManagementApp": {
+    "sprint": {
+      "home": {
+        "title": "السبرنتات",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "سبرنت جديد",
+        "createOrEditLabel": "إنشاء أو تعديل سبرنت",
+        "notFound": "لا يوجد السبرنت"
+      },
+      "created": "تم إنشاء السبرنت جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث السبرنت بالمعرّف {{ param }}",
+      "deleted": "تم حذف السبرنت بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف السبرنت {{ id }}؟"
+      },
+      "detail": {
+        "title": "السبرنت"
+      },
+      "id": "المعرّف",
+      "name": "الاسم",
+      "goal": "الهدف",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء",
+      "status": "الحالة",
+      "capacity": "السعة",
+      "velocity": "السرعة",
+      "project": "المشروع"
+    }
+  }
+}

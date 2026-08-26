@@ -1,0 +1,29 @@
+{
+  "projectManagementApp": {
+    "activityLog": {
+      "home": {
+        "title": "سجلات النشاط",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء سجل نشاط جديد",
+        "createOrEditLabel": "إنشاء أو تعديل سجل نشاط",
+        "notFound": "لا يوجد سجل النشاط"
+      },
+      "created": "تم إنشاء سجل النشاط جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث سجل النشاط بالمعرّف {{ param }}",
+      "deleted": "تم حذف سجل النشاط بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف سجل النشاط {{ id }}؟"
+      },
+      "detail": {
+        "title": "سجل النشاط"
+      },
+      "id": "المعرّف",
+      "action": "الإجراء",
+      "entityName": "اسم الكيان",
+      "entityId": "معرّف الكيان",
+      "description": "الوصف",
+      "createdDate": "تاريخ الإنشاء",
+      "employee": "الموظف"
+    }
+  }
+}

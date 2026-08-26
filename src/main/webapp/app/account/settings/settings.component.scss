@@ -4,14 +4,21 @@
   padding: 1.5rem 1rem;
 }
 
-.settings-card {
+.settings-stack {
   width: 100%;
   max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
 
-  // MDC card removes mat-card-content's top padding when it follows a header,
-  // assuming the header's own bottom padding is enough spacing - but with an
-  // outlined mat-form-field right below (label sitting at the field's top
-  // edge), that default gap reads as crowded. Push it back open explicitly.
+.settings-card {
+  width: 100%;
+
+  // MDC card removes mat-card-content's top padding when it follows a header, assuming
+  // the header's own bottom padding is enough spacing - but with an outlined
+  // mat-form-field right below (label sitting at the field's top edge), that default
+  // gap reads as crowded. Push it back open explicitly.
   ::ng-deep .mat-mdc-card-header {
     margin-bottom: 1.25rem;
   }
@@ -27,6 +34,12 @@
     background: #f0fff4;
     color: #276749;
     border: 1px solid #9ae6b4;
+  }
+
+  &.alert-danger {
+    background: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
   }
 }
 
@@ -44,10 +57,62 @@
   }
 }
 
+.field--full {
+  width: 100%;
+}
+
 .actions-row {
   display: flex;
   justify-content: flex-end;
   margin-top: 0.5rem;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+
+  & + .toggle-row {
+    border-top: 1px solid #edf2f7;
+  }
+}
+
+.toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.toggle-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.toggle-hint {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.password-reset-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #718096;
+  margin-top: 0.25rem;
+
+  a {
+    color: #667eea;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 @media (max-width: 600px) {
@@ -55,4 +120,8 @@
     flex-direction: column;
     gap: 0;
   }
+}
+
+::ng-deep .ng-invalid:not(form) {
+  border-left: none !important;
 }

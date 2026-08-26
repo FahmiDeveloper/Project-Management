@@ -1,0 +1,28 @@
+{
+  "projectManagementApp": {
+    "reportSnapshot": {
+      "home": {
+        "title": "لقطات التقارير",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء لقطة تقرير جديدة",
+        "createOrEditLabel": "إنشاء أو تعديل لقطة تقرير",
+        "notFound": "لا يوجد لقطة التقرير"
+      },
+      "created": "تم إنشاء لقطة التقرير جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث لقطة التقرير بالمعرّف {{ param }}",
+      "deleted": "تم حذف لقطة التقرير بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف لقطة التقرير {{ id }}؟"
+      },
+      "detail": {
+        "title": "لقطة التقرير"
+      },
+      "id": "المعرّف",
+      "name": "الاسم",
+      "type": "النوع",
+      "generatedDate": "تاريخ الإنشاء",
+      "data": "البيانات",
+      "project": "المشروع"
+    }
+  }
+}

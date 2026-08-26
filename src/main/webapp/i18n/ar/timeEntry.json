@@ -1,0 +1,31 @@
+{
+  "projectManagementApp": {
+    "timeEntry": {
+      "home": {
+        "title": "إدخالات الوقت",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إدخال وقت جديد",
+        "createOrEditLabel": "إنشاء أو تعديل إدخال وقت",
+        "notFound": "لا يوجد إدخال الوقت"
+      },
+      "created": "تم إنشاء إدخال الوقت جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث إدخال الوقت بالمعرّف {{ param }}",
+      "deleted": "تم حذف إدخال الوقت بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف إدخال الوقت {{ id }}؟"
+      },
+      "detail": {
+        "title": "إدخال الوقت"
+      },
+      "id": "المعرّف",
+      "description": "الوصف",
+      "startTime": "وقت البدء",
+      "endTime": "وقت الانتهاء",
+      "hours": "الساعات",
+      "entryDate": "تاريخ الإدخال",
+      "task": "المهمة",
+      "employee": "الموظف",
+      "note": "ملاحظة"
+    }
+  }
+}

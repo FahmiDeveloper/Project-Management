@@ -1,0 +1,35 @@
+{
+  "projectManagementApp": {
+    "project": {
+      "home": {
+        "title": "Projets",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Nouveau projet",
+        "createOrEditLabel": "Créer ou modifier un projet",
+        "notFound": "Aucun Projet trouvé"
+      },
+      "created": "Un nouveau Projet a été créé avec l'identifiant {{ param }}",
+      "updated": "Projet a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Projet a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Projet {{ id }} ?",
+        "blocked": "Ce projet ne peut pas être supprimé car il est encore référencé par d'autres enregistrements (ex. membres de projet, tâches). Veuillez d'abord supprimer ces références."
+      },
+      "detail": {
+        "title": "Projet"
+      },
+      "id": "ID",
+      "code": "Code",
+      "name": "Nom",
+      "description": "Description",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "budget": "Budget",
+      "progress": "Progression",
+      "status": "Statut",
+      "client": "Client",
+      "manager": "Responsable",
+      "note": "Note"
+    }
+  }
+}

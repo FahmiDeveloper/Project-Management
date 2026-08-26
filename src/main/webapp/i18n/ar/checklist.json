@@ -1,0 +1,26 @@
+{
+  "projectManagementApp": {
+    "checklist": {
+      "home": {
+        "title": "قوائم التحقق",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "قائمة تحقق جديدة",
+        "createOrEditLabel": "إنشاء أو تعديل قائمة تحقق",
+        "notFound": "لا يوجد قائمة التحقق"
+      },
+      "created": "تم إنشاء قائمة التحقق جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث قائمة التحقق بالمعرّف {{ param }}",
+      "deleted": "تم حذف قائمة التحقق بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف قائمة التحقق {{ id }}؟"
+      },
+      "detail": {
+        "title": "قائمة التحقق"
+      },
+      "id": "المعرّف",
+      "title": "العنوان",
+      "createdDate": "تاريخ الإنشاء",
+      "task": "المهمة"
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "metrics": {
+    "title": "مقاييس التطبيق",
+    "refresh.button": "تحديث",
+    "updating": "جارٍ التحديث...",
+    "jvm": {
+      "title": "مقاييس JVM",
+      "memory": {
+        "title": "الذاكرة",
+        "total": "إجمالي الذاكرة",
+        "heap": "ذاكرة Heap",
+        "nonheap": "ذاكرة Non-Heap"
+      },
+      "threads": {
+        "title": "الخيوط (Threads)",
+        "all": "الكل",
+        "runnable": "قابل للتشغيل",
+        "timedwaiting": "بانتظار مؤقت",
+        "waiting": "بانتظار",
+        "blocked": "محظور",
+        "dump": {
+          "title": "تفريغ الخيوط",
+          "id": "المعرّف: ",
+          "blockedtime": "زمن الحظر",
+          "blockedcount": "عدد مرات الحظر",
+          "waitedtime": "زمن الانتظار",
+          "waitedcount": "عدد مرات الانتظار",
+          "lockname": "اسم القفل",
+          "stacktrace": "تتبع المكدس",
+          "show": "إظهار تتبع المكدس",
+          "hide": "إخفاء تتبع المكدس"
+        }
+      },
+      "gc": {
+        "title": "جمع القمامة (Garbage Collection)",
+        "marksweepcount": "عدد Mark Sweep",
+        "marksweeptime": "زمن Mark Sweep",
+        "scavengecount": "عدد Scavenge",
+        "scavengetime": "زمن Scavenge"
+      },
+      "http": {
+        "title": "طلبات HTTP (الزمن بالميلي ثانية)",
+        "active": "الطلبات النشطة:",
+        "total": "إجمالي الطلبات:",
+        "table": {
+          "code": "الرمز",
+          "count": "العدد",
+          "mean": "المتوسط",
+          "average": "المعدل",
+          "max": "الأقصى"
+        },
+        "code": {
+          "ok": "ناجح",
+          "notfound": "غير موجود",
+          "servererror": "خطأ في الخادم"
+        }
+      }
+    },
+    "servicesstats": {
+      "title": "إحصائيات الخدمات (الزمن بالميلي ثانية)",
+      "table": {
+        "name": "اسم الخدمة",
+        "count": "العدد",
+        "mean": "المتوسط",
+        "min": "الأدنى",
+        "max": "الأقصى",
+        "p50": "p50",
+        "p75": "p75",
+        "p95": "p95",
+        "p99": "p99"
+      }
+    },
+    "cache": {
+      "title": "إحصائيات الذاكرة المؤقتة",
+      "cachename": "اسم الذاكرة المؤقتة",
+      "hits": "مرات الإصابة",
+      "misses": "مرات الإخفاق",
+      "gets": "عمليات القراءة",
+      "puts": "عمليات الكتابة",
+      "removals": "عمليات الإزالة",
+      "evictions": "عمليات الإخلاء",
+      "hitPercent": "نسبة الإصابة %",
+      "missPercent": "نسبة الإخفاق %",
+      "averageGetTime": "متوسط زمن القراءة (µs)",
+      "averagePutTime": "متوسط زمن الكتابة (µs)",
+      "averageRemoveTime": "متوسط زمن الإزالة (µs)"
+    },
+    "datasource": {
+      "usage": "استخدام تجمّع الاتصالات",
+      "title": "إحصائيات مصدر البيانات (الزمن بالميلي ثانية)",
+      "name": "استخدام التجمّع",
+      "count": "العدد",
+      "mean": "المتوسط",
+      "min": "الأدنى",
+      "max": "الأقصى",
+      "p50": "p50",
+      "p75": "p75",
+      "p95": "p95",
+      "p99": "p99"
+    }
+  }
+}

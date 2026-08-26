@@ -1,0 +1,13 @@
+{
+  "projectManagementApp": {
+    "MemberRole": {
+      "null": "",
+      "PROJECT_MANAGER": "مدير المشروع",
+      "TEAM_LEAD": "قائد الفريق",
+      "DEVELOPER": "مطوّر",
+      "TESTER": "مختبِر",
+      "DESIGNER": "مصمّم",
+      "BUSINESS_ANALYST": "محلل أعمال"
+    }
+  }
+}

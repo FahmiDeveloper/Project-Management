@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "title": "إعدادات الحساب لـ [<strong>{{username}}</strong>]",
+    "form": {
+      "firstname": "الاسم الأول",
+      "firstname.placeholder": "اسمك الأول",
+      "lastname": "اسم العائلة",
+      "lastname.placeholder": "اسم عائلتك",
+      "language": "اللغة",
+      "button": "حفظ"
+    },
+    "messages": {
+      "error": {
+        "fail": "<strong>حدث خطأ!</strong> تعذّر حفظ الإعدادات.",
+        "emailexists": "<strong>هذا البريد الإلكتروني مستخدم بالفعل!</strong> يرجى اختيار بريد آخر."
+      },
+      "success": "<strong>تم حفظ الإعدادات!</strong>",
+      "validate": {
+        "firstname": {
+          "required": "الاسم الأول مطلوب.",
+          "minlength": "يجب أن يتكوّن الاسم الأول من حرف واحد على الأقل",
+          "maxlength": "لا يمكن أن يتجاوز الاسم الأول 50 حرفًا"
+        },
+        "lastname": {
+          "required": "اسم العائلة مطلوب.",
+          "minlength": "يجب أن يتكوّن اسم العائلة من حرف واحد على الأقل",
+          "maxlength": "لا يمكن أن يتجاوز اسم العائلة 50 حرفًا"
+        }
+      }
+    }
+  }
+}
