@@ -1,0 +1,28 @@
+{
+  "projectManagementApp": {
+    "projectMember": {
+      "home": {
+        "title": "أعضاء المشاريع",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء عضو مشروع جديد",
+        "createOrEditLabel": "إنشاء أو تعديل عضو مشروع",
+        "notFound": "لا يوجد عضو المشروع"
+      },
+      "created": "تم إنشاء عضو المشروع جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث عضو المشروع بالمعرّف {{ param }}",
+      "deleted": "تم حذف عضو المشروع بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف عضو المشروع {{ id }}؟"
+      },
+      "detail": {
+        "title": "عضو المشروع"
+      },
+      "id": "المعرّف",
+      "role": "الدور",
+      "joinedDate": "تاريخ الانضمام",
+      "active": "نشط",
+      "project": "المشروع",
+      "employee": "الموظف"
+    }
+  }
+}

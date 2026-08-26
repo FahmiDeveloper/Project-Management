@@ -322,6 +322,29 @@ public class UserService {
                 user.setImageUrl(imageUrl);
                 userRepository.save(user);
                 this.clearUserCaches(user);
+
+                // NEW: keep the linked Employee's name in sync, so an edit made from the
+                // profile page is also reflected in the Employees management list, not just
+                // on the User's own account. Guarded by the same 2-character minimum Employee
+                // enforces via bean validation, so a too-short name here doesn't fail the save
+                // outright - it's simply left unchanged on the Employee side.
+                employeeRepository
+                    .findOneByUserLogin(user.getLogin())
+                    .ifPresent(employee -> {
+                        boolean changed = false;
+                        if (firstName != null && firstName.trim().length() >= 2) {
+                            employee.setFirstName(firstName.trim());
+                            changed = true;
+                        }
+                        if (lastName != null && lastName.trim().length() >= 2) {
+                            employee.setLastName(lastName.trim());
+                            changed = true;
+                        }
+                        if (changed) {
+                            employeeRepository.save(employee);
+                        }
+                    });
+
                 LOG.debug("Changed Information for User: {}", user);
             });
     }
@@ -445,24 +468,54 @@ public class UserService {
      * Employee, and copies its URL onto the User. No-ops (with a debug log) for any id that
      * doesn't resolve to a valid, unlinked, PROFILE_PICTURE attachment, so a bad/missing id
      * never blocks registration itself.
+     *
+     * @return true if the attachment was found and linked, false if it was ignored (null id,
+     *     unknown id, wrong category, or already linked to another employee).
      */
-    private void linkProfilePictureIfPresent(User user, Employee employee, Long pictureAttachmentId) {
+    private boolean linkProfilePictureIfPresent(User user, Employee employee, Long pictureAttachmentId) {
         if (pictureAttachmentId == null) {
-            return;
+            return false;
         }
-        attachmentRepository
+        return attachmentRepository
             .findById(pictureAttachmentId)
             .filter(attachment -> attachment.getCategory() == AttachmentCategory.PROFILE_PICTURE)
             .filter(attachment -> attachment.getEmployee() == null)
-            .ifPresentOrElse(
-                (Attachment attachment) -> {
-                    attachment.setEmployee(employee);
-                    attachmentRepository.save(attachment);
-                    user.setImageUrl(attachment.getFileUrl());
-                    userRepository.save(user);
-                    LOG.debug("Linked profile picture attachment {} to employee {}", attachment.getId(), employee.getId());
-                },
-                () -> LOG.debug("Ignoring invalid or already-linked pictureAttachmentId {} at registration", pictureAttachmentId)
+            .map((Attachment attachment) -> {
+                attachment.setEmployee(employee);
+                attachmentRepository.save(attachment);
+                user.setImageUrl(attachment.getFileUrl());
+                userRepository.save(user);
+                this.clearUserCaches(user);
+                LOG.debug("Linked profile picture attachment {} to employee {}", attachment.getId(), employee.getId());
+                return true;
+            })
+            .orElseGet(() -> {
+                LOG.debug("Ignoring invalid or already-linked pictureAttachmentId {}", pictureAttachmentId);
+                return false;
+            });
+    }
+
+    /**
+     * Links an already-uploaded profile-picture Attachment to the currently authenticated
+     * user's existing Employee record, replacing their current profile picture. Reuses the
+     * exact same linking logic as registration ({@link #linkProfilePictureIfPresent}) - the
+     * only difference is the Employee already exists here instead of being created alongside
+     * the User in the same transaction.
+     *
+     * @param pictureAttachmentId id of an unlinked, PROFILE_PICTURE Attachment created by a
+     *     prior call to {@code POST /account/upload-picture}.
+     * @return the new imageUrl if linking succeeded; empty if there's no authenticated user,
+     *     no Employee record for them, or the attachment id was invalid/already linked.
+     */
+    @Transactional
+    public Optional<String> linkProfilePictureToCurrentUser(Long pictureAttachmentId) {
+        return SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .flatMap(user ->
+                employeeRepository
+                    .findOneByUserLogin(user.getLogin())
+                    .filter(employee -> linkProfilePictureIfPresent(user, employee, pictureAttachmentId))
+                    .map(employee -> user.getImageUrl())
             );
     }
 

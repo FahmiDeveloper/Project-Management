@@ -1,0 +1,27 @@
+{
+  "projectManagementApp": {
+    "checklistItem": {
+      "home": {
+        "title": "Éléments de liste de contrôle",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouvel élément de liste de contrôle",
+        "createOrEditLabel": "Créer ou modifier un élément de liste de contrôle",
+        "notFound": "Aucun Élément de liste de contrôle trouvé"
+      },
+      "created": "Un nouveau Élément de liste de contrôle a été créé avec l'identifiant {{ param }}",
+      "updated": "Élément de liste de contrôle a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Élément de liste de contrôle a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Élément de liste de contrôle {{ id }} ?"
+      },
+      "detail": {
+        "title": "Élément de liste de contrôle"
+      },
+      "id": "ID",
+      "content": "Contenu",
+      "isDone": "Terminé",
+      "position": "Position",
+      "checklist": "Liste de contrôle"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "projectManagementApp": {
+    "attachment": {
+      "home": {
+        "title": "المرفقات",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء مرفق جديد",
+        "createOrEditLabel": "إنشاء أو تعديل مرفق",
+        "notFound": "لا يوجد المرفق"
+      },
+      "created": "تم إنشاء المرفق جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث المرفق بالمعرّف {{ param }}",
+      "deleted": "تم حذف المرفق بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف المرفق {{ id }}؟"
+      },
+      "detail": {
+        "title": "المرفق"
+      },
+      "id": "المعرّف",
+      "fileName": "اسم الملف",
+      "fileUrl": "رابط الملف",
+      "fileType": "نوع الملف",
+      "fileSize": "حجم الملف",
+      "uploadedDate": "تاريخ الرفع",
+      "task": "المهمة",
+      "employee": "الموظف"
+    }
+  }
+}

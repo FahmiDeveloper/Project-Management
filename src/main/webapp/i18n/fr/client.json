@@ -1,0 +1,32 @@
+{
+  "projectManagementApp": {
+    "client": {
+      "home": {
+        "title": "Clients",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau client",
+        "createOrEditLabel": "Créer ou modifier un client",
+        "notFound": "Aucun Client trouvé"
+      },
+      "created": "Un nouveau Client a été créé avec l'identifiant {{ param }}",
+      "updated": "Client a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Client a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Client {{ id }} ?"
+      },
+      "detail": {
+        "title": "Client"
+      },
+      "id": "ID",
+      "companyName": "Nom de l'entreprise",
+      "contactName": "Nom du contact",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "city": "Ville",
+      "country": "Pays",
+      "website": "Site web",
+      "note": "Note"
+    }
+  }
+}

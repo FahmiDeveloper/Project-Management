@@ -64,6 +64,11 @@ export default class MainComponent implements OnInit {
       if (!account) {
         this.router.navigate(['/login']);
       }
+      // NOTE: do NOT add a router.url === '/' check here to redirect to /home.
+      // On cold reload, this.router.url can still report '/' while a guard-driven
+      // navigation to a deep-linked route (e.g. /account/settings) is in flight,
+      // causing this to hijack that navigation. The '' -> 'home' redirect in
+      // app.routes.ts already handles the root-path case safely at the router level.
     });
 
     this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {

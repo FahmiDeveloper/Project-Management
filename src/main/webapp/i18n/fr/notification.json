@@ -1,0 +1,29 @@
+{
+  "projectManagementApp": {
+    "notification": {
+      "home": {
+        "title": "Notifications",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer une nouvelle notification",
+        "createOrEditLabel": "Créer ou modifier une notification",
+        "notFound": "Aucun Notification trouvé"
+      },
+      "created": "Un nouveau Notification a été créé avec l'identifiant {{ param }}",
+      "updated": "Notification a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Notification a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Notification {{ id }} ?"
+      },
+      "detail": {
+        "title": "Notification"
+      },
+      "id": "ID",
+      "title": "Titre",
+      "message": "Message",
+      "type": "Type",
+      "isRead": "Lu",
+      "createdDate": "Date de création",
+      "employee": "Employé"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "projectManagementApp": {
+    "notification": {
+      "home": {
+        "title": "الإشعارات",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء إشعار جديد",
+        "createOrEditLabel": "إنشاء أو تعديل إشعار",
+        "notFound": "لا يوجد الإشعار"
+      },
+      "created": "تم إنشاء الإشعار جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث الإشعار بالمعرّف {{ param }}",
+      "deleted": "تم حذف الإشعار بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف الإشعار {{ id }}؟"
+      },
+      "detail": {
+        "title": "الإشعار"
+      },
+      "id": "المعرّف",
+      "title": "العنوان",
+      "message": "الرسالة",
+      "type": "النوع",
+      "isRead": "مقروء",
+      "createdDate": "تاريخ الإنشاء",
+      "employee": "الموظف"
+    }
+  }
+}

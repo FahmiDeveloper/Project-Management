@@ -20,6 +20,11 @@ export interface UploadPictureResponse {
   fileUrl: string;
 }
 
+// NEW: shape of the response returned by POST /account/link-picture.
+export interface LinkPictureResponse {
+  imageUrl: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RegisterService {
   private readonly http = inject(HttpClient);
@@ -37,12 +42,24 @@ export class RegisterService {
     return this.http.post(this.applicationConfigService.getEndpointFor('api/account/resend-verification-code'), payload);
   }
 
-  // NEW: uploads a profile picture ahead of registration. Returns the id of the unlinked
-  // Attachment created server-side (to be sent back as Registration.pictureAttachmentId) and
-  // its public URL (for showing a preview).
+  // Uploads a profile picture. Returns the id of the unlinked Attachment created server-side
+  // and its public URL (for showing a preview). Used both ahead of registration (see
+  // RegisterComponent, where the id is sent along with the registration payload) and from an
+  // already-registered user's profile page (see ProfileComponent, which follows this call
+  // with linkPicture() below instead of waiting for a form submit).
   uploadPicture(file: File): Observable<UploadPictureResponse> {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<UploadPictureResponse>(this.applicationConfigService.getEndpointFor('api/account/upload-picture'), formData);
+  }
+
+  // NEW: links an already-uploaded profile picture (via uploadPicture() above) to the
+  // current, already-registered user - the authenticated counterpart to the
+  // pictureAttachmentId sent as part of Registration for a brand-new account. Used by
+  // ProfileComponent to update an existing user's picture.
+  linkPicture(attachmentId: number): Observable<LinkPictureResponse> {
+    return this.http.post<LinkPictureResponse>(this.applicationConfigService.getEndpointFor('api/account/link-picture'), {
+      attachmentId,
+    });
   }
 }

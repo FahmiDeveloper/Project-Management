@@ -1,0 +1,38 @@
+{
+  "projectManagementApp": {
+    "task": {
+      "home": {
+        "title": "المهام",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "مهمة جديدة",
+        "createOrEditLabel": "إنشاء أو تعديل مهمة",
+        "notFound": "لا يوجد المهمة"
+      },
+      "created": "تم إنشاء المهمة جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث المهمة بالمعرّف {{ param }}",
+      "deleted": "تم حذف المهمة بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف المهمة {{ id }}؟"
+      },
+      "detail": {
+        "title": "المهمة"
+      },
+      "id": "المعرّف",
+      "title": "العنوان",
+      "description": "الوصف",
+      "priority": "الأولوية",
+      "status": "الحالة",
+      "storyPoints": "نقاط القصة",
+      "estimatedHours": "الساعات المقدّرة",
+      "spentHours": "الساعات المستغرقة",
+      "startDate": "تاريخ البدء",
+      "dueDate": "تاريخ الاستحقاق",
+      "completionPercentage": "نسبة الإنجاز",
+      "sprint": "السبرنت",
+      "milestone": "المرحلة الرئيسية",
+      "assignedTo": "مسند إلى",
+      "createdBy": "أنشأه",
+      "note": "ملاحظة"
+    }
+  }
+}

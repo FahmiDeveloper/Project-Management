@@ -1,0 +1,13 @@
+{
+  "projectManagementApp": {
+    "TaskStatus": {
+      "null": "",
+      "TODO": "قيد الانتظار",
+      "IN_PROGRESS": "قيد التنفيذ",
+      "IN_REVIEW": "قيد المراجعة",
+      "TESTING": "قيد الاختبار",
+      "DONE": "منجز",
+      "BLOCKED": "محظور"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "projectManagementApp": {
+    "activityLog": {
+      "home": {
+        "title": "Journaux d'activités",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau journal d'activité",
+        "createOrEditLabel": "Créer ou modifier un journal d'activité",
+        "notFound": "Aucun Journal d'activité trouvé"
+      },
+      "created": "Un nouveau Journal d'activité a été créé avec l'identifiant {{ param }}",
+      "updated": "Journal d'activité a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Journal d'activité a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Journal d'activité {{ id }} ?"
+      },
+      "detail": {
+        "title": "Journal d'activité"
+      },
+      "id": "ID",
+      "action": "Action",
+      "entityName": "Nom de l'entité",
+      "entityId": "ID de l'entité",
+      "description": "Description",
+      "createdDate": "Date de création",
+      "employee": "Employé"
+    }
+  }
+}

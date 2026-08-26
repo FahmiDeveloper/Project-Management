@@ -1,0 +1,28 @@
+{
+  "projectManagementApp": {
+    "projectMember": {
+      "home": {
+        "title": "Membres de projets",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau membre de projet",
+        "createOrEditLabel": "Créer ou modifier un membre de projet",
+        "notFound": "Aucun Membre de projet trouvé"
+      },
+      "created": "Un nouveau Membre de projet a été créé avec l'identifiant {{ param }}",
+      "updated": "Membre de projet a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Membre de projet a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Membre de projet {{ id }} ?"
+      },
+      "detail": {
+        "title": "Membre de projet"
+      },
+      "id": "ID",
+      "role": "Rôle",
+      "joinedDate": "Date d'adhésion",
+      "active": "Actif",
+      "project": "Projet",
+      "employee": "Employé"
+    }
+  }
+}

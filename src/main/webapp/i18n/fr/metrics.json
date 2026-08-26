@@ -1,0 +1,102 @@
+{
+  "metrics": {
+    "title": "Métriques de l'application",
+    "refresh.button": "Actualiser",
+    "updating": "Mise à jour...",
+    "jvm": {
+      "title": "Métriques JVM",
+      "memory": {
+        "title": "Mémoire",
+        "total": "Mémoire totale",
+        "heap": "Mémoire heap",
+        "nonheap": "Mémoire non-heap"
+      },
+      "threads": {
+        "title": "Threads",
+        "all": "Tous",
+        "runnable": "Exécutable",
+        "timedwaiting": "En attente temporisée",
+        "waiting": "En attente",
+        "blocked": "Bloqué",
+        "dump": {
+          "title": "Vidage des threads",
+          "id": "Id : ",
+          "blockedtime": "Temps bloqué",
+          "blockedcount": "Nombre de blocages",
+          "waitedtime": "Temps d'attente",
+          "waitedcount": "Nombre d'attentes",
+          "lockname": "Nom du verrou",
+          "stacktrace": "Trace de la pile",
+          "show": "Afficher la trace",
+          "hide": "Masquer la trace"
+        }
+      },
+      "gc": {
+        "title": "Ramasse-miettes",
+        "marksweepcount": "Nombre Mark Sweep",
+        "marksweeptime": "Temps Mark Sweep",
+        "scavengecount": "Nombre Scavenge",
+        "scavengetime": "Temps Scavenge"
+      },
+      "http": {
+        "title": "Requêtes HTTP (temps en millisecondes)",
+        "active": "Requêtes actives :",
+        "total": "Total des requêtes :",
+        "table": {
+          "code": "Code",
+          "count": "Nombre",
+          "mean": "Moyenne",
+          "average": "Moyenne",
+          "max": "Max"
+        },
+        "code": {
+          "ok": "Ok",
+          "notfound": "Non trouvé",
+          "servererror": "Erreur serveur"
+        }
+      }
+    },
+    "servicesstats": {
+      "title": "Statistiques des services (temps en millisecondes)",
+      "table": {
+        "name": "Nom du service",
+        "count": "Nombre",
+        "mean": "Moyenne",
+        "min": "Min",
+        "max": "Max",
+        "p50": "p50",
+        "p75": "p75",
+        "p95": "p95",
+        "p99": "p99"
+      }
+    },
+    "cache": {
+      "title": "Statistiques du cache",
+      "cachename": "Nom du cache",
+      "hits": "Réussites du cache",
+      "misses": "Échecs du cache",
+      "gets": "Lectures du cache",
+      "puts": "Écritures du cache",
+      "removals": "Suppressions du cache",
+      "evictions": "Évictions du cache",
+      "hitPercent": "% de réussite du cache",
+      "missPercent": "% d'échec du cache",
+      "averageGetTime": "Temps moyen de lecture (µs)",
+      "averagePutTime": "Temps moyen d'écriture (µs)",
+      "averageRemoveTime": "Temps moyen de suppression (µs)"
+    },
+    "datasource": {
+      "usage": "Utilisation du pool de connexions",
+      "title": "Statistiques de la source de données (temps en millisecondes)",
+      "name": "Utilisation du pool",
+      "count": "Nombre",
+      "mean": "Moyenne",
+      "min": "Min",
+      "max": "Max",
+      "p50": "p50",
+      "p75": "p75",
+      "p95": "p95",
+      "p99": "p99"
+    }
+  }
+}

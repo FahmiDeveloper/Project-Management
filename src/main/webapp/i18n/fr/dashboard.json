@@ -1,0 +1,32 @@
+{
+  "projectManagementApp": {
+    "dashboard": {
+      "home": {
+        "title": "Tableau de bord",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau tableau de bord",
+        "createOrEditLabel": "Créer ou modifier un tableau de bord",
+        "notFound": "Aucun Tableau de bord trouvé"
+      },
+      "created": "Un nouveau Tableau de bord a été créé avec l'identifiant {{ param }}",
+      "updated": "Tableau de bord a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Tableau de bord a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Tableau de bord {{ id }} ?"
+      },
+      "detail": {
+        "title": "Tableau de bord"
+      },
+      "id": "ID",
+      "name": "Nom",
+      "description": "Description",
+      "layout": "Disposition",
+      "config": "Configuration",
+      "isDefault": "Par défaut",
+      "createdDate": "Date de création",
+      "updatedDate": "Date de mise à jour",
+      "employee": "Employé",
+      "project": "Projet"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "projectManagementApp": {
+    "MilestoneStatus": {
+      "null": "",
+      "PLANNED": "مخطّط له",
+      "IN_PROGRESS": "قيد التنفيذ",
+      "COMPLETED": "مكتمل",
+      "CANCELLED": "ملغى"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "home": {
+    "title": "Accueil",
+    "subtitle": "Ceci est votre page d'accueil",
+    "logged": {
+      "message": "Vous êtes connecté en tant que \"{{username}}\"."
+    },
+    "question": "Si vous avez une question sur JHipster :",
+    "link": {
+      "homepage": "Page d'accueil de JHipster",
+      "stackoverflow": "JHipster sur Stack Overflow",
+      "bugtracker": "Suivi des bugs JHipster",
+      "chat": "Salon de discussion public JHipster",
+      "follow": "suivre @jhipster sur Twitter"
+    },
+    "like": "Si vous aimez JHipster, n'oubliez pas de nous donner une étoile sur",
+    "github": "GitHub"
+  }
+}

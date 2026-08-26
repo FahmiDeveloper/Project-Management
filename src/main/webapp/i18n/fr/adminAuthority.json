@@ -1,0 +1,23 @@
+{
+  "projectManagementApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Autorités",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer une nouvelle autorité",
+        "createOrEditLabel": "Créer ou modifier une autorité",
+        "notFound": "Aucun Autorité trouvé"
+      },
+      "created": "Un nouveau Autorité a été créé avec l'identifiant {{ param }}",
+      "updated": "Autorité a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Autorité a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Autorité {{ id }} ?"
+      },
+      "detail": {
+        "title": "Autorité"
+      },
+      "name": "Nom"
+    }
+  }
+}

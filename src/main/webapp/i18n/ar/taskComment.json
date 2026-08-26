@@ -1,0 +1,27 @@
+{
+  "projectManagementApp": {
+    "taskComment": {
+      "home": {
+        "title": "تعليقات المهام",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء تعليق مهمة جديد",
+        "createOrEditLabel": "إنشاء أو تعديل تعليق مهمة",
+        "notFound": "لا يوجد تعليق المهمة"
+      },
+      "created": "تم إنشاء تعليق المهمة جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث تعليق المهمة بالمعرّف {{ param }}",
+      "deleted": "تم حذف تعليق المهمة بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف تعليق المهمة {{ id }}؟"
+      },
+      "detail": {
+        "title": "تعليق المهمة"
+      },
+      "id": "المعرّف",
+      "content": "المحتوى",
+      "createdDate": "تاريخ الإنشاء",
+      "task": "المهمة",
+      "employee": "الموظف"
+    }
+  }
+}

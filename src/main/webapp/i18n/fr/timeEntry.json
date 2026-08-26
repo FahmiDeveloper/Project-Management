@@ -1,0 +1,31 @@
+{
+  "projectManagementApp": {
+    "timeEntry": {
+      "home": {
+        "title": "Saisies de temps",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Nouvelle saisie de temps",
+        "createOrEditLabel": "Créer ou modifier une saisie de temps",
+        "notFound": "Aucun Saisie de temps trouvé"
+      },
+      "created": "Un nouveau Saisie de temps a été créé avec l'identifiant {{ param }}",
+      "updated": "Saisie de temps a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Saisie de temps a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Saisie de temps {{ id }} ?"
+      },
+      "detail": {
+        "title": "Saisie de temps"
+      },
+      "id": "ID",
+      "description": "Description",
+      "startTime": "Heure de début",
+      "endTime": "Heure de fin",
+      "hours": "Heures",
+      "entryDate": "Date de saisie",
+      "task": "Tâche",
+      "employee": "Employé",
+      "note": "Note"
+    }
+  }
+}

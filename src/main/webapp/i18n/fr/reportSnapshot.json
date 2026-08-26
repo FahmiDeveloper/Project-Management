@@ -1,0 +1,28 @@
+{
+  "projectManagementApp": {
+    "reportSnapshot": {
+      "home": {
+        "title": "Instantanés de rapports",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouvel instantané de rapport",
+        "createOrEditLabel": "Créer ou modifier un instantané de rapport",
+        "notFound": "Aucun Instantané de rapport trouvé"
+      },
+      "created": "Un nouveau Instantané de rapport a été créé avec l'identifiant {{ param }}",
+      "updated": "Instantané de rapport a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Instantané de rapport a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Instantané de rapport {{ id }} ?"
+      },
+      "detail": {
+        "title": "Instantané de rapport"
+      },
+      "id": "ID",
+      "name": "Nom",
+      "type": "Type",
+      "generatedDate": "Date de génération",
+      "data": "Données",
+      "project": "Projet"
+    }
+  }
+}

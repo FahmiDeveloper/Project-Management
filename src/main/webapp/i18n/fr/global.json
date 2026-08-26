@@ -1,0 +1,165 @@
+{
+  "global": {
+    "title": "ProjectManagement",
+    "browsehappy": "Vous utilisez un navigateur <strong>obsolète</strong>. Veuillez <a href=\"http://browsehappy.com/?locale=fr\">mettre à jour votre navigateur</a> pour améliorer votre expérience.",
+    "menu": {
+      "home": "Accueil",
+      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
+      "entities": {
+        "main": "Entités",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "adminAuthority": "Autorité",
+        "department": "Département",
+        "employee": "Employé",
+        "client": "Client",
+        "project": "Projet",
+        "projectMember": "Membre du projet",
+        "milestone": "Jalon",
+        "sprint": "Sprint",
+        "task": "Tâche",
+        "taskComment": "Commentaire de tâche",
+        "attachment": "Pièce jointe",
+        "checklist": "Liste de contrôle",
+        "checklistItem": "Élément de liste de contrôle",
+        "timeEntry": "Saisie de temps",
+        "notification": "Notification",
+        "activityLog": "Journal d'activité",
+        "reportSnapshot": "Instantané de rapport",
+        "dashboard": "Tableau de bord"
+      },
+      "account": {
+        "main": "Compte",
+        "settings": "Paramètres",
+        "password": "Mot de passe",
+        "sessions": "Sessions",
+        "login": "Se connecter",
+        "logout": "Se déconnecter",
+        "register": "S'inscrire"
+      },
+      "admin": {
+        "main": "Administration",
+        "userManagement": "Gestion des utilisateurs",
+        "tracker": "Suivi des utilisateurs",
+        "metrics": "Métriques",
+        "health": "Santé",
+        "configuration": "Configuration",
+        "logs": "Journaux",
+        "apidocs": "API",
+        "database": "Base de données",
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+      },
+      "language": "Langue"
+    },
+    "form": {
+      "username.label": "Nom d'utilisateur",
+      "username.placeholder": "Votre nom d'utilisateur",
+      "currentpassword.label": "Mot de passe actuel",
+      "currentpassword.placeholder": "Mot de passe actuel",
+      "newpassword.label": "Nouveau mot de passe",
+      "newpassword.placeholder": "Nouveau mot de passe",
+      "confirmpassword.label": "Confirmation du nouveau mot de passe",
+      "confirmpassword.placeholder": "Confirmez le nouveau mot de passe",
+      "email.label": "E-mail",
+      "email.placeholder": "Votre e-mail"
+    },
+    "messages": {
+      "info": {
+        "authenticated": {
+          "prefix": "Si vous souhaitez ",
+          "link": "vous connecter",
+          "suffix": ", vous pouvez essayer les comptes par défaut :<br/>- Administrateur (identifiant=\"admin\" et mot de passe=\"admin\") <br/>- Utilisateur (identifiant=\"user\" et mot de passe=\"user\")."
+        },
+        "register": {
+          "noaccount": "Vous n'avez pas encore de compte ?",
+          "link": "Créer un nouveau compte"
+        }
+      },
+      "error": {
+        "dontmatch": "Le mot de passe et sa confirmation ne correspondent pas !"
+      },
+      "validate": {
+        "newpassword": {
+          "required": "Votre mot de passe est requis.",
+          "minlength": "Votre mot de passe doit contenir au moins 4 caractères.",
+          "maxlength": "Votre mot de passe ne peut pas dépasser 50 caractères.",
+          "strength": "Force du mot de passe :"
+        },
+        "confirmpassword": {
+          "required": "La confirmation de votre mot de passe est requise.",
+          "minlength": "La confirmation de votre mot de passe doit contenir au moins 4 caractères.",
+          "maxlength": "La confirmation de votre mot de passe ne peut pas dépasser 50 caractères."
+        },
+        "email": {
+          "required": "Votre e-mail est requis.",
+          "invalid": "Votre e-mail est invalide.",
+          "minlength": "Votre e-mail doit contenir au moins 5 caractères.",
+          "maxlength": "Votre e-mail ne peut pas dépasser 50 caractères."
+        }
+      }
+    },
+    "field": {
+      "id": "ID"
+    },
+    "ribbon": {
+      "dev": "Développement"
+    },
+    "item-count": "Affichage de {{first}} - {{second}} sur {{total}} éléments."
+  },
+  "entity": {
+    "action": {
+      "addblob": "Ajouter un fichier",
+      "addimage": "Ajouter une image",
+      "back": "Retour",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "open": "Ouvrir",
+      "save": "Enregistrer",
+      "view": "Voir",
+      "show": "Afficher {{otherEntity}}"
+    },
+    "detail": {
+      "field": "Champ",
+      "value": "Valeur"
+    },
+    "delete": {
+      "title": "Confirmer la suppression"
+    },
+    "validation": {
+      "required": "Ce champ est requis.",
+      "minlength": "Ce champ doit contenir au moins {{ min }} caractères.",
+      "maxlength": "Ce champ ne peut pas dépasser {{ max }} caractères.",
+      "min": "Ce champ doit être au moins {{ min }}.",
+      "max": "Ce champ ne peut pas dépasser {{ max }}.",
+      "minbytes": "Ce champ doit contenir au moins {{ min }} octets.",
+      "maxbytes": "Ce champ ne peut pas dépasser {{ max }} octets.",
+      "pattern": "Ce champ doit respecter le modèle pour {{ pattern }}.",
+      "number": "Ce champ doit être un nombre.",
+      "datetimelocal": "Ce champ doit être une date et une heure.",
+      "patternLogin": "Ce champ ne peut contenir que des lettres, des chiffres et des adresses e-mail."
+    },
+    "filters": {
+      "set": "Les filtres suivants sont définis",
+      "clear": "Effacer le filtre",
+      "clearAll": "Effacer tous les filtres"
+    }
+  },
+  "error": {
+    "internalServerError": "Erreur interne du serveur",
+    "server.not.reachable": "Serveur injoignable",
+    "url.not.found": "Introuvable",
+    "NotNull": "Le champ {{ fieldName }} ne peut pas être vide !",
+    "Size": "Le champ {{ fieldName }} ne respecte pas les exigences de taille min/max !",
+    "userexists": "Ce nom d'utilisateur est déjà utilisé !",
+    "emailexists": "Cet e-mail est déjà utilisé !",
+    "idexists": "Un(e) nouveau/nouvelle {{ entityName }} ne peut pas déjà avoir un ID",
+    "idnull": "ID invalide",
+    "idinvalid": "ID invalide",
+    "idnotfound": "ID introuvable",
+    "file": {
+      "could.not.extract": "Impossible d'extraire le fichier",
+      "not.image": "Le fichier devait être une image mais son type est \"{{ fileType }}\""
+    }
+  },
+  "footer": "Ceci est votre pied de page"
+}

@@ -1,0 +1,23 @@
+{
+  "projectManagementApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "الصلاحيات",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء صلاحية جديدة",
+        "createOrEditLabel": "إنشاء أو تعديل صلاحية",
+        "notFound": "لا يوجد الصلاحية"
+      },
+      "created": "تم إنشاء الصلاحية جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث الصلاحية بالمعرّف {{ param }}",
+      "deleted": "تم حذف الصلاحية بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف الصلاحية {{ id }}؟"
+      },
+      "detail": {
+        "title": "الصلاحية"
+      },
+      "name": "الاسم"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "projectManagementApp": {
+    "employee": {
+      "home": {
+        "title": "Employés",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Nouvel employé",
+        "createOrEditLabel": "Créer ou modifier un employé",
+        "notFound": "Aucun Employé trouvé"
+      },
+      "created": "Un nouveau Employé a été créé avec l'identifiant {{ param }}",
+      "updated": "Employé a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Employé a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Employé {{ id }} ?"
+      },
+      "detail": {
+        "title": "Employé"
+      },
+      "id": "ID",
+      "employeeNumber": "Numéro d'employé",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phone": "Téléphone",
+      "jobTitle": "Poste",
+      "hireDate": "Date d'embauche",
+      "user": "Utilisateur",
+      "department": "Département",
+      "note": "Note"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "projectManagementApp": {
+    "department": {
+      "home": {
+        "title": "Départements",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau département",
+        "createOrEditLabel": "Créer ou modifier un département",
+        "notFound": "Aucun Département trouvé"
+      },
+      "created": "Un nouveau Département a été créé avec l'identifiant {{ param }}",
+      "updated": "Département a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Département a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Département {{ id }} ?"
+      },
+      "detail": {
+        "title": "Département"
+      },
+      "id": "ID",
+      "name": "Nom",
+      "description": "Description"
+    }
+  }
+}

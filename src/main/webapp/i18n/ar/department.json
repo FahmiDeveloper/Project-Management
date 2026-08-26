@@ -1,0 +1,25 @@
+{
+  "projectManagementApp": {
+    "department": {
+      "home": {
+        "title": "الأقسام",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء قسم جديد",
+        "createOrEditLabel": "إنشاء أو تعديل قسم",
+        "notFound": "لا يوجد القسم"
+      },
+      "created": "تم إنشاء القسم جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث القسم بالمعرّف {{ param }}",
+      "deleted": "تم حذف القسم بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف القسم {{ id }}؟"
+      },
+      "detail": {
+        "title": "القسم"
+      },
+      "id": "المعرّف",
+      "name": "الاسم",
+      "description": "الوصف"
+    }
+  }
+}

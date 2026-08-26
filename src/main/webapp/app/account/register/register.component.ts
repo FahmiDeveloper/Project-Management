@@ -14,6 +14,10 @@ import { MatIconModule } from '@angular/material/icon';
 const MAX_PICTURE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_PICTURE_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
+// Same default avatar shown in the toolbar/sidenav (see BodyComponent) and on the profile
+// page when a user has no picture of their own, so the preview here never shows an empty state.
+const DEFAULT_PICTURE_URL = './../../content/images/user-picture.png';
+
 @Component({
   selector: 'jhi-register',
   imports: [SharedModule, RouterModule, FormsModule, ReactiveFormsModule, MatIconModule],
@@ -82,6 +86,14 @@ export default class RegisterComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.firstNameInput().nativeElement.focus();
+  }
+
+  get displayedImageUrl(): string {
+    return this.picturePreviewUrl() ?? DEFAULT_PICTURE_URL;
+  }
+
+  get hasCustomPicture(): boolean {
+    return !!this.picturePreviewUrl();
   }
 
   register(): void {

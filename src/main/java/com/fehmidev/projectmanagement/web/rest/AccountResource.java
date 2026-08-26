@@ -1,9 +1,11 @@
 package com.fehmidev.projectmanagement.web.rest;
 
 import com.fehmidev.projectmanagement.domain.Attachment;
+import com.fehmidev.projectmanagement.domain.Employee;
 import com.fehmidev.projectmanagement.domain.User;
 import com.fehmidev.projectmanagement.domain.enumeration.AttachmentCategory;
 import com.fehmidev.projectmanagement.repository.AttachmentRepository;
+import com.fehmidev.projectmanagement.repository.EmployeeRepository;
 import com.fehmidev.projectmanagement.repository.UserRepository;
 import com.fehmidev.projectmanagement.security.SecurityUtils;
 import com.fehmidev.projectmanagement.service.FileStorageService;
@@ -64,13 +66,19 @@ public class AccountResource {
     // ahead of the Employee/User existing.
     private final AttachmentRepository attachmentRepository;
 
+    // NEW: needed to read/update the current user's Employee.phone from their profile page -
+    // phone lives on Employee, not User/AdminUserDTO, so it can't go through
+    // POST /account like firstName/lastName/email/imageUrl do.
+    private final EmployeeRepository employeeRepository;
+
     public AccountResource(
         UserRepository userRepository,
         UserService userService,
         MailService mailService,
         VerificationCodeService verificationCodeService,
         FileStorageService fileStorageService,
-        AttachmentRepository attachmentRepository
+        AttachmentRepository attachmentRepository,
+        EmployeeRepository employeeRepository
     ) {
         this.userRepository = userRepository;
         this.userService = userService;
@@ -78,15 +86,17 @@ public class AccountResource {
         this.verificationCodeService = verificationCodeService;
         this.fileStorageService = fileStorageService;
         this.attachmentRepository = attachmentRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     /**
-     * {@code POST  /account/upload-picture} : upload a profile picture ahead of registration.
+     * {@code POST  /account/upload-picture} : upload a profile picture.
      * <p>
-     * Stores the file and creates an unlinked {@link Attachment} (no employee yet, since
-     * registration hasn't completed). The returned {@code attachmentId} must be sent back with
-     * the {@code /register} call (as {@code ManagedUserVM.pictureAttachmentId}) so the backend
-     * can link it to the newly created Employee and populate the new User's imageUrl.
+     * Used both ahead of registration (no employee yet - the returned attachment stays
+     * unlinked until {@code POST /register} links it) and from an already-registered user's
+     * profile page (in which case {@code POST /account/link-picture} links it immediately
+     * afterwards). Either way this endpoint only ever stores the file and creates the
+     * unlinked {@link Attachment} row; it never decides who it belongs to.
      *
      * @param file the uploaded image (PNG, JPEG, or WEBP, max 5MB).
      * @return the created attachment's id and public URL.
@@ -112,11 +122,100 @@ public class AccountResource {
         attachment.setFileSize(stored.size());
         attachment.setUploadedDate(Instant.now());
         attachment.setCategory(AttachmentCategory.PROFILE_PICTURE);
-        // employee intentionally left null - linked later once registration creates the Employee.
+        // employee intentionally left null - linked later, either by /register (new account)
+        // or by /account/link-picture (existing account updating their picture).
         attachment = attachmentRepository.save(attachment);
 
         LOG.debug("Stored profile picture attachment {} at {}", attachment.getId(), attachment.getFileUrl());
         return ResponseEntity.ok(Map.of("attachmentId", attachment.getId(), "fileUrl", attachment.getFileUrl()));
+    }
+
+    /**
+     * {@code POST  /account/link-picture} : link an already-uploaded profile picture to the
+     * current, already-registered user - reuses the exact same upload+link flow used at
+     * registration ({@link UserService#linkProfilePictureToCurrentUser}), so a user can update
+     * their profile picture the same way they set it during registration: upload first via
+     * {@code POST /account/upload-picture} to get an {@code attachmentId}, then call this
+     * endpoint with that id.
+     * <p>
+     * Sits under the {@code /api/**} fallback authenticated() rule in SecurityConfiguration -
+     * unlike upload-picture, this one requires the caller to already be logged in, since it
+     * needs to know which existing Employee to link the picture to.
+     *
+     * @param body a JSON body of the form {@code {"attachmentId": 123}}.
+     * @return the new imageUrl on success.
+     * @throws AccountResourceException if attachmentId is missing, or if linking failed
+     *     (unknown/already-linked attachment, or no Employee record for the current user).
+     */
+    @PostMapping("/account/link-picture")
+    public ResponseEntity<Map<String, String>> linkProfilePicture(@RequestBody Map<String, Long> body) {
+        Long attachmentId = body.get("attachmentId");
+        if (attachmentId == null) {
+            throw new AccountResourceException("attachmentId is required");
+        }
+        return userService
+            .linkProfilePictureToCurrentUser(attachmentId)
+            .map(imageUrl -> ResponseEntity.ok(Map.of("imageUrl", imageUrl)))
+            .orElseThrow(() ->
+                new AccountResourceException("Could not link profile picture: invalid attachment, or no employee record found")
+            );
+    }
+
+    /**
+     * {@code GET  /account/employee} : get the current user's linked Employee info shown on
+     * their profile page (employee number and job title are read-only display fields; phone
+     * is the only one editable from there - see {@link #updateCurrentEmployeePhone}).
+     *
+     * @throws AccountResourceException {@code 500 (Internal Server Error)} if there's no
+     *     Employee linked to the current user (e.g. an admin account created before this
+     *     feature existed, never having gone through self-registration).
+     */
+    @GetMapping("/account/employee")
+    public ResponseEntity<Map<String, String>> getCurrentEmployee() {
+        return SecurityUtils.getCurrentUserLogin()
+            .flatMap(employeeRepository::findOneByUserLogin)
+            .map(employee ->
+                ResponseEntity.ok(
+                    Map.of(
+                        "employeeNumber",
+                        employee.getEmployeeNumber(),
+                        "jobTitle",
+                        employee.getJobTitle(),
+                        "phone",
+                        employee.getPhone() != null ? employee.getPhone() : ""
+                    )
+                )
+            )
+            .orElseThrow(() -> new AccountResourceException("No employee record found for current user"));
+    }
+
+    /**
+     * {@code POST  /account/employee/phone} : update the current user's phone number.
+     * <p>
+     * Phone lives on {@link Employee}, not {@link User}/{@code AdminUserDTO}, so it's a
+     * separate call from {@code POST /account} rather than one more field on that payload.
+     *
+     * @param body a JSON body of the form {@code {"phone": "12345678"}}. An empty/blank phone
+     *     clears it; anything else must be exactly 8 digits, matching the same validation used
+     *     at registration.
+     * @throws AccountResourceException if the phone isn't blank and isn't exactly 8 digits, or
+     *     if there's no Employee linked to the current user.
+     */
+    @PostMapping("/account/employee/phone")
+    public ResponseEntity<Map<String, String>> updateCurrentEmployeePhone(@RequestBody Map<String, String> body) {
+        String phone = body.get("phone");
+        if (phone != null && !phone.isBlank() && !phone.matches("[0-9]{8}")) {
+            throw new AccountResourceException("Phone number must contain exactly 8 digits");
+        }
+        return SecurityUtils.getCurrentUserLogin()
+            .flatMap(employeeRepository::findOneByUserLogin)
+            .map(employee -> {
+                employee.setPhone(phone == null || phone.isBlank() ? null : phone.trim());
+                employeeRepository.save(employee);
+                LOG.debug("Updated phone for current user's employee record");
+                return ResponseEntity.ok(Map.of("phone", employee.getPhone() != null ? employee.getPhone() : ""));
+            })
+            .orElseThrow(() -> new AccountResourceException("No employee record found for current user"));
     }
 
     /**

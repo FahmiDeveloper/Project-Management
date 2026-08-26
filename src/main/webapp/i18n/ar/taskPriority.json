@@ -1,0 +1,11 @@
+{
+  "projectManagementApp": {
+    "TaskPriority": {
+      "null": "",
+      "LOW": "منخفضة",
+      "MEDIUM": "متوسطة",
+      "HIGH": "عالية",
+      "CRITICAL": "حرجة"
+    }
+  }
+}

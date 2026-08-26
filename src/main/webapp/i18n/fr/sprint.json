@@ -1,0 +1,31 @@
+{
+  "projectManagementApp": {
+    "sprint": {
+      "home": {
+        "title": "Sprints",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Nouveau sprint",
+        "createOrEditLabel": "Créer ou modifier un sprint",
+        "notFound": "Aucun Sprint trouvé"
+      },
+      "created": "Un nouveau Sprint a été créé avec l'identifiant {{ param }}",
+      "updated": "Sprint a été mis à jour avec l'identifiant {{ param }}",
+      "deleted": "Sprint a été supprimé avec l'identifiant {{ param }}",
+      "delete": {
+        "question": "Voulez-vous vraiment supprimer Sprint {{ id }} ?"
+      },
+      "detail": {
+        "title": "Sprint"
+      },
+      "id": "ID",
+      "name": "Nom",
+      "goal": "Objectif",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "status": "Statut",
+      "capacity": "Capacité",
+      "velocity": "Vélocité",
+      "project": "Projet"
+    }
+  }
+}

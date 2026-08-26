@@ -1,0 +1,12 @@
+{
+  "projectManagementApp": {
+    "ProjectStatus": {
+      "null": "",
+      "PLANNED": "Planifié",
+      "ACTIVE": "Actif",
+      "ON_HOLD": "En attente",
+      "COMPLETED": "Terminé",
+      "CANCELLED": "Annulé"
+    }
+  }
+}

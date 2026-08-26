@@ -1,0 +1,26 @@
+{
+  "reset": {
+    "request": {
+      "title": "Réinitialiser votre mot de passe",
+      "form": {
+        "button": "Réinitialiser le mot de passe"
+      },
+      "messages": {
+        "info": "Saisissez l'adresse e-mail utilisée lors de votre inscription",
+        "success": "Consultez votre e-mail pour savoir comment réinitialiser votre mot de passe."
+      }
+    },
+    "finish": {
+      "title": "Réinitialiser le mot de passe",
+      "form": {
+        "button": "Valider le nouveau mot de passe"
+      },
+      "messages": {
+        "info": "Choisissez un nouveau mot de passe",
+        "success": "<strong>Votre mot de passe a été réinitialisé.</strong> Veuillez ",
+        "keymissing": "La clé de réinitialisation est manquante.",
+        "error": "Votre mot de passe n'a pas pu être réinitialisé. Rappel : une demande de réinitialisation n'est valable que 24 heures."
+      }
+    }
+  }
+}

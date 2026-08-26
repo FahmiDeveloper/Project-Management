@@ -1,0 +1,13 @@
+{
+  "projectManagementApp": {
+    "MemberRole": {
+      "null": "",
+      "PROJECT_MANAGER": "Chef de projet",
+      "TEAM_LEAD": "Chef d'équipe",
+      "DEVELOPER": "Développeur",
+      "TESTER": "Testeur",
+      "DESIGNER": "Designer",
+      "BUSINESS_ANALYST": "Analyste métier"
+    }
+  }
+}

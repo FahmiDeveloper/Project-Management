@@ -1,0 +1,10 @@
+{
+  "projectManagementApp": {
+    "SprintStatus": {
+      "null": "",
+      "PLANNED": "Planifié",
+      "ACTIVE": "Actif",
+      "COMPLETED": "Terminé"
+    }
+  }
+}

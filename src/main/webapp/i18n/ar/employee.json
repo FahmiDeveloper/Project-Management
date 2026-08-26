@@ -1,0 +1,32 @@
+{
+  "projectManagementApp": {
+    "employee": {
+      "home": {
+        "title": "الموظفون",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "موظف جديد",
+        "createOrEditLabel": "إنشاء أو تعديل موظف",
+        "notFound": "لا يوجد الموظف"
+      },
+      "created": "تم إنشاء الموظف جديد بالمعرّف {{ param }}",
+      "updated": "تم تحديث الموظف بالمعرّف {{ param }}",
+      "deleted": "تم حذف الموظف بالمعرّف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف الموظف {{ id }}؟"
+      },
+      "detail": {
+        "title": "الموظف"
+      },
+      "id": "المعرّف",
+      "employeeNumber": "رقم الموظف",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "phone": "الهاتف",
+      "jobTitle": "المسمى الوظيفي",
+      "hireDate": "تاريخ التوظيف",
+      "user": "المستخدم",
+      "department": "القسم",
+      "note": "ملاحظة"
+    }
+  }
+}
