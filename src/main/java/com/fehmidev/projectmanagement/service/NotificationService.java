@@ -185,6 +185,21 @@ public class NotificationService {
     }
 
     /**
+     * Resolves the profile photo URL of the currently authenticated user's Employee,
+     * via the linked User entity (Employee has no photo field of its own).
+     *
+     * @return the photo URL, or {@code null} if unavailable.
+     */
+    @Transactional(readOnly = true)
+    public String getCurrentEmployeePhotoUrl() {
+        Employee currentEmployee = getCurrentEmployee();
+        if (currentEmployee != null && currentEmployee.getUser() != null) {
+            return currentEmployee.getUser().getImageUrl();
+        }
+        return null;
+    }
+
+    /**
      * Get all notifications for the current user
      */
     @Transactional(readOnly = true)

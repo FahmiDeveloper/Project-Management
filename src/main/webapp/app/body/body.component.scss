@@ -23,6 +23,20 @@ $radius: 12px;
   }
 }
 
+// Mirror of slideIn for when the sidenav sits on the right (dir="rtl") - without this,
+// the sidenav would still animate in from the left even though it now opens from the
+// right, which looks like it's flying in from behind the content.
+@keyframes slideInRtl {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -120,7 +134,7 @@ $radius: 12px;
           max-height: 100%;
           width: auto;
           height: auto;
-          object-fit: contain; // Ensures the whole rocket stays visible without clipping
+          object-fit: contain;
         }
       }
 
@@ -201,13 +215,13 @@ $radius: 12px;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      overflow: hidden !important; // Clips image corners to the button border
+      overflow: hidden !important;
 
       .user-avatar {
         width: 100% !important;
         height: 100% !important;
         border-radius: 50%;
-        object-fit: cover !important; // Prevents distortion while filling the entire space
+        object-fit: cover !important;
         border: none;
         box-shadow: none;
       }
@@ -491,13 +505,21 @@ $radius: 12px;
   }
 }
 
-// Notification Menu - Updated with fixed button styles
-::ng-deep .modern-notif-menu {
-  min-width: 360px;
+// Notification Menu - MDC Panel & Content Overrides
+::ng-deep .mat-mdc-menu-panel.modern-notif-menu {
+  min-width: unset !important; // Removes default 112px constraint
+  max-width: none !important; // Removes default 280px constraint
+  width: 420px !important; // Set desired default desktop width
   max-height: 500px;
   border-radius: $radius;
   box-shadow: $shadow-lg;
   overflow: hidden;
+
+  .mat-mdc-menu-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
 
   .menu-header {
     padding: 16px 20px;
@@ -615,6 +637,7 @@ $radius: 12px;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        overflow: hidden;
 
         mat-icon {
           color: white;
@@ -625,6 +648,22 @@ $radius: 12px;
           align-items: center;
           justify-content: center;
         }
+      }
+
+      .notif-avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .notif-avatar-fallback {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .notif-content {
@@ -842,9 +881,9 @@ $radius: 12px;
   }
 
   // Notification menu responsive
-  ::ng-deep .modern-notif-menu {
+  ::ng-deep .mat-mdc-menu-panel.modern-notif-menu {
+    width: 320px !important;
     min-width: 300px !important;
-    max-width: 320px !important;
 
     .menu-header {
       padding: 14px 16px;
@@ -955,7 +994,6 @@ $radius: 12px;
       }
     }
 
-    // Keep brand text visible and larger on mobile
     .brand-text {
       display: inline !important;
       font-size: 1.2rem !important;
@@ -993,9 +1031,9 @@ $radius: 12px;
   }
 
   // Notification menu responsive - mobile
-  ::ng-deep .modern-notif-menu {
+  ::ng-deep .mat-mdc-menu-panel.modern-notif-menu {
+    width: 280px !important;
     min-width: 260px !important;
-    max-width: 280px !important;
 
     .menu-header {
       padding: 12px 14px;
@@ -1130,9 +1168,9 @@ $radius: 12px;
   }
 
   // Notification menu responsive - extra small
-  ::ng-deep .modern-notif-menu {
+  ::ng-deep .mat-mdc-menu-panel.modern-notif-menu {
+    width: 260px !important;
     min-width: 240px !important;
-    max-width: 260px !important;
 
     .menu-header {
       padding: 10px 12px;
@@ -1205,4 +1243,82 @@ button:focus-visible,
 .search-input:focus-visible {
   outline: 2px solid #667eea;
   outline-offset: 2px;
+}
+// ============================================================================
+// RTL overrides
+// ============================================================================
+// body.component.html wraps the whole template in <div [dir]="direction.dir()"
+// class="app-shell">, so [dir='rtl'] here matches an element inside THIS
+// component's own template - Angular's ViewEncapsulation already scopes these
+// selectors to this file, so no :host-context() is needed (that's only for
+// matching an ancestor OUTSIDE the component).
+//
+// Most of the layout (flexbox row order, e.g. .toolbar-container's
+// brand-section/actions-section, .actions-row-style rows) already flips on its
+// own per the CSS spec once dir="rtl" is set - flex-direction: row visually
+// reverses with the writing direction automatically. The overrides below are
+// only for things CSS inheritance/flex reversal does NOT cover: absolutely
+// positioned elements (left/right/top/bottom), one-sided margins, explicit
+// text-align, and the sidenav's entrance animation.
+[dir='rtl'] {
+  .modern-sidenav {
+    animation-name: slideInRtl;
+  }
+
+  // Notification dot on the bell icon (toolbar) - was pinned to the icon's
+  // top-right corner; mirror it to top-left.
+  .modern-toolbar .action-btn .notification-dot {
+    right: auto;
+    left: 6px;
+  }
+
+  // Online status dot on the sidebar avatar - was bottom-right of the avatar.
+  .sidebar-header .user-avatar-wrapper .status-indicator {
+    right: auto;
+    left: 2px;
+  }
+
+  .sidebar-nav .nav-item {
+    // Label text was force-aligned left regardless of direction.
+    .nav-text {
+      text-align: right;
+    }
+
+    // Active-item accent bar was pinned to the left edge.
+    &.active::before {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  .modern-notif-menu {
+    // Icon-before-text spacing on "Mark all read" used margin-right (LTR gap
+    // on the icon's trailing side); mirror to margin-left.
+    .mark-read-btn mat-icon {
+      margin-right: 0;
+      margin-left: 4px;
+    }
+
+    // Bullet-before-timestamp spacing in each notification row.
+    .notif-content .notif-time::before {
+      margin-right: 0;
+      margin-left: 4px;
+    }
+  }
+
+  // Mobile breakpoints re-declare the notification dot's position with
+  // !important at smaller sizes - mirror each one to match.
+  @media (max-width: 768px) {
+    .modern-toolbar .action-btn .notification-dot {
+      right: auto !important;
+      left: 4px !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .modern-toolbar .action-btn .notification-dot {
+      right: auto !important;
+      left: 3px !important;
+    }
+  }
 }

@@ -3,7 +3,7 @@ self.addEventListener('push', event => {
 
   self.registration.showNotification(data.title, {
     body: data.body,
-    icon: '/content/icons/icon-192x192.png',
+    icon: data.icon || '/content/icons/icon-192x192.png',
     data: { url: data.url },
   });
 });

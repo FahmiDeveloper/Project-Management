@@ -2,8 +2,10 @@ package com.fehmidev.projectmanagement.service.mapper;
 
 import com.fehmidev.projectmanagement.domain.Employee;
 import com.fehmidev.projectmanagement.domain.Notification;
+import com.fehmidev.projectmanagement.domain.User;
 import com.fehmidev.projectmanagement.service.dto.EmployeeDTO;
 import com.fehmidev.projectmanagement.service.dto.NotificationDTO;
+import com.fehmidev.projectmanagement.service.dto.UserDTO;
 import org.mapstruct.*;
 
 /**
@@ -19,5 +21,12 @@ public interface NotificationMapper extends EntityMapper<NotificationDTO, Notifi
     @Mapping(target = "id", source = "id")
     @Mapping(target = "firstName", source = "firstName")
     @Mapping(target = "lastName", source = "lastName")
+    @Mapping(target = "user", source = "user", qualifiedByName = "userImageUrl")
     EmployeeDTO toDtoEmployeeId(Employee employee);
+
+    @Named("userImageUrl")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "imageUrl", source = "imageUrl")
+    UserDTO toDtoUserImageUrl(User user);
 }

@@ -1,40 +1,49 @@
-<div class="notification-mobile-list">
-  @for (notification of notifications(); track notification.id) {
-    <mat-card class="notification-card" appearance="outlined" [class.notification-unread]="!notification.isRead">
-      <mat-card-header>
-        <mat-card-title>{{ notification.title }}</mat-card-title>
-      </mat-card-header>
+<div class="notification-feed-mobile">
+  @for (group of groupedNotifications(); track trackGroup(group)) {
+    <div class="feed-group">
+      <div class="feed-group-header">{{ group.label }}</div>
 
-      <mat-card-content>
-        <div class="notification-card-row">
-          <span class="type-chip">{{ notification.type }}</span>
-          <span class="read-status" [class.read-true]="notification.isRead" [class.read-false]="!notification.isRead">
-            <mat-icon class="meta-icon">{{ notification.isRead ? 'check_circle' : 'cancel' }}</mat-icon>
-            {{ notification.isRead ? 'Read' : 'Unread' }}
-          </span>
-        </div>
-
-        @if (notification.message) {
-          <div class="notification-message" [matTooltip]="notification.message">
-            {{ notification.message }}
+      @for (notification of group.items; track notification.id) {
+        <div class="feed-row-mobile" [class.feed-row-unread]="!notification.isRead" [attr.data-type]="notification.type">
+          <div class="feed-row-avatar">
+            @if (notification.employee) {
+              <a [routerLink]="['/employee', notification.employee.id, 'view']">
+                @if (getEmployeeAvatar(notification); as avatarUrl) {
+                  <img [src]="avatarUrl" alt="" class="employee-avatar" />
+                } @else {
+                  <span class="employee-avatar employee-avatar-fallback">{{ getEmployeeInitials(notification) }}</span>
+                }
+              </a>
+            } @else {
+              <span class="employee-avatar employee-avatar-fallback">?</span>
+            }
           </div>
-        }
 
-        <div class="notification-card-row notification-meta">
-          @if (notification.employee) {
-            <a [routerLink]="['/employee', notification.employee.id, 'view']" class="meta-link">
-              <mat-icon class="meta-icon">person</mat-icon>
-              <span>{{ notification.employee.firstName }}&nbsp;{{ notification.employee.lastName }}</span>
-            </a>
-          }
-          @if (notification.createdDate) {
-            <span class="notification-date">
-              <mat-icon class="meta-icon">event</mat-icon>
-              {{ notification.createdDate | formatMediumDatetime }}
-            </span>
-          }
+          <div class="feed-row-body">
+            <div class="feed-row-line1">
+              <span class="feed-title" [class.feed-title-unread]="!notification.isRead">{{ notification.title }}</span>
+              @if (!notification.isRead) {
+                <span class="unread-dot"></span>
+              }
+            </div>
+
+            @if (notification.employee) {
+              <a [routerLink]="['/employee', notification.employee.id, 'view']" class="feed-employee-link">
+                {{ notification.employee.firstName }} {{ notification.employee.lastName }}
+              </a>
+            }
+
+            @if (notification.message) {
+              <div class="feed-message" [matTooltip]="notification.message">{{ notification.message }}</div>
+            }
+
+            <div class="feed-row-footer">
+              <span class="type-chip" [attr.data-type]="notification.type">{{ notification.type }}</span>
+              <span class="feed-time">{{ notification.createdDate | formatMediumDatetime }}</span>
+            </div>
+          </div>
         </div>
-      </mat-card-content>
-    </mat-card>
+      }
+    </div>
   }
 </div>

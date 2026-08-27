@@ -10,7 +10,7 @@ export interface IEmployee {
   phone?: string | null;
   jobTitle?: string | null;
   hireDate?: dayjs.Dayjs | null;
-  user?: Pick<IUser, 'id' | 'login'> | null;
+  user?: Pick<IUser, 'id' | 'login' | 'imageUrl'> | null;
   department?: Pick<IDepartment, 'id' | 'name'> | null;
   note?: string | null;
 }

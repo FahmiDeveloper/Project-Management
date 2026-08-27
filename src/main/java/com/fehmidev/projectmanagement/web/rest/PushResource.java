@@ -33,8 +33,11 @@ public class PushResource {
         // Save desktop notification, linked to the currently authenticated user's Employee
         notificationService.saveNotificationForCurrentUser(message.getTitle(), message.getBody(), "desktop");
 
+        // Resolve the sender's photo to use as the notification icon
+        String iconUrl = notificationService.getCurrentEmployeePhotoUrl();
+
         // Send to all devices (both desktop and mobile)
-        webPushService.sendToAllDevices(message.getTitle(), message.getBody(), message.getUrl(), message.getImage());
+        webPushService.sendToAllDevices(message.getTitle(), message.getBody(), message.getUrl(), message.getImage(), iconUrl);
     }
 
     // Send from mobile - saves FCM and sends to all, attributed to the current user
@@ -43,8 +46,11 @@ public class PushResource {
         // Save mobile notification, linked to the currently authenticated user's Employee
         notificationService.saveNotificationForCurrentUser(message.getTitle(), message.getBody(), "mobile");
 
+        // Resolve the sender's photo to use as the notification icon
+        String iconUrl = notificationService.getCurrentEmployeePhotoUrl();
+
         // Send to all devices (both desktop and mobile)
-        webPushService.sendToAllDevices(message.getTitle(), message.getBody(), message.getUrl(), message.getImage());
+        webPushService.sendToAllDevices(message.getTitle(), message.getBody(), message.getUrl(), message.getImage(), iconUrl);
     }
 
     @PostMapping("/fcm-token")
