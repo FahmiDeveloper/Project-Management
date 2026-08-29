@@ -30,7 +30,6 @@
             <mat-form-field appearance="outline" class="field">
               <mat-label>Theme</mat-label>
               <mat-select [value]="themeService.preference()" (selectionChange)="setTheme($event.value)" data-cy="theme">
-                <mat-option value="light">Light</mat-option>
                 <mat-option value="dark">Dark</mat-option>
                 <mat-option value="system">System</mat-option>
               </mat-select>
