@@ -75,7 +75,7 @@
   padding: 0.75rem 0;
 
   & + .toggle-row {
-    border-top: 1px solid #edf2f7;
+    border-top: 1px solid var(--app-border-color);
   }
 }
 
@@ -88,12 +88,17 @@
 .toggle-title {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #2d3748;
+  // !important because this text sits inside mat-slide-toggle's own <label> wrapper,
+  // which Material gives a static rgba(0,0,0,.6)-ish default color at higher
+  // specificity than this single class - that static value doesn't react to the
+  // theme, so on a dark background it renders as a washed-out gray rather than the
+  // color actually declared here.
+  color: var(--app-text-primary) !important;
 }
 
 .toggle-hint {
   font-size: 0.8rem;
-  color: #718096;
+  color: var(--app-text-secondary) !important;
 }
 
 .password-reset-link {
@@ -101,11 +106,11 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.85rem;
-  color: #718096;
+  color: var(--app-text-secondary);
   margin-top: 0.25rem;
 
   a {
-    color: #667eea;
+    color: var(--app-active-color);
     font-weight: 500;
     text-decoration: none;
 
@@ -124,4 +129,18 @@
 
 ::ng-deep .ng-invalid:not(form) {
   border-left: none !important;
+}
+
+// "Change password" already uses mat-raised-button color="primary" (same as Save), but
+// it's disabled until the password form is valid, and Material's disabled-button colors
+// are calibrated for light backgrounds (semi-transparent black) - on a dark background,
+// and even in light mode per your screenshot, that read as washed-out/unclear rather
+// than a normal disabled state. Forcing the same solid indigo/white as the enabled Save
+// button here, in both themes. Note: this only changes the look - the [disabled]
+// attribute still blocks the click until the form is actually valid, it just no longer
+// visually announces that it's disabled.
+::ng-deep button[data-cy='password-submit'] {
+  --mdc-protected-button-disabled-container-color: #3f51b5;
+  --mdc-protected-button-disabled-label-text-color: #ffffff;
+  opacity: 1 !important;
 }

@@ -37,17 +37,20 @@ public class WebPushService {
         this.pushService = new PushService(publicKey, privateKey, subject);
     }
 
-    // NEW: Send to ALL devices (both desktop and mobile)
-    public void sendToAllDevices(String title, String body, String url, String imageUrl) {
+    // Send to ALL devices (both desktop and mobile)
+    public void sendToAllDevices(String title, String body, String url, String imageUrl, String iconUrl) {
         // Send to desktop browsers (Web Push)
-        sendToDesktop(title, body, url, imageUrl);
+        sendToDesktop(title, body, url, iconUrl);
 
         // Send to mobile devices (FCM)
-        sendToMobile(title, body, imageUrl, url);
+        sendToMobile(title, body, imageUrl, url, iconUrl);
     }
 
     // Send to desktop browsers only
-    private void sendToDesktop(String title, String body, String url, String imageUrl) {
+    private void sendToDesktop(String title, String body, String url, String iconUrl) {
+        // Fall back to the app icon if the sender has no photo
+        String icon = (iconUrl != null && !iconUrl.isBlank()) ? iconUrl : "/content/icons/icon-192x192.png";
+
         subscriptionService
             .findAll()
             .forEach(sub -> {
@@ -56,7 +59,7 @@ public class WebPushService {
                         sub.getEndpoint(),
                         sub.getKeys().get("p256dh"),
                         sub.getKeys().get("auth"),
-                        String.format("{\"title\":\"%s\",\"body\":\"%s\",\"url\":\"%s\"}", title, body, url)
+                        String.format("{\"title\":\"%s\",\"body\":\"%s\",\"url\":\"%s\",\"icon\":\"%s\"}", title, body, url, icon)
                     );
                     pushService.send(notification);
                     System.out.println("✅ Desktop notification sent to: " + sub.getEndpoint());
@@ -68,12 +71,15 @@ public class WebPushService {
     }
 
     // Send to mobile devices only
-    private void sendToMobile(String title, String body, String imageUrl, String url) {
+    private void sendToMobile(String title, String body, String imageUrl, String url, String iconUrl) {
+        // Prefer an explicit image; otherwise fall back to the sender's photo
+        String resolvedImage = (imageUrl != null && !imageUrl.isBlank()) ? imageUrl : iconUrl;
+
         subscriptionService
             .findAllFcmTokens()
             .forEach(token -> {
                 try {
-                    AndroidNotification androidNotification = AndroidNotification.builder().setImage(imageUrl).build();
+                    AndroidNotification androidNotification = AndroidNotification.builder().setImage(resolvedImage).build();
 
                     AndroidConfig androidConfig = AndroidConfig.builder()
                         .setNotification(androidNotification)
@@ -86,7 +92,7 @@ public class WebPushService {
                     com.google.firebase.messaging.Notification firebaseNotification = com.google.firebase.messaging.Notification.builder()
                         .setTitle(title)
                         .setBody(body)
-                        .setImage(imageUrl)
+                        .setImage(resolvedImage)
                         .build();
 
                     Message message = Message.builder()

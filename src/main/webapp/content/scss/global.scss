@@ -1,7 +1,270 @@
+@use '@angular/material' as mat;
 @import 'bootstrap-variables';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* ==============================================================
+Dark theme - Material tokens (mat.theme API, Material 19)
+===============================================================*/
+// IMPORTANT: this block is scoped ONLY to `.theme-dark` - it does not touch `html` or
+// `:root`, so the default (System-when-OS-is-light / no class) rendering above is the
+// untouched indigo-pink prebuilt theme, exactly as before. `.theme-dark` has the same
+// specificity as :root/html but is declared later in the stylesheet, so on `<html
+// class="theme-dark">` it correctly overrides indigo-pink's tokens; with no class
+// present, this whole block simply never applies.
+.theme-dark {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$violet-palette,
+        tertiary: mat.$rose-palette,
+      ),
+    )
+  );
+
+  // Material 3 tints --mat-sys-surface* toward the primary/tertiary palette by default
+  // ("tonal harmony") - reads as an unwanted colored wash on flat surfaces like
+  // mat-table rows and mat-card backgrounds, which should stay neutral. Aliased to
+  // --app-* (declared below) so Material components and this app's own custom
+  // components share the exact same dark background/text colors.
+  --mat-sys-surface: var(--app-card-bg);
+  --mat-sys-surface-container-lowest: var(--app-card-bg);
+  --mat-sys-surface-container-low: var(--app-hover-bg);
+  --mat-sys-surface-container: var(--app-hover-bg);
+  --mat-sys-surface-container-high: var(--app-border-color);
+  --mat-sys-surface-container-highest: var(--app-border-color);
+  --mat-sys-on-surface: var(--app-text-primary);
+  --mat-sys-on-surface-variant: var(--app-text-secondary);
+}
+
+/* ==============================================================
+Dark theme - direct overrides for Material's OWN generated classes
+===============================================================*/
+// The block above only helps components that read the M3 --mat-sys-* tokens. This app's
+// Material components are actually styled by the prebuilt indigo-pink.css theme (the
+// legacy M2 API), which bakes its colors into these exact class names as static CSS at
+// build time - they never look at --mat-sys-* at all, so .theme-dark had zero visible
+// effect on them (mat-table rows/cells, mat-card, form field text/borders, plain
+// headings). Targeting the classes directly here is what actually makes them respond.
+.theme-dark {
+  #page-heading,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--app-text-primary);
+  }
+
+  // Tables (e.g. the Projects list) - row/cell background and text only; header rows
+  // that set their own explicit brand color (like .project-mat-table's indigo header)
+  // are untouched since that rule has higher selector specificity than this one.
+  .mat-mdc-table {
+    background-color: var(--app-card-bg);
+  }
+
+  .mat-mdc-row,
+  .mat-mdc-footer-row {
+    background-color: var(--app-card-bg);
+  }
+
+  .mat-mdc-cell,
+  .mat-mdc-footer-cell {
+    color: var(--app-text-primary);
+    border-bottom-color: var(--app-border-color);
+  }
+
+  .mat-mdc-paginator {
+    background-color: var(--app-card-bg);
+    color: var(--app-text-primary);
+  }
+
+  // Cards (mat-card, used throughout Settings/Profile)
+  .mat-mdc-card {
+    background-color: var(--app-card-bg);
+    color: var(--app-text-primary);
+  }
+
+  .mat-mdc-card-subtitle {
+    color: var(--app-text-secondary);
+  }
+
+  // Form fields (search/filter inputs, selects) - text, label, and outline border
+  .mat-mdc-form-field {
+    color: var(--app-text-primary);
+  }
+
+  .mat-mdc-form-field input,
+  .mat-mdc-form-field textarea,
+  .mat-mdc-select-value,
+  .mat-mdc-select-arrow {
+    color: var(--app-text-primary) !important;
+  }
+
+  .mdc-floating-label,
+  .mat-mdc-form-field-hint {
+    color: var(--app-text-secondary) !important;
+  }
+
+  .mdc-text-field--outlined .mdc-notched-outline__leading,
+  .mdc-text-field--outlined .mdc-notched-outline__notch,
+  .mdc-text-field--outlined .mdc-notched-outline__trailing {
+    border-color: var(--app-input-border) !important;
+  }
+
+  // Dropdown/select overlay panels (mat-select options, mat-menu, mat-autocomplete)
+  .mat-mdc-select-panel,
+  .mat-mdc-menu-panel,
+  .mat-mdc-autocomplete-panel {
+    background-color: var(--app-card-bg) !important;
+  }
+
+  .mat-mdc-option,
+  .mat-mdc-option .mdc-list-item__primary-text {
+    color: var(--app-text-primary) !important;
+  }
+
+  // Menu items (user menu: My Profile / Settings / Help & Support / Logout, and
+  // notification menu) - same static-color issue as table cells and options above.
+  // :not(.logout-item) preserves that item's intentional red (#f56565, set in
+  // body.component.scss) instead of flattening it to the same color as everything else.
+  .mat-mdc-menu-item:not(.logout-item),
+  .mat-mdc-menu-item:not(.logout-item) .mdc-list-item__primary-text,
+  .mat-mdc-menu-item:not(.logout-item) mat-icon {
+    color: var(--app-text-primary) !important;
+  }
+
+  // Action icon buttons (view/edit/delete, e.g. the Projects table row actions) use
+  // Material's color="primary"/"accent"/"warn" inputs. Under the static indigo-pink
+  // theme those are fixed blue/pink/red in light mode - but the mat.theme() call above
+  // (needed to theme everything else for dark) recomputes primary/tertiary using the
+  // violet/rose palette, which shifts these specific buttons to a different hue in dark
+  // mode. Pin them back to indigo-pink's exact values so they look identical in both
+  // themes, since they're meant as fixed semantic colors (view/edit/delete), not
+  // theme-reactive ones.
+  .mat-mdc-icon-button.mat-primary,
+  .mat-mdc-icon-button.mat-primary .mat-icon {
+    color: #3f51b5 !important;
+  }
+
+  .mat-mdc-icon-button.mat-accent,
+  .mat-mdc-icon-button.mat-accent .mat-icon {
+    color: #ff4081 !important;
+  }
+
+  .mat-mdc-icon-button.mat-warn,
+  .mat-mdc-icon-button.mat-warn .mat-icon {
+    color: #f44336 !important;
+  }
+
+  // General fix for the recurring pattern above (menu items, options, toggle labels,
+  // and now the sidenav nav items, hamburger button, and toolbar notification/user
+  // icons): any mat-button/mat-icon-button WITHOUT an explicit color="primary/accent/
+  // warn" wraps its content in an MDC label/icon element that reads its own static
+  // color, ignoring whatever this app's own CSS declares on the button host (.nav-item,
+  // .hamburger-btn, .action-btn, etc). Making the internal element inherit from its
+  // host fixes every instance of this at once instead of patching one component at a
+  // time. Buttons that DO have an explicit color (Save, Change password, view/edit/
+  // delete) are excluded so their own deliberate colors above aren't touched.
+  .mat-mdc-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) .mdc-button__label,
+  .mat-mdc-unelevated-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) .mdc-button__label,
+  .mat-mdc-icon-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) .mat-icon {
+    color: inherit !important;
+  }
+
+  // Still reported as unclear even with the inherit fix above - going straight to the
+  // brightest text token (--app-text-primary, near-white) instead of the dimmer
+  // --app-text-secondary these use by default in body.component.scss, and explicitly
+  // clearing any background so nothing sits behind the hamburger/notification icons
+  // that could wash them out.
+  .nav-item,
+  .nav-item .nav-icon,
+  .hamburger-btn,
+  .action-btn {
+    color: var(--app-text-primary) !important;
+  }
+
+  .hamburger-btn,
+  .action-btn {
+    background: transparent !important;
+  }
+}
+
+/* ==============================================================
+App-wide design tokens (--app-*)
+===============================================================*/
+// Back the custom (non-Material) SCSS across the app - body.component.scss,
+// profile/settings styles, etc. As CSS custom properties they can change at runtime
+// when .theme-dark is toggled, which SCSS $variables never could. Light values here
+// are IDENTICAL to what body.component.scss used to hardcode, so defining them changes
+// nothing visually in light/System-light mode - only .theme-dark's overrides matter.
+//
+// STILL TO DO: register.component.scss, verify-code.component.scss, and
+// login.component.scss still use `@media (prefers-color-scheme: dark)` instead of the
+// `.theme-dark` class, so they'll only ever follow the raw OS setting, ignoring the
+// explicit Dark/System choice in Settings, until converted to class selectors.
+:root {
+  --app-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --app-sidebar-bg: #ffffff;
+  --app-card-bg: #ffffff;
+  --app-text-primary: #2d3748;
+  --app-text-secondary: #718096;
+  --app-text-muted: #a0aec0;
+  --app-border-color: #e2e8f0;
+  // Deliberately more visible than --app-border-color (which is meant for subtle
+  // dividers) - input/select outlines need enough contrast against the card surface
+  // to actually read as a boundary, not just a hint of one.
+  --app-input-border: #a0aec0;
+  --app-hover-bg: #f7fafc;
+  --app-active-color: #667eea;
+  --app-overlay-bg: rgba(255, 255, 255, 0.7);
+  --app-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --app-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --app-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.theme-dark {
+  --app-sidebar-bg: #1a202c;
+  --app-card-bg: #1a202c;
+  --app-text-primary: #f7fafc;
+  --app-text-secondary: #cbd5e0;
+  // Was #718096 - borderline-low contrast against the #1a202c card background for
+  // small hint/meta text (the picture upload hint, Employee #/Role line, etc).
+  --app-text-muted: #94a3b8;
+  --app-border-color: #2d3748;
+  // Clearly lighter than --app-card-bg/--app-hover-bg (#1a202c/#2d3748), so field
+  // outlines stay visible as an actual boundary instead of blending into the surface.
+  --app-input-border: #4a5568;
+  --app-hover-bg: #2d3748;
+  --app-overlay-bg: rgba(26, 32, 44, 0.7);
+  --app-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --app-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --app-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  .form-control {
+    background-color: var(--app-hover-bg);
+    color: var(--app-text-primary);
+  }
+}
+
+body {
+  background: var(--app-hover-bg);
+  color: var(--app-text-primary);
+}
+
+// Unscoped (applies in light mode too, not just .theme-dark) - Material's default
+// outlined-field border is quite subtle out of the box. --app-input-border is a
+// deliberately more visible gray in both themes so filter inputs/selects read clearly
+// as fields rather than blending into the page.
+.mdc-text-field--outlined .mdc-notched-outline__leading,
+.mdc-text-field--outlined .mdc-notched-outline__notch,
+.mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-color: var(--app-input-border) !important;
+}
+
 /* ==============================================================
 Bootstrap tweaks
 ===============================================================*/
@@ -18,6 +281,21 @@ h4 {
 a {
   color: #533f03;
   font-weight: bold;
+}
+
+// #533f03 (a dark brown) has good contrast on a white/light background, which is why
+// it was chosen - but that same dark color is nearly invisible on the dark navy
+// backgrounds .theme-dark introduces, which is exactly what happened to the Client/
+// Manager links in the Projects table. Swap to a lighter gold with equivalent contrast
+// against the dark surface.
+.theme-dark {
+  a {
+    color: #f6ad55;
+  }
+
+  a:hover {
+    color: #f6ad55;
+  }
 }
 
 /* override hover color for dropdown-item forced by bootstrap to all a:not([href]):not([tabindex]) elements in _reboot.scss */

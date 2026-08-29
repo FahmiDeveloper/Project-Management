@@ -6,6 +6,7 @@ public class PushMessageDTO {
     private String body;
     private String url;
     private String image;
+    private String icon;
 
     public String getTitle() {
         return title;
@@ -37,5 +38,13 @@ public class PushMessageDTO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

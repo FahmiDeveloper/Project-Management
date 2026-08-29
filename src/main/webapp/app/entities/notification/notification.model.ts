@@ -8,7 +8,7 @@ export interface INotification {
   type?: string | null;
   isRead?: boolean | null;
   createdDate?: dayjs.Dayjs | null;
-  employee?: Pick<IEmployee, 'id' | 'firstName' | 'lastName'> | null;
+  employee?: Pick<IEmployee, 'id' | 'firstName' | 'lastName' | 'user'> | null;
 }
 
 export type NewNotification = Omit<INotification, 'id'> & { id: null };

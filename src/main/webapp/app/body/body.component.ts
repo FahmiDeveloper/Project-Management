@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, inject, Input, OnInit, ViewChild, HostListener, OnDestroy, signal } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { BidiModule } from '@angular/cdk/bidi';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -16,6 +17,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
+import { DirectionService } from 'app/core/language/direction.service';
 
 @Component({
   selector: 'app-body',
@@ -24,6 +26,7 @@ import { AccountService } from 'app/core/auth/account.service';
   styleUrls: ['./body.component.scss'],
   imports: [
     CommonModule,
+    BidiModule,
     MatToolbarModule,
     MatIconModule,
     MatBadgeModule,
@@ -39,6 +42,11 @@ export class BodyComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
   @Input() isConnected = false;
+
+  // Exposed to the template so the root wrapper can carry a live [dir] binding - this is
+  // what lets mat-sidenav (position 'start') and CDK overlays (menus, selects) flip sides
+  // reactively when the language changes, not just on a full page reload.
+  protected readonly direction = inject(DirectionService);
 
   private readonly destroy$ = new Subject<void>();
 

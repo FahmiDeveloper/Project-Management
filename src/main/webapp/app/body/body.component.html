@@ -1,192 +1,217 @@
-<!-- Modern Toolbar -->
-<mat-toolbar *ngIf="isConnected" class="modern-toolbar">
-  <div class="toolbar-container">
-    <div class="brand-section">
-      <button mat-icon-button (click)="sidenav.toggle()" class="hamburger-btn" matTooltip="Toggle navigation">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <div class="brand-logo">
-        <div class="logo-icon">
-          <img src="./../../projmanag.ico" alt="Logo" class="logo-img" />
+<!--
+  Wrapping the whole shell in [dir] (via BidiModule) is what makes mat-sidenav's default
+  'start' position, and any CDK overlay (mat-menu, mat-select panels, etc.) opened from
+  inside this tree, flip sides reactively when the language changes - not just after a
+  full page reload. Pure CSS layout (flexbox order, table columns, text-align) already
+  follows document.documentElement's dir attribute via inheritance regardless of this
+  wrapper (see DirectionService), so this wrapper specifically exists for the CDK/JS-driven
+  positioning that inheritance alone doesn't cover.
+-->
+<div [dir]="direction.dir()" class="app-shell">
+  <!-- Modern Toolbar -->
+  <mat-toolbar *ngIf="isConnected" class="modern-toolbar">
+    <div class="toolbar-container">
+      <div class="brand-section">
+        <button mat-icon-button (click)="sidenav.toggle()" class="hamburger-btn" matTooltip="Toggle navigation">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <div class="brand-logo">
+          <div class="logo-icon">
+            <img src="./../../projmanag.ico" alt="Logo" class="logo-img" />
+          </div>
+          <span class="brand-text">Proj<span>Manage</span></span>
         </div>
-        <span class="brand-text">Proj<span>Manage</span></span>
+      </div>
+
+      <div class="actions-section">
+        <!-- Notifications -->
+        <button mat-icon-button [matMenuTriggerFor]="notifMenu" class="action-btn notification-btn" matTooltip="Notifications">
+          <mat-icon>notifications</mat-icon>
+          <span class="notification-dot" *ngIf="allNotifNotDone && allNotifNotDone.length > 0"></span>
+        </button>
+
+        <!-- User -->
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn" matTooltip="User profile">
+          <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="user-avatar" />
+        </button>
       </div>
     </div>
+  </mat-toolbar>
 
-    <div class="actions-section">
-      <!-- Notifications -->
-      <button mat-icon-button [matMenuTriggerFor]="notifMenu" class="action-btn notification-btn" matTooltip="Notifications">
-        <mat-icon>notifications</mat-icon>
-        <span class="notification-dot" *ngIf="allNotifNotDone && allNotifNotDone.length > 0"></span>
+  <!-- Notification Menu -->
+  <mat-menu #notifMenu="matMenu" class="modern-notif-menu">
+    <div class="menu-header">
+      <h4>Notifications</h4>
+      <button
+        mat-button
+        color="primary"
+        *ngIf="allNotifNotDone && allNotifNotDone.length > 0"
+        (click)="markAllAsRead()"
+        class="mark-read-btn"
+      >
+        <mat-icon>done_all</mat-icon>
+        Mark all read
       </button>
-
-      <!-- User -->
-      <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn" matTooltip="User profile">
-        <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="user-avatar" />
-      </button>
     </div>
-  </div>
-</mat-toolbar>
-
-<!-- Notification Menu -->
-<mat-menu #notifMenu="matMenu" class="modern-notif-menu">
-  <div class="menu-header">
-    <h4>Notifications</h4>
-    <button
-      mat-button
-      color="primary"
-      *ngIf="allNotifNotDone && allNotifNotDone.length > 0"
-      (click)="markAllAsRead()"
-      class="mark-read-btn"
-    >
-      <mat-icon>done_all</mat-icon>
-      Mark all read
-    </button>
-  </div>
-  <div class="notif-list">
-    <div *ngIf="!allNotifNotDone || allNotifNotDone.length === 0" class="empty-state">
-      <mat-icon>notifications_off</mat-icon>
-      <p>All caught up!</p>
-      <span>No new notifications</span>
-    </div>
-    <div *ngFor="let notif of allNotifNotDone" class="notif-item" [class.unread]="!notif.read" (click)="markAsRead(notif)">
-      <div class="notif-avatar" [style.background]="getColor(notif)">
-        <mat-icon>{{ getIcon(notif) }}</mat-icon>
+    <div class="notif-list">
+      <div *ngIf="!allNotifNotDone || allNotifNotDone.length === 0" class="empty-state">
+        <mat-icon>notifications_off</mat-icon>
+        <p>All caught up!</p>
+        <span>No new notifications</span>
       </div>
-      <div class="notif-content">
-        <div class="notif-title">{{ notif.subject }}</div>
-        <div class="notif-message">{{ notif.message }}</div>
-        <div class="notif-time">{{ getTimeAgo(notif.createdAt) }}</div>
-      </div>
-      <div class="notif-indicator" *ngIf="!notif.read"></div>
-    </div>
-  </div>
-  <div class="menu-footer">
-    <button mat-button class="view-all-btn" (click)="viewAllNotifications()">
-      View all notifications <mat-icon>arrow_forward</mat-icon>
-    </button>
-  </div>
-</mat-menu>
-
-<!-- User Menu -->
-<mat-menu #userMenu="matMenu" class="modern-user-menu">
-  <div class="user-profile">
-    <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="profile-avatar" />
-    <div class="profile-info">
-      <h4>
-        @if (account() !== null) {
-          @if (account(); as accountRef) {
-            {{ accountRef.firstName }}&nbsp;{{ accountRef.lastName }}
-          }
-        }
-      </h4>
-      <p>Developer • Project Management</p>
-    </div>
-  </div>
-  <mat-divider></mat-divider>
-  <button mat-menu-item (click)="goToProfile()">
-    <mat-icon>person_outline</mat-icon>
-    <span>My Profile</span>
-  </button>
-  <button mat-menu-item (click)="goToSettings()">
-    <mat-icon>settings_outline</mat-icon>
-    <span>Settings</span>
-  </button>
-  <button mat-menu-item>
-    <mat-icon>help_outline</mat-icon>
-    <span>Help & Support</span>
-  </button>
-  <mat-divider></mat-divider>
-  <button mat-menu-item (click)="logout()" class="logout-item">
-    <mat-icon>logout</mat-icon>
-    <span>Logout</span>
-  </button>
-</mat-menu>
-
-<!-- Sidenav Container -->
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav
-    #sidenav="matSidenav"
-    class="modern-sidenav"
-    [mode]="isMobile ? 'over' : 'side'"
-    [opened]="isConnected ? false : false"
-    [fixedInViewport]="true"
-    [fixedTopGap]="64"
-    *ngIf="isConnected"
-  >
-    <!-- Sidebar Header -->
-    <div class="sidebar-header">
-      <div class="user-card">
-        <div class="user-avatar-wrapper">
-          <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="sidebar-avatar" />
-          <div class="status-indicator online"></div>
+      <div *ngFor="let notif of allNotifNotDone" class="notif-item" [class.unread]="!notif.read" (click)="markAsRead(notif)">
+        <div class="notif-avatar" [style.background]="getColor(notif)">
+          <mat-icon>{{ getIcon(notif) }}</mat-icon>
         </div>
-        <h3 class="user-fullname">
+        <div class="notif-content">
+          <div class="notif-title">{{ notif.subject }}</div>
+          <div class="notif-message">{{ notif.message }}</div>
+          <div class="notif-time">{{ getTimeAgo(notif.createdAt) }}</div>
+        </div>
+        <div class="notif-indicator" *ngIf="!notif.read"></div>
+      </div>
+    </div>
+    <div class="menu-footer">
+      <button mat-button class="view-all-btn" (click)="viewAllNotifications()">
+        View all notifications <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </mat-menu>
+
+  <!-- User Menu -->
+  <mat-menu #userMenu="matMenu" class="modern-user-menu">
+    <div class="user-profile">
+      <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="profile-avatar" />
+      <div class="profile-info">
+        <h4>
           @if (account() !== null) {
             @if (account(); as accountRef) {
               {{ accountRef.firstName }}&nbsp;{{ accountRef.lastName }}
             }
           }
-        </h3>
-        <p class="user-role">Senior Developer</p>
-        <div class="user-stats">
-          <div class="stat-item">
-            <span class="stat-value">12</span>
-            <span class="stat-label">Projects</span>
+        </h4>
+        <p>Developer • Project Management</p>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="goToProfile()">
+      <mat-icon>person_outline</mat-icon>
+      <span>My Profile</span>
+    </button>
+    <button mat-menu-item (click)="goToSettings()">
+      <mat-icon>settings_outline</mat-icon>
+      <span>Settings</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>help_outline</mat-icon>
+      <span>Help & Support</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()" class="logout-item">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
+
+  <!-- Sidenav Container -->
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav
+      #sidenav="matSidenav"
+      class="modern-sidenav"
+      [mode]="isMobile ? 'over' : 'side'"
+      [opened]="isConnected ? false : false"
+      [fixedInViewport]="true"
+      [fixedTopGap]="64"
+      *ngIf="isConnected"
+    >
+      <!-- Sidebar Header -->
+      <div class="sidebar-header">
+        <div class="user-card">
+          <div class="user-avatar-wrapper">
+            <img [src]="account()?.imageUrl || './../../content/images/user-picture.png'" alt="User avatar" class="sidebar-avatar" />
+            <div class="status-indicator online"></div>
           </div>
-          <div class="stat-divider"></div>
-          <div class="stat-item">
-            <span class="stat-value">8</span>
-            <span class="stat-label">Tasks</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat-item">
-            <span class="stat-value">4</span>
-            <span class="stat-label">Teams</span>
+          <h3 class="user-fullname">
+            @if (account() !== null) {
+              @if (account(); as accountRef) {
+                {{ accountRef.firstName }}&nbsp;{{ accountRef.lastName }}
+              }
+            }
+          </h3>
+          <p class="user-role">Senior Developer</p>
+          <div class="user-stats">
+            <div class="stat-item">
+              <span class="stat-value">12</span>
+              <span class="stat-label">Projects</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-value">8</span>
+              <span class="stat-label">Tasks</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-value">4</span>
+              <span class="stat-label">Teams</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <mat-divider></mat-divider>
+      <mat-divider></mat-divider>
 
-    <!-- Navigation -->
-    <nav class="sidebar-nav">
-      <div class="nav-section">
-        <span class="nav-label">Main</span>
-        <button
-          *ngFor="let item of getMainNav()"
-          mat-button
-          class="nav-item"
-          [class.active]="isActiveRoute(item.link)"
-          (click)="redirectToSideNavContext(item)"
-        >
-          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-          <span class="nav-text">{{ item.text }}</span>
-          <span class="nav-badge" *ngIf="getBadgeCount(item) > 0">{{ getBadgeCount(item) }}</span>
-        </button>
-      </div>
-
-      <div class="nav-section">
-        <span class="nav-label">Management</span>
-        <button
-          *ngFor="let item of getManagementNav()"
-          mat-button
-          class="nav-item"
-          [class.active]="isActiveRoute(item.link)"
-          (click)="redirectToSideNavContext(item)"
-        >
-          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-          <span class="nav-text">{{ item.text }}</span>
-          <span class="nav-badge" *ngIf="getBadgeCount(item) > 0">{{ getBadgeCount(item) }}</span>
-        </button>
-      </div>
-
-      @if (!isMobile) {
+      <!-- Navigation -->
+      <nav class="sidebar-nav">
         <div class="nav-section">
-          <span class="nav-label">Analytics</span>
+          <span class="nav-label">Main</span>
           <button
-            *ngFor="let item of getAnalyticsNav()"
+            *ngFor="let item of getMainNav()"
+            mat-button
+            class="nav-item"
+            [class.active]="isActiveRoute(item.link)"
+            (click)="redirectToSideNavContext(item)"
+          >
+            <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+            <span class="nav-text">{{ item.text }}</span>
+            <span class="nav-badge" *ngIf="getBadgeCount(item) > 0">{{ getBadgeCount(item) }}</span>
+          </button>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-label">Management</span>
+          <button
+            *ngFor="let item of getManagementNav()"
+            mat-button
+            class="nav-item"
+            [class.active]="isActiveRoute(item.link)"
+            (click)="redirectToSideNavContext(item)"
+          >
+            <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+            <span class="nav-text">{{ item.text }}</span>
+            <span class="nav-badge" *ngIf="getBadgeCount(item) > 0">{{ getBadgeCount(item) }}</span>
+          </button>
+        </div>
+
+        @if (!isMobile) {
+          <div class="nav-section">
+            <span class="nav-label">Analytics</span>
+            <button
+              *ngFor="let item of getAnalyticsNav()"
+              mat-button
+              class="nav-item"
+              [class.active]="isActiveRoute(item.link)"
+              (click)="redirectToSideNavContext(item)"
+            >
+              <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+              <span class="nav-text">{{ item.text }}</span>
+            </button>
+          </div>
+        }
+
+        <div class="nav-section" *jhiHasAnyAuthority="'ROLE_ADMIN'">
+          <span class="nav-label" jhiTranslate="global.menu.admin.main">Administration</span>
+          <button
+            *ngFor="let item of getAdministrationNav()"
             mat-button
             class="nav-item"
             [class.active]="isActiveRoute(item.link)"
@@ -196,43 +221,29 @@
             <span class="nav-text">{{ item.text }}</span>
           </button>
         </div>
-      }
+      </nav>
 
-      <div class="nav-section" *jhiHasAnyAuthority="'ROLE_ADMIN'">
-        <span class="nav-label" jhiTranslate="global.menu.admin.main">Administration</span>
-        <button
-          *ngFor="let item of getAdministrationNav()"
-          mat-button
-          class="nav-item"
-          [class.active]="isActiveRoute(item.link)"
-          (click)="redirectToSideNavContext(item)"
-        >
-          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-          <span class="nav-text">{{ item.text }}</span>
+      <div class="sidebar-footer">
+        <div class="progress-card">
+          <div class="progress-info">
+            <span>Storage Usage</span>
+            <span>75%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 75%"></div>
+          </div>
+        </div>
+        <button mat-button class="logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
         </button>
       </div>
-    </nav>
+    </mat-sidenav>
 
-    <div class="sidebar-footer">
-      <div class="progress-card">
-        <div class="progress-info">
-          <span>Storage Usage</span>
-          <span>75%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width: 75%"></div>
-        </div>
+    <mat-sidenav-content class="sidenav-content">
+      <div class="content-area">
+        <router-outlet></router-outlet>
       </div>
-      <button mat-button class="logout-btn" (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </button>
-    </div>
-  </mat-sidenav>
-
-  <mat-sidenav-content class="sidenav-content">
-    <div class="content-area">
-      <router-outlet></router-outlet>
-    </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
