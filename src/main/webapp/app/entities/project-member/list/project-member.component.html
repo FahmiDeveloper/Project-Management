@@ -3,7 +3,7 @@
     <span jhiTranslate="projectManagementApp.projectMember.home.title">Projects Members</span>
 
     <div class="d-flex justify-content-end">
-      <button mat-stroked-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
+      <button mat-flat-button color="primary" class="me-2" (click)="load()" [disabled]="isLoading">
         <mat-icon [class.spin]="isLoading">refresh</mat-icon>
         <span jhiTranslate="projectManagementApp.projectMember.home.refreshListLabel">Refresh list</span>
       </button>

@@ -104,10 +104,18 @@
 .password-reset-link {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  color: var(--app-text-secondary);
-  margin-top: 0.25rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+
+  .reset-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--app-text-secondary);
+  }
 
   a {
     color: var(--app-active-color);
@@ -124,6 +132,15 @@
   .field-row {
     flex-direction: column;
     gap: 0;
+  }
+
+  .password-reset-link {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
   }
 }
 

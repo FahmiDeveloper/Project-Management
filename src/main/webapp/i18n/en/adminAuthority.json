@@ -4,7 +4,7 @@
       "home": {
         "title": "Authorities",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Authority",
+        "createLabel": "New authority",
         "createOrEditLabel": "Create or edit a Authority",
         "notFound": "No Authorities found"
       },

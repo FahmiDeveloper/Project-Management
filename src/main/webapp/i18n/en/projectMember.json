@@ -4,7 +4,7 @@
       "home": {
         "title": "Projects members",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Project Member",
+        "createLabel": "New project Member",
         "createOrEditLabel": "Create or edit a Project Member",
         "notFound": "No Project Members found"
       },

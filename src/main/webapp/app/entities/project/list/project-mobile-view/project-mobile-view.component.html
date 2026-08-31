@@ -1,10 +1,37 @@
 <div class="project-mobile-list">
   @for (project of projects(); track project.id) {
     <mat-card class="project-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>{{ project.name }}</mat-card-title>
-        <mat-card-subtitle>{{ project.code }}</mat-card-subtitle>
-      </mat-card-header>
+      <div class="project-card-header">
+        <div class="project-card-title-group">
+          <mat-card-title>{{ project.name }}</mat-card-title>
+          <mat-card-subtitle>{{ project.code }}</mat-card-subtitle>
+        </div>
+
+        <button
+          mat-icon-button
+          class="card-menu-btn"
+          [matMenuTriggerFor]="cardMenu"
+          aria-label="Project actions"
+          data-cy="entityActionsButton"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <mat-menu #cardMenu="matMenu">
+          <a mat-menu-item [routerLink]="['/project', project.id, 'view']" data-cy="entityDetailsButton">
+            <mat-icon>visibility</mat-icon>
+            <span>View</span>
+          </a>
+          <a mat-menu-item [routerLink]="['/project', project.id, 'edit']" data-cy="entityEditButton">
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+          </a>
+          <button mat-menu-item (click)="delete.emit(project)" data-cy="entityDeleteButton">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
 
       <mat-card-content>
         <div class="project-card-row">
@@ -42,18 +69,6 @@
           <span class="progress-label">{{ project.progress ?? 0 }}%</span>
         </div>
       </mat-card-content>
-
-      <mat-card-actions align="end">
-        <a mat-icon-button color="primary" [routerLink]="['/project', project.id, 'view']" data-cy="entityDetailsButton" matTooltip="View">
-          <mat-icon>visibility</mat-icon>
-        </a>
-        <a mat-icon-button color="accent" [routerLink]="['/project', project.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
-          <mat-icon>edit</mat-icon>
-        </a>
-        <button mat-icon-button color="warn" (click)="delete.emit(project)" data-cy="entityDeleteButton" matTooltip="Delete">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </mat-card-actions>
     </mat-card>
   }
 </div>

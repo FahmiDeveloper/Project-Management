@@ -4,7 +4,7 @@
       "home": {
         "title": "Activities logs",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Activity Log",
+        "createLabel": "New activity log",
         "createOrEditLabel": "Create or edit a Activity Log",
         "notFound": "No Activity Logs found"
       },

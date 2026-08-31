@@ -77,11 +77,6 @@ Dark theme - direct overrides for Material's OWN generated classes
     border-bottom-color: var(--app-border-color);
   }
 
-  .mat-mdc-paginator {
-    background-color: var(--app-card-bg);
-    color: var(--app-text-primary);
-  }
-
   // Cards (mat-card, used throughout Settings/Profile)
   .mat-mdc-card {
     background-color: var(--app-card-bg);
@@ -120,6 +115,62 @@ Dark theme - direct overrides for Material's OWN generated classes
   .mat-mdc-menu-panel,
   .mat-mdc-autocomplete-panel {
     background-color: var(--app-card-bg) !important;
+  }
+
+  // Paginator (bottom of the Projects table/card list) - same static-color issue as
+  // everything else on this page. The class-based color overrides below likely
+  // weren't enough because the paginator's prev/next icons are raw <svg> elements
+  // using `fill`, not <mat-icon>/color - using Material's own paginator system
+  // tokens is the reliable fix, same approach that fixed the surface-tint issue
+  // earlier. Kept the class overrides too as a fallback.
+  .mat-mdc-paginator {
+    --mat-paginator-container-background-color: transparent;
+    --mat-paginator-container-text-color: var(--app-text-secondary);
+    --mat-paginator-enabled-icon-color: var(--app-text-primary);
+    --mat-paginator-disabled-icon-color: var(--app-text-muted);
+    --mat-paginator-select-trigger-text-color: var(--app-text-primary);
+    background: transparent !important;
+    color: var(--app-text-primary) !important;
+  }
+
+  .mat-mdc-paginator-range-label,
+  .mat-mdc-paginator-page-size-label {
+    color: var(--app-text-primary) !important;
+  }
+
+  .mat-mdc-paginator .mat-mdc-icon-button .mat-icon,
+  .mat-mdc-paginator-icon,
+  .mat-mdc-paginator-icon path {
+    color: var(--app-text-primary) !important;
+    fill: var(--app-text-primary) !important;
+  }
+
+  .mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-icon,
+  .mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-mdc-paginator-icon,
+  .mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-mdc-paginator-icon path {
+    color: var(--app-text-muted) !important;
+    fill: var(--app-text-muted) !important;
+  }
+
+  // Mobile filter collapse panel (mat-expansion-panel) - static white background/text
+  // by default, same root cause as the table/cards before they were fixed.
+  .mat-expansion-panel {
+    background: var(--app-card-bg) !important;
+    color: var(--app-text-primary) !important;
+  }
+
+  .mat-expansion-panel-header-title,
+  .mat-expansion-panel-header-description {
+    color: var(--app-text-primary) !important;
+  }
+
+  .mat-expansion-panel-header .mat-icon {
+    color: var(--app-text-primary) !important;
+  }
+
+  .mat-expansion-indicator::after {
+    color: var(--app-text-primary) !important;
+    border-color: var(--app-text-primary) !important;
   }
 
   .mat-mdc-option,
@@ -191,6 +242,26 @@ Dark theme - direct overrides for Material's OWN generated classes
   .action-btn {
     background: transparent !important;
   }
+}
+
+// Unscoped (light/System-when-OS-light mode) - the paginator's range label
+// ("1 - 1 of 1") renders in Material's indigo primary by default, but the prev/next
+// icon buttons render in a dim neutral gray - making the icons match the label's
+// indigo instead, per request. Disabled icons (e.g. prev arrows on page 1) get a
+// lighter version of the same indigo so they still read as disabled, not just
+// recolored the same as an active button.
+.mat-mdc-paginator .mat-mdc-icon-button .mat-icon,
+.mat-mdc-paginator-icon,
+.mat-mdc-paginator-icon path {
+  color: #3f51b5 !important;
+  fill: #3f51b5 !important;
+}
+
+.mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-icon,
+.mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-mdc-paginator-icon,
+.mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-mdc-paginator-icon path {
+  color: rgba(63, 81, 181, 0.4) !important;
+  fill: rgba(63, 81, 181, 0.4) !important;
 }
 
 /* ==============================================================
@@ -286,15 +357,16 @@ a {
 // #533f03 (a dark brown) has good contrast on a white/light background, which is why
 // it was chosen - but that same dark color is nearly invisible on the dark navy
 // backgrounds .theme-dark introduces, which is exactly what happened to the Client/
-// Manager links in the Projects table. Swap to a lighter gold with equivalent contrast
-// against the dark surface.
+// Manager links in the Projects table. Requested to match the rest of the row's plain
+// white text rather than stand out in a different color - the underline (already set
+// on the base `a` rule above) remains as the only visual cue that it's a link.
 .theme-dark {
   a {
-    color: #f6ad55;
+    color: var(--app-text-primary);
   }
 
   a:hover {
-    color: #f6ad55;
+    color: var(--app-text-primary);
   }
 }
 

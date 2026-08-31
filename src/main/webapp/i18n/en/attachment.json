@@ -4,7 +4,7 @@
       "home": {
         "title": "Attachments",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Attachment",
+        "createLabel": "New attachment",
         "createOrEditLabel": "Create or edit a Attachment",
         "notFound": "No Attachments found"
       },

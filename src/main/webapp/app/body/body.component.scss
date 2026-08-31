@@ -364,7 +364,18 @@ $radius: 12px;
         padding: 10px 12px;
         margin: 2px 0;
         border-radius: 8px;
-        color: var(--app-text-secondary);
+        // !important + explicit transparent: something outside this stylesheet (a
+        // Material default we haven't tracked down) is giving mat-button a visible
+        // light fill at rest, which combined with the forced light text color below
+        // meant text and background were nearly the same tone. Forcing this to
+        // transparent lets the dark sidenav show through instead.
+        background: transparent !important;
+        // !important because this text sits inside mat-button's own internal
+        // .mdc-button__label wrapper, which reads its own static color from the
+        // indigo-pink theme at higher effective priority than this class - that static
+        // value doesn't react to .theme-dark, so only :hover's MORE SPECIFIC selector
+        // was ever winning, making the text look invisible until hovered.
+        color: var(--app-text-secondary) !important;
         font-size: 0.9rem;
         font-weight: 400;
         transition: none;
@@ -374,7 +385,7 @@ $radius: 12px;
           font-size: 20px;
           width: 20px;
           height: 20px;
-          color: var(--app-text-secondary);
+          color: var(--app-text-secondary) !important;
           transition: none;
           display: flex;
           align-items: center;
@@ -384,6 +395,7 @@ $radius: 12px;
         .nav-text {
           flex: 1;
           text-align: left;
+          color: inherit !important;
         }
 
         .nav-badge {
@@ -398,20 +410,20 @@ $radius: 12px;
 
         &:hover {
           background: var(--app-hover-bg);
-          color: var(--app-text-primary);
+          color: var(--app-text-primary) !important;
 
           .nav-icon {
-            color: #667eea;
+            color: #667eea !important;
           }
         }
 
         &.active {
           background: rgba(102, 126, 234, 0.08);
-          color: #667eea;
+          color: #667eea !important;
           font-weight: 500;
 
           .nav-icon {
-            color: #667eea;
+            color: #667eea !important;
           }
 
           &::before {
