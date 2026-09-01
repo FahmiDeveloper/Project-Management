@@ -42,6 +42,20 @@
   }
 }
 
+// Below this width the two-per-row layout (First/Last Name, Email/Phone) gets
+// cramped, so stack all four inputs into a single column instead - matches the
+// breakpoint style used elsewhere in the app (768px = tablet/mobile cutoff).
+@media (max-width: 768px) {
+  .field-row {
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .field {
+      width: 100%;
+    }
+  }
+}
+
 .actions-row {
   display: flex;
   justify-content: flex-end;

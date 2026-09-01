@@ -247,6 +247,10 @@ export class BodyComponent implements OnInit, OnDestroy {
     this.router.navigate(['/account/settings']);
   }
 
+  goToHelpAndSupport(): void {
+    this.router.navigate(['/account/help-support']);
+  }
+
   isActiveRoute(link: string): boolean {
     return this.router.url === link || this.router.url.startsWith(link + '/');
   }
