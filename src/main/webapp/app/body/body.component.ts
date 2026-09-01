@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, Input, OnInit, ViewChild, HostListener, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject, Input, OnInit, ViewChild, HostListener, OnDestroy, signal } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { BidiModule } from '@angular/cdk/bidi';
 import { MatSidenav } from '@angular/material/sidenav';
@@ -11,6 +11,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
+import dayjs from 'dayjs/esm';
 import { LoginService } from 'app/login/login.service';
 import { Subject, Subscription } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -18,6 +19,9 @@ import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directiv
 import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { DirectionService } from 'app/core/language/direction.service';
+import { ThemeService } from 'app/core/theme/theme.service';
+import { INotification } from 'app/entities/notification/notification.model';
+import { NotificationService } from 'app/entities/notification/service/notification.service';
 
 @Component({
   selector: 'app-body',
@@ -54,6 +58,7 @@ export class BodyComponent implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly accountService = inject(AccountService);
+  private readonly notificationService = inject(NotificationService);
 
   isMobile = false;
   private breakpointSubscription: Subscription | null = null;
@@ -63,44 +68,18 @@ export class BodyComponent implements OnInit, OnDestroy {
   showPageHeader = true;
   breadcrumbs: BreadcrumbItem[] = [];
 
-  allNotifNotDone: Notification[] = [
-    {
-      id: '1',
-      subject: 'Project Deadline Approaching',
-      message: 'E-commerce Platform due in 3 days',
-      createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-      read: false,
-      type: 'deadline',
-      color: '#f56565',
-    },
-    {
-      id: '2',
-      subject: 'New Team Member',
-      message: 'Sarah Johnson joined your project team',
-      createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-      read: false,
-      type: 'team',
-      color: '#4299e1',
-    },
-    {
-      id: '3',
-      subject: 'Task Completed',
-      message: 'Design review passed for mobile app',
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-      read: false,
-      type: 'task',
-      color: '#48bb78',
-    },
-    {
-      id: '4',
-      subject: 'Meeting Scheduled',
-      message: 'Sprint planning tomorrow at 10:00 AM',
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-      read: false,
-      type: 'meeting',
-      color: '#ed8936',
-    },
-  ];
+  notifications = signal<INotification[]>([]);
+  unreadCount = computed(() => this.notifications().filter(n => !n.isRead).length);
+
+  // Server doesn't send a color per-notification - keeping the same type-based mapping
+  // the mock data used. Adjust these keys if your backend's actual `type` values differ
+  // from the placeholders the mock used (deadline/team/task/meeting).
+  private readonly notifTypeColors: Record<string, string> = {
+    deadline: '#f56565',
+    team: '#4299e1',
+    task: '#48bb78',
+    meeting: '#ed8936',
+  };
 
   sideNavList: SideNavList[] = [
     { icon: 'home', text: 'Home', link: '/home' },
@@ -130,6 +109,15 @@ export class BodyComponent implements OnInit, OnDestroy {
     { icon: 'api', text: 'API', link: '/admin/docs' },
   ];
 
+  // Injected here (not used directly in this component) purely so its constructor runs
+  // on app startup, on every route - it's providedIn: 'root', so Angular only creates
+  // it the first time something injects it. Before this, SettingsComponent was the only
+  // injector, so refreshing any OTHER page never constructed it, .theme-dark was never
+  // applied to <html>, and the page silently fell back to the default light theme even
+  // though localStorage still had "dark" saved. BodyComponent renders on every route, so
+  // injecting it here guarantees the theme is applied no matter where you refresh.
+  private readonly themeService = inject(ThemeService);
+
   constructor(private router: Router) {}
 
   ngOnInit() {
@@ -137,6 +125,8 @@ export class BodyComponent implements OnInit, OnDestroy {
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => this.account.set(account));
+
+    this.loadNotifications();
 
     this.breakpointSubscription = this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.Tablet]).subscribe(result => {
       this.isMobile = result.matches;
@@ -263,51 +253,58 @@ export class BodyComponent implements OnInit, OnDestroy {
 
   getBadgeCount(item: SideNavList): number {
     if (item.link === '/notification') {
-      return this.allNotifNotDone?.filter(n => !n.read).length || 0;
+      return this.unreadCount();
     }
     return 0;
   }
 
-  getTimeAgo(date: string): string {
+  loadNotifications(): void {
+    this.notificationService.query({ page: 0, size: 5, sort: ['createdDate,desc'] }).subscribe(res => {
+      this.notifications.set(res.body ?? []);
+    });
+  }
+
+  getTimeAgo(date: dayjs.Dayjs | null | undefined): string {
     if (!date) return 'Just now';
-    try {
-      const now = new Date();
-      const notifDate = new Date(date);
-      if (isNaN(notifDate.getTime())) return 'Just now';
-
-      const diff = Math.floor((now.getTime() - notifDate.getTime()) / 1000);
-      if (diff < 60) return `${diff}s ago`;
-      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-      if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-      return notifDate.toLocaleDateString();
-    } catch {
-      return 'Just now';
-    }
+    const diff = dayjs().diff(date, 'second');
+    if (diff < 60) return `${diff}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+    return date.format('MMM D, YYYY');
   }
 
-  getColor(notification: Notification): string {
-    return notification.color || '#667eea';
+  getColor(notification: INotification): string {
+    return this.notifTypeColors[notification.type ?? ''] || '#667eea';
   }
 
-  getIcon(notification: Notification): string {
-    const icons = {
+  getIcon(notification: INotification): string {
+    const icons: Record<string, string> = {
       deadline: 'warning',
       team: 'person_add',
       task: 'check_circle',
       meeting: 'event',
     };
-    return icons[notification.type as keyof typeof icons] || 'notifications';
+    return icons[notification.type ?? ''] || 'notifications';
   }
 
   markAllAsRead() {
-    this.allNotifNotDone.forEach(n => (n.read = true));
+    const unread = this.notifications().filter(n => !n.isRead);
+    unread.forEach(n => {
+      this.notificationService.partialUpdate({ id: n.id, isRead: true }).subscribe();
+    });
+    this.notifications.update(list => list.map(n => ({ ...n, isRead: true })));
     this.cdr.detectChanges();
   }
 
-  markAsRead(notification: Notification) {
-    notification.read = true;
-    this.cdr.detectChanges();
+  markAsRead(notification: INotification) {
+    if (notification.isRead) {
+      return;
+    }
+    this.notificationService.partialUpdate({ id: notification.id, isRead: true }).subscribe(() => {
+      this.notifications.update(list => list.map(n => (n.id === notification.id ? { ...n, isRead: true } : n)));
+      this.cdr.detectChanges();
+    });
   }
 
   viewAllNotifications(): void {
@@ -319,16 +316,6 @@ export interface SideNavList {
   icon: string;
   text: string;
   link: string;
-}
-
-export interface Notification {
-  id: string;
-  subject: string;
-  message: string;
-  createdAt: string;
-  read: boolean;
-  type: string;
-  color: string;
 }
 
 export interface BreadcrumbItem {

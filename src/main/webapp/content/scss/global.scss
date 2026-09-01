@@ -153,8 +153,25 @@ Dark theme - direct overrides for Material's OWN generated classes
   }
 
   // Mobile filter collapse panel (mat-expansion-panel) - static white background/text
-  // by default, same root cause as the table/cards before they were fixed.
+  // by default. Class-based overrides here kept losing (worked on first load, reverted
+  // to white after open/close) even with !important, the same symptom the paginator
+  // had before switching to Material's own system tokens instead of guessing at which
+  // internal class to target - doing the same here since it's the reliable fix.
   .mat-expansion-panel {
+    --mat-expansion-container-background-color: var(--app-card-bg);
+    --mat-expansion-container-text-color: var(--app-text-primary);
+    --mat-expansion-header-text-color: var(--app-text-primary);
+    --mat-expansion-header-description-color: var(--app-text-secondary);
+    --mat-expansion-header-indicator-color: var(--app-text-primary);
+    --mat-expansion-header-hover-state-layer-color: var(--app-hover-bg);
+    --mat-expansion-header-focus-state-layer-color: var(--app-hover-bg);
+    background: var(--app-card-bg) !important;
+    color: var(--app-text-primary) !important;
+  }
+
+  .mat-expansion-panel-header,
+  .mat-expansion-panel-body,
+  .mat-expansion-panel-content {
     background: var(--app-card-bg) !important;
     color: var(--app-text-primary) !important;
   }
@@ -184,7 +201,7 @@ Dark theme - direct overrides for Material's OWN generated classes
   // body.component.scss) instead of flattening it to the same color as everything else.
   .mat-mdc-menu-item:not(.logout-item),
   .mat-mdc-menu-item:not(.logout-item) .mdc-list-item__primary-text,
-  .mat-mdc-menu-item:not(.logout-item) mat-icon {
+  .mat-mdc-menu-item:not(.logout-item) mat-icon:not(.menu-icon-view):not(.menu-icon-edit):not(.menu-icon-delete) {
     color: var(--app-text-primary) !important;
   }
 
@@ -244,24 +261,42 @@ Dark theme - direct overrides for Material's OWN generated classes
   }
 }
 
+// Unscoped (both themes) - View/Edit/Delete moved from standalone icon buttons (which
+// had Material's color="primary"/"accent"/"warn" giving them blue/pink/red natively)
+// into mat-menu-item entries (desktop right-click context menu, mobile card's
+// three-dot menu). mat-menu-item has no equivalent color input, so without this it
+// defaults to plain gray/black icons in both themes - restoring the original colors
+// explicitly via these classes set in the templates.
+.menu-icon-view {
+  color: #3f51b5 !important;
+}
+
+.menu-icon-edit {
+  color: #ff4081 !important;
+}
+
+.menu-icon-delete {
+  color: #f44336 !important;
+}
+
 // Unscoped (light/System-when-OS-light mode) - the paginator's range label
-// ("1 - 1 of 1") renders in Material's indigo primary by default, but the prev/next
-// icon buttons render in a dim neutral gray - making the icons match the label's
-// indigo instead, per request. Disabled icons (e.g. prev arrows on page 1) get a
-// lighter version of the same indigo so they still read as disabled, not just
-// recolored the same as an active button.
+// ("1 - 1 of 1") renders in a dark/near-black tone by default, but the prev/next icon
+// buttons render in a lighter neutral gray - making the icons match the label's dark
+// color instead, per request. Disabled icons (e.g. prev arrows on page 1) get a
+// lighter/muted version so they still read as disabled, not just recolored the same
+// as an active button.
 .mat-mdc-paginator .mat-mdc-icon-button .mat-icon,
 .mat-mdc-paginator-icon,
 .mat-mdc-paginator-icon path {
-  color: #3f51b5 !important;
-  fill: #3f51b5 !important;
+  color: var(--app-text-primary) !important;
+  fill: var(--app-text-primary) !important;
 }
 
 .mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-icon,
 .mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-mdc-paginator-icon,
 .mat-mdc-paginator .mat-mdc-icon-button:disabled .mat-mdc-paginator-icon path {
-  color: rgba(63, 81, 181, 0.4) !important;
-  fill: rgba(63, 81, 181, 0.4) !important;
+  color: var(--app-text-muted) !important;
+  fill: var(--app-text-muted) !important;
 }
 
 /* ==============================================================

@@ -148,15 +148,15 @@
 <mat-menu #rowMenu="matMenu">
   <ng-template matMenuContent let-project="project">
     <a mat-menu-item [routerLink]="['/project', project.id, 'view']" data-cy="entityDetailsButton">
-      <mat-icon>visibility</mat-icon>
+      <mat-icon class="menu-icon-view">visibility</mat-icon>
       <span>View</span>
     </a>
     <a mat-menu-item [routerLink]="['/project', project.id, 'edit']" data-cy="entityEditButton">
-      <mat-icon>edit</mat-icon>
+      <mat-icon class="menu-icon-edit">edit</mat-icon>
       <span>Edit</span>
     </a>
     <button mat-menu-item (click)="delete.emit(project)" data-cy="entityDeleteButton">
-      <mat-icon>delete</mat-icon>
+      <mat-icon class="menu-icon-delete">delete</mat-icon>
       <span>Delete</span>
     </button>
   </ng-template>

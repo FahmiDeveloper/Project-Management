@@ -548,7 +548,7 @@ $radius: 12px;
     .mark-read-btn {
       font-size: 0.75rem;
       text-transform: none;
-      color: #667eea;
+      color: #667eea !important;
       font-weight: 500;
       padding: 4px 12px;
       min-height: 32px;
@@ -567,11 +567,23 @@ $radius: 12px;
         transform: scale(0.96);
       }
 
+      // display:flex + centering brings this in line with every other icon button in
+      // this file (.hamburger-btn, .action-btn) - previously missing here, which was
+      // masked by the visible border box around the button. Once the dark-mode fix
+      // removed that border/box, the icon and text baseline drifted apart visibly.
+      display: inline-flex !important;
+      align-items: center !important;
+
       mat-icon {
         font-size: 16px;
         width: 16px;
         height: 16px;
+        line-height: 16px;
         margin-right: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
       }
     }
   }
@@ -642,7 +654,7 @@ $radius: 12px;
         width: 40px;
         height: 40px;
         min-width: 40px;
-        border-radius: 10px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -663,6 +675,7 @@ $radius: 12px;
       .notif-avatar-img {
         width: 100%;
         height: 100%;
+        border-radius: 50%;
         object-fit: cover;
         display: block;
       }
@@ -670,7 +683,7 @@ $radius: 12px;
       .notif-avatar-fallback {
         width: 100%;
         height: 100%;
-        border-radius: 10px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -733,7 +746,7 @@ $radius: 12px;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      color: #667eea;
+      color: #667eea !important;
       font-weight: 500;
       font-size: 0.85rem;
       padding: 8px 16px;
@@ -1330,5 +1343,29 @@ button:focus-visible,
       right: auto !important;
       left: 3px !important;
     }
+  }
+}
+
+// Requested plain white instead of the brand indigo, and no visible border box around
+// either button.
+// Uses the same .mat-mdc-menu-panel.modern-notif-menu prefix as the original color
+// rule above (not just `.theme-dark .mark-read-btn`) so this override has equal-or-
+// higher specificity and actually wins the cascade - a shorter, 2-class version of
+// this selector was losing to that 3-class original #667eea rule, which is why only
+// the icon (which had no competing color rule) was turning white while the label text
+// kept inheriting the still-indigo button color.
+::ng-deep .theme-dark .mat-mdc-menu-panel.modern-notif-menu {
+  .mark-read-btn,
+  .view-all-btn {
+    color: var(--app-text-primary) !important;
+    border: none !important;
+    outline: none !important;
+  }
+
+  .mark-read-btn .mat-icon,
+  .view-all-btn .mat-icon,
+  .mark-read-btn .mdc-button__label,
+  .view-all-btn .mdc-button__label {
+    color: var(--app-text-primary) !important;
   }
 }
