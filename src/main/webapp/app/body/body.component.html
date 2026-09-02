@@ -55,20 +55,26 @@
       </div>
       <div *ngFor="let notif of notifications()" class="notif-item" [class.unread]="!notif.isRead" (click)="markAsRead(notif)">
         <div class="notif-avatar">
-          <img
-            *ngIf="notif.employee?.user?.imageUrl; else notifIconFallback"
-            [src]="notif.employee?.user?.imageUrl"
-            alt=""
-            class="notif-avatar-img"
-          />
-          <ng-template #notifIconFallback>
+          @if (notif.employee?.user?.imageUrl; as avatarUrl) {
+            <img [src]="avatarUrl" alt="" class="notif-avatar-img" />
+          } @else {
             <div class="notif-avatar-fallback" [style.background]="getColor(notif)">
               <mat-icon>{{ getIcon(notif) }}</mat-icon>
             </div>
-          </ng-template>
+          }
         </div>
         <div class="notif-content">
-          <div class="notif-title">{{ notif.title }}</div>
+          <div class="notif-title">
+            @if (notif.employee) {
+              <a [routerLink]="['/employee', notif.employee.id, 'view']" class="notif-employee-link" (click)="$event.stopPropagation()">
+                {{ notif.employee.firstName }} {{ notif.employee.lastName }}
+              </a>
+              <span class="notif-title-separator">&middot;</span>
+              <span class="notif-title-text">{{ notif.title }}</span>
+            } @else {
+              <span class="notif-title-text">{{ notif.title }}</span>
+            }
+          </div>
           <div class="notif-message">{{ notif.message }}</div>
           <div class="notif-time">{{ getTimeAgo(notif.createdDate) }}</div>
         </div>

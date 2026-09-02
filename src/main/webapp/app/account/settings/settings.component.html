@@ -8,10 +8,6 @@
       </mat-card-header>
 
       <mat-card-content>
-        @if (success()) {
-          <div class="alert alert-success"><strong>Preferences saved!</strong></div>
-        }
-
         <jhi-alert-error />
 
         <form name="preferencesForm" (ngSubmit)="save()" [formGroup]="settingsForm" novalidate>
@@ -153,8 +149,15 @@
 
           <div class="password-reset-link">
             <div class="reset-hint">
-              <span>Forgot your current password?</span>
-              <a routerLink="/account/reset/request">Reset it by email</a>
+              @if (!passwordResetSuccess()) {
+                <span>Forgot your current password?</span>
+                <a (click)="requestPasswordReset()" data-cy="passwordResetByEmail">Reset it by email</a>
+              } @else {
+                <span class="text-success">Check your email for a link to reset your password.</span>
+              }
+              @if (passwordResetError()) {
+                <span class="text-danger">Could not send the reset email. Please try again.</span>
+              }
             </div>
 
             <button mat-raised-button color="primary" type="submit" [disabled]="passwordForm.invalid" data-cy="password-submit">

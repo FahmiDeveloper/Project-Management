@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, computed, inject, Input, OnInit, ViewChil
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { BidiModule } from '@angular/cdk/bidi';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, NavigationEnd } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -39,6 +39,7 @@ import { NotificationService } from 'app/entities/notification/service/notificat
     MatMenuModule,
     MatTooltipModule,
     RouterOutlet,
+    RouterLink,
     HasAnyAuthorityDirective,
   ],
 })
@@ -124,9 +125,22 @@ export class BodyComponent implements OnInit, OnDestroy {
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(account => this.account.set(account));
-
-    this.loadNotifications();
+      .subscribe(account => {
+        this.account.set(account);
+        // BodyComponent wraps every route, including public ones like the password
+        // reset pages (/account/reset/request, /account/reset/finish) and the login
+        // page itself. Only hit the (authenticated) notifications endpoint when
+        // there's actually a logged-in user - otherwise this fires on every public
+        // page too, the backend returns 401 for the missing token, and
+        // AuthExpiredInterceptor force-redirects to /login before the public page
+        // ever gets a chance to render (this is what was breaking the reset-password
+        // link when "remember me" wasn't checked and no stale token was lying around).
+        if (account) {
+          this.loadNotifications();
+        } else {
+          this.notifications.set([]);
+        }
+      });
 
     this.breakpointSubscription = this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.Tablet]).subscribe(result => {
       this.isMobile = result.matches;

@@ -41,6 +41,20 @@ export default class MainComponent implements OnInit {
   isConnected = false;
   isMobile = false;
 
+  // Pages that must stay reachable with NO account/token at all. This used to be handled
+  // implicitly - nothing forced a redirect for these because they simply don't have a
+  // canActivate guard - but the old "if (!account) navigate(['/login'])" below fired on
+  // EVERY route regardless of guards, so it force-redirected these too. Restoring that
+  // redirect (needed because protected routes like /home, /project, etc. apparently don't
+  // have their own canActivate guard yet - they were relying entirely on this) has to skip
+  // this whitelist or we're back to breaking the reset-password/login/register pages.
+  //
+  // TODO(longer-term, more correct fix): add UserRouteAccessService (or equivalent)
+  // canActivate guards directly on the protected routes themselves, the standard JHipster
+  // way. Once every protected route guards itself, this whitelist-based redirect here can
+  // be removed entirely instead of maintained in two places.
+  private readonly publicRoutePrefixes = ['/login', '/account/register', '/account/activate', '/account/reset', '/account/verify-code'];
+
   constructor() {
     this.renderer = this.rootRenderer.createRenderer(document.querySelector('html'), null);
   }
@@ -61,7 +75,7 @@ export default class MainComponent implements OnInit {
 
     // try to log in automatically
     this.accountService.identity().subscribe(account => {
-      if (!account) {
+      if (!account && !this.isPublicRoute(this.router.url)) {
         this.router.navigate(['/login']);
       }
       // NOTE: do NOT add a router.url === '/' check here to redirect to /home.
@@ -81,5 +95,10 @@ export default class MainComponent implements OnInit {
   onToggleSideNav(data: SideNavToggle): void {
     this.screenWidth = data.screenWidth;
     this.isSideNavCollapsed = data.collapsed;
+  }
+
+  private isPublicRoute(url: string): boolean {
+    const path = url.split('?')[0];
+    return this.publicRoutePrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`));
   }
 }
