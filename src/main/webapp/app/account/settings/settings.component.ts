@@ -6,7 +6,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
@@ -16,6 +15,9 @@ import { Account } from 'app/core/auth/account.model';
 import { LANGUAGES } from 'app/config/language.constants';
 import { ThemePreference, ThemeService } from 'app/core/theme/theme.service';
 import { PasswordChangeService } from './password-change.service';
+// NOTE: adjust this path if your password-reset-init service lives somewhere else.
+// Standard JHipster layout puts it at app/account/password-reset/init/.
+import { PasswordResetInitService } from '../password-reset/init/password-reset-init.service';
 
 const initialAccount: Account = {} as Account;
 
@@ -31,7 +33,6 @@ const initialAccount: Account = {} as Account;
     MatInputModule,
     MatButtonModule,
     MatCardModule,
-    MatDividerModule,
     MatSelectModule,
     MatSlideToggleModule,
   ],
@@ -71,6 +72,13 @@ export default class SettingsComponent implements OnInit {
   passwordError = signal(false);
   passwordDoNotMatch = signal(false);
 
+  // "Reset it by email" from the password card. Unlike the standalone forgot-password
+  // page, the user is already logged in here, so we already have their email in
+  // settingsForm - no need to send them off to retype it. We just POST that email to
+  // the same /account/reset-password/init endpoint the standalone page uses.
+  passwordResetSuccess = signal(false);
+  passwordResetError = signal(false);
+
   // Notification preferences.
   // NOT PERSISTED SERVER-SIDE YET: nothing in AccountResource/UserService exposes fields
   // for these, so this only lives in the form/UI for now. Wiring real persistence needs
@@ -88,15 +96,29 @@ export default class SettingsComponent implements OnInit {
   private readonly accountService = inject(AccountService);
   private readonly translateService = inject(TranslateService);
   private readonly passwordChangeService = inject(PasswordChangeService);
+  private readonly passwordResetInitService = inject(PasswordResetInitService);
 
   ngOnInit(): void {
     // force=true bypasses accountCache$ so we never patch the form (and later POST
     // back) a stale value - e.g. right after ProfileComponent updated the picture but
     // before anything else refreshed the cached account.
+    // emitEvent: false is required here now that langKey auto-saves on change below -
+    // without it, this initial patch would itself count as a "change" and fire an
+    // unnecessary save the moment the page loads.
     this.accountService.identity(true).subscribe(account => {
       if (account) {
-        this.settingsForm.patchValue(account);
+        this.settingsForm.patchValue(account, { emitEvent: false });
       }
+    });
+
+    // Language now saves as soon as a new value is selected - no Save button needed.
+    this.settingsForm.get('langKey')!.valueChanges.subscribe(() => {
+      this.save();
+    });
+
+    // Same for notification toggles - each one saves itself immediately on click.
+    this.notificationForm.valueChanges.subscribe(() => {
+      this.saveNotificationPreferences();
     });
   }
 
@@ -132,6 +154,22 @@ export default class SettingsComponent implements OnInit {
         this.passwordForm.reset({ currentPassword: '', newPassword: '', confirmPassword: '' });
       },
       error: () => this.passwordError.set(true),
+    });
+  }
+
+  requestPasswordReset(): void {
+    this.passwordResetSuccess.set(false);
+    this.passwordResetError.set(false);
+
+    const email = this.settingsForm.getRawValue().email;
+    if (!email) {
+      this.passwordResetError.set(true);
+      return;
+    }
+
+    this.passwordResetInitService.save(email).subscribe({
+      next: () => this.passwordResetSuccess.set(true),
+      error: () => this.passwordResetError.set(true),
     });
   }
 

@@ -18,10 +18,13 @@ export default class LoginComponent implements OnInit, AfterViewInit {
 
   authenticationError = signal(false);
 
+  // No more "remember me" control - every successful login is always persisted to
+  // localStorage (see login() below, which always sends rememberMe: true to
+  // LoginService/AuthServerProvider). This keeps AuthServerProvider.authenticateSuccess()'s
+  // existing rememberMe branching untouched - it just always takes the "remember" path now.
   loginForm = new FormGroup({
     username: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    rememberMe: new FormControl(false, { nonNullable: true, validators: [Validators.required] }),
   });
 
   private readonly accountService = inject(AccountService);
@@ -42,7 +45,9 @@ export default class LoginComponent implements OnInit, AfterViewInit {
   }
 
   login(): void {
-    this.loginService.login(this.loginForm.getRawValue()).subscribe({
+    const { username, password } = this.loginForm.getRawValue();
+
+    this.loginService.login({ username, password, rememberMe: true }).subscribe({
       next: () => {
         this.authenticationError.set(false);
 

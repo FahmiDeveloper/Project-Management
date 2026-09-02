@@ -4,7 +4,7 @@
       "home": {
         "title": "Reports snapshots",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Report Snapshot",
+        "createLabel": "New report snapshot",
         "createOrEditLabel": "Create or edit a Report Snapshot",
         "notFound": "No Report Snapshots found"
       },

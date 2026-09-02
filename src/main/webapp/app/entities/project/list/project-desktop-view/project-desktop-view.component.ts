@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output, Signal, WritableSignal, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, Signal, ViewChild, WritableSignal, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 import SharedModule from 'app/shared/shared.module';
 import { MaterialModule } from 'app/shared/material.module';
@@ -35,10 +36,24 @@ export class ProjectDesktopViewComponent {
     'client',
     'manager',
     'note',
-    'actions',
   ];
+
+  // Right-click context menu (view/edit/delete moved here instead of always-visible
+  // row buttons). mat-menu has no "open at x/y" API, so the standard approach is a
+  // hidden trigger element whose position we move to the cursor, then open it
+  // programmatically.
+  @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
+  contextMenuPosition = { x: 0, y: 0 };
 
   protected readonly projectService = inject(ProjectService);
 
   trackId = (item: IProject): number => this.projectService.getProjectIdentifier(item);
+
+  onRowContextMenu(event: MouseEvent, project: IProject): void {
+    event.preventDefault();
+    this.contextMenuPosition = { x: event.clientX, y: event.clientY };
+    this.contextMenu.menuData = { project };
+    this.contextMenu.menu?.focusFirstItem('mouse');
+    this.contextMenu.openMenu();
+  }
 }

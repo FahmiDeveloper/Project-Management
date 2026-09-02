@@ -84,6 +84,14 @@
   font-size: 14.5px;
   font-weight: 500;
   color: #1f2937;
+  // Now doubles as the employee-name link (see .html) - resets the browser's
+  // default anchor underline so it still reads as plain text at rest, and adds
+  // a hover cue so it's clear it's clickable.
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .feed-title-unread {
@@ -93,7 +101,10 @@
 
 .feed-employee-link {
   font-size: 12.5px;
-  color: rgba(0, 0, 0, 0.55);
+  // Was rgba(0,0,0,0.55) - too faint now that this slot holds the title text
+  // instead of the employee name. Darkened and bolded for readability.
+  color: #1f2937;
+  font-weight: 600;
   text-decoration: none;
 
   &::before {

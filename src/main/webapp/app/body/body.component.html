@@ -27,7 +27,7 @@
         <!-- Notifications -->
         <button mat-icon-button [matMenuTriggerFor]="notifMenu" class="action-btn notification-btn" matTooltip="Notifications">
           <mat-icon>notifications</mat-icon>
-          <span class="notification-dot" *ngIf="allNotifNotDone && allNotifNotDone.length > 0"></span>
+          <span class="notification-dot" *ngIf="unreadCount() > 0"></span>
         </button>
 
         <!-- User -->
@@ -42,33 +42,43 @@
   <mat-menu #notifMenu="matMenu" class="modern-notif-menu">
     <div class="menu-header">
       <h4>Notifications</h4>
-      <button
-        mat-button
-        color="primary"
-        *ngIf="allNotifNotDone && allNotifNotDone.length > 0"
-        (click)="markAllAsRead()"
-        class="mark-read-btn"
-      >
+      <button mat-button *ngIf="unreadCount() > 0" (click)="markAllAsRead()" class="mark-read-btn">
         <mat-icon>done_all</mat-icon>
         Mark all read
       </button>
     </div>
     <div class="notif-list">
-      <div *ngIf="!allNotifNotDone || allNotifNotDone.length === 0" class="empty-state">
+      <div *ngIf="notifications().length === 0" class="empty-state">
         <mat-icon>notifications_off</mat-icon>
         <p>All caught up!</p>
         <span>No new notifications</span>
       </div>
-      <div *ngFor="let notif of allNotifNotDone" class="notif-item" [class.unread]="!notif.read" (click)="markAsRead(notif)">
-        <div class="notif-avatar" [style.background]="getColor(notif)">
-          <mat-icon>{{ getIcon(notif) }}</mat-icon>
+      <div *ngFor="let notif of notifications()" class="notif-item" [class.unread]="!notif.isRead" (click)="markAsRead(notif)">
+        <div class="notif-avatar">
+          @if (notif.employee?.user?.imageUrl; as avatarUrl) {
+            <img [src]="avatarUrl" alt="" class="notif-avatar-img" />
+          } @else {
+            <div class="notif-avatar-fallback" [style.background]="getColor(notif)">
+              <mat-icon>{{ getIcon(notif) }}</mat-icon>
+            </div>
+          }
         </div>
         <div class="notif-content">
-          <div class="notif-title">{{ notif.subject }}</div>
+          <div class="notif-title">
+            @if (notif.employee) {
+              <a [routerLink]="['/employee', notif.employee.id, 'view']" class="notif-employee-link" (click)="$event.stopPropagation()">
+                {{ notif.employee.firstName }} {{ notif.employee.lastName }}
+              </a>
+              <span class="notif-title-separator">&middot;</span>
+              <span class="notif-title-text">{{ notif.title }}</span>
+            } @else {
+              <span class="notif-title-text">{{ notif.title }}</span>
+            }
+          </div>
           <div class="notif-message">{{ notif.message }}</div>
-          <div class="notif-time">{{ getTimeAgo(notif.createdAt) }}</div>
+          <div class="notif-time">{{ getTimeAgo(notif.createdDate) }}</div>
         </div>
-        <div class="notif-indicator" *ngIf="!notif.read"></div>
+        <div class="notif-indicator" *ngIf="!notif.isRead"></div>
       </div>
     </div>
     <div class="menu-footer">
@@ -102,7 +112,7 @@
       <mat-icon>settings_outline</mat-icon>
       <span>Settings</span>
     </button>
-    <button mat-menu-item>
+    <button mat-menu-item (click)="goToHelpAndSupport()">
       <mat-icon>help_outline</mat-icon>
       <span>Help & Support</span>
     </button>

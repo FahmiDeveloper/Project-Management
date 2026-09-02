@@ -4,7 +4,7 @@
       "home": {
         "title": "Tasks comments",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Task Comment",
+        "createLabel": "New task comment",
         "createOrEditLabel": "Create or edit a Task Comment",
         "notFound": "No Task Comments found"
       },

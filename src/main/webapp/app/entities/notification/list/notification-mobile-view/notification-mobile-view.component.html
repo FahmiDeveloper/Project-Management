@@ -21,16 +21,24 @@
 
           <div class="feed-row-body">
             <div class="feed-row-line1">
-              <span class="feed-title" [class.feed-title-unread]="!notification.isRead">{{ notification.title }}</span>
+              @if (notification.employee) {
+                <a
+                  [routerLink]="['/employee', notification.employee.id, 'view']"
+                  class="feed-title"
+                  [class.feed-title-unread]="!notification.isRead"
+                >
+                  {{ notification.employee.firstName }} {{ notification.employee.lastName }}
+                </a>
+              } @else {
+                <span class="feed-title" [class.feed-title-unread]="!notification.isRead">{{ notification.title }}</span>
+              }
               @if (!notification.isRead) {
                 <span class="unread-dot"></span>
               }
             </div>
 
             @if (notification.employee) {
-              <a [routerLink]="['/employee', notification.employee.id, 'view']" class="feed-employee-link">
-                {{ notification.employee.firstName }} {{ notification.employee.lastName }}
-              </a>
+              <span class="feed-employee-link">{{ notification.title }}</span>
             }
 
             @if (notification.message) {

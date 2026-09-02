@@ -35,13 +35,6 @@
         />
       </div>
 
-      <div class="form-check mb-3">
-        <label class="form-check-label" for="rememberMe">
-          <input class="form-check-input" type="checkbox" name="rememberMe" id="rememberMe" formControlName="rememberMe" />
-          <span jhiTranslate="login.form.rememberme">Remember me</span>
-        </label>
-      </div>
-
       <button type="submit" class="btn btn-primary w-100" data-cy="submit" jhiTranslate="login.form.button" [disabled]="loginForm.invalid">
         Sign in
       </button>

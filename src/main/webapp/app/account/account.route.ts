@@ -8,6 +8,7 @@ import profileRoute from './profile/profile.route';
 import registerRoute from './register/register.route';
 import settingsRoute from './settings/settings.route';
 import verifyCodeRoute from './verify-code/verify-code.route';
+import helpSupportRoute from './help-support/help-support.route';
 
 const accountRoutes: Routes = [
   activateRoute,
@@ -17,6 +18,7 @@ const accountRoutes: Routes = [
   profileRoute,
   registerRoute,
   settingsRoute,
+  helpSupportRoute,
   verifyCodeRoute,
 ];
 
