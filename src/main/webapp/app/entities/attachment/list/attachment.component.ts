@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
@@ -28,6 +28,7 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'jhi-attachment',
@@ -48,6 +49,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
+    MatMenuModule,
   ],
 })
 export class AttachmentComponent implements OnInit, OnDestroy {
@@ -55,7 +57,7 @@ export class AttachmentComponent implements OnInit, OnDestroy {
   attachments = signal<IAttachment[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['fileName', 'fileUrl', 'fileType', 'fileSize', 'uploadedDate', 'task', 'employee', 'actions'];
+  displayedColumns: string[] = ['fileName', 'fileUrl', 'fileType', 'fileSize', 'uploadedDate', 'task', 'employee'];
 
   // ---- File name filter (debounced text input) ----
   filterFileName = signal<string>('');
@@ -100,6 +102,14 @@ export class AttachmentComponent implements OnInit, OnDestroy {
   protected ngZone = inject(NgZone);
   protected readonly taskService = inject(TaskService);
   protected readonly employeeService = inject(EmployeeService);
+
+  // Right-click context menu (view/edit/delete moved here instead of an always-visible
+  // "actions" column), mirroring sprint/project/employee/task/milestone/department/client/
+  // project-member/task-comment-desktop-view. mat-menu has no "open at x/y" API, so the
+  // standard approach is a hidden trigger element whose position we move to the cursor,
+  // then open it programmatically.
+  @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
+  contextMenuPosition = { x: 0, y: 0 };
 
   trackId = (item: IAttachment): number => this.attachmentService.getAttachmentIdentifier(item);
 
@@ -171,6 +181,14 @@ export class AttachmentComponent implements OnInit, OnDestroy {
     this.employeeSearchTerm.set('');
     this.page = 1;
     this.load();
+  }
+
+  onRowContextMenu(event: MouseEvent, attachment: IAttachment): void {
+    event.preventDefault();
+    this.contextMenuPosition = { x: event.clientX, y: event.clientY };
+    this.contextMenu.menuData = { attachment };
+    this.contextMenu.menu?.focusFirstItem('mouse');
+    this.contextMenu.openMenu();
   }
 
   delete(attachment: IAttachment): void {

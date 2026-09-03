@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { IMilestone } from '../../milestone.model';
 
@@ -15,7 +16,16 @@ import { IMilestone } from '../../milestone.model';
   selector: 'jhi-milestone-mobile-view',
   templateUrl: './milestone-mobile-view.component.html',
   styleUrls: ['./milestone-mobile-view.component.scss'],
-  imports: [RouterModule, SharedModule, FormatMediumDatePipe, MatCardModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    RouterModule,
+    SharedModule,
+    FormatMediumDatePipe,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+  ],
 })
 export class MilestoneMobileViewComponent {
   @Input({ required: true }) milestones!: Signal<IMilestone[]>;

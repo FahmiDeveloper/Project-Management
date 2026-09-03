@@ -25,8 +25,12 @@
     opacity: 1;
   }
 
-  .actions-cell {
-    white-space: nowrap;
+  .checklist-row {
+    cursor: context-menu;
+
+    &:hover {
+      background-color: var(--app-hover-bg);
+    }
   }
 }
 

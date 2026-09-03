@@ -10,7 +10,6 @@ import { forkJoin } from 'rxjs';
 import { ActivityLogService } from 'app/entities/activity-log/service/activity-log.service';
 import { AttachmentService } from 'app/entities/attachment/service/attachment.service';
 import { DashboardService } from 'app/entities/dashboard/service/dashboard.service';
-import { NotificationService } from 'app/entities/notification/service/notification.service';
 import { ProjectService } from 'app/entities/project/service/project.service';
 import { TaskCommentService } from 'app/entities/task-comment/service/task-comment.service';
 import { TaskService } from 'app/entities/task/service/task.service';
@@ -31,7 +30,6 @@ export class EmployeeDeleteDialogComponent implements OnInit {
   protected activityLogService = inject(ActivityLogService);
   protected attachmentService = inject(AttachmentService);
   protected dashboardService = inject(DashboardService);
-  protected notificationService = inject(NotificationService);
   protected projectMemberService = inject(ProjectMemberService);
   protected projectService = inject(ProjectService);
   protected taskCommentService = inject(TaskCommentService);
@@ -50,7 +48,6 @@ export class EmployeeDeleteDialogComponent implements OnInit {
       activityLogs: this.activityLogService.count({ employeeId: id }),
       attachments: this.attachmentService.count({ employeeId: id }),
       dashboards: this.dashboardService.count({ employeeId: id }),
-      notifications: this.notificationService.count({ employeeId: id }),
       members: this.projectMemberService.count({ employeeId: id }),
       projects: this.projectService.count({ managerId: id }),
       taskComments: this.taskCommentService.count({ employeeId: id }),
@@ -58,18 +55,7 @@ export class EmployeeDeleteDialogComponent implements OnInit {
       taskscreatedBy: this.taskService.count({ createdById: id }),
       timeEntries: this.timeEntryService.count({ employeeId: id }),
     }).subscribe(
-      ({
-        activityLogs,
-        attachments,
-        dashboards,
-        notifications,
-        members,
-        projects,
-        taskComments,
-        tasksassignedTo,
-        taskscreatedBy,
-        timeEntries,
-      }) => {
+      ({ activityLogs, attachments, dashboards, members, projects, taskComments, tasksassignedTo, taskscreatedBy, timeEntries }) => {
         if ((activityLogs.body ?? 0) > 0) {
           this.messages.push({ message: `Activity logs list has ${activityLogs.body} row(s) with this employee and cannot be deleted.` });
         }
@@ -78,9 +64,6 @@ export class EmployeeDeleteDialogComponent implements OnInit {
         }
         if ((dashboards.body ?? 0) > 0) {
           this.messages.push({ message: `Dashboards list has ${dashboards.body} row(s) with this employee and cannot be deleted.` });
-        }
-        if ((notifications.body ?? 0) > 0) {
-          this.messages.push({ message: `Notifications list has ${notifications.body} row(s) with this employee and cannot be deleted.` });
         }
         if ((members.body ?? 0) > 0) {
           this.messages.push({ message: `Projects members list has ${members.body} row(s) with this employee and cannot be deleted.` });

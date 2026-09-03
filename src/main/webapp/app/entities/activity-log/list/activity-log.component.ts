@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
@@ -26,6 +26,7 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'jhi-activity-log',
@@ -46,6 +47,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
+    MatMenuModule,
   ],
 })
 export class ActivityLogComponent implements OnInit {
@@ -53,7 +55,7 @@ export class ActivityLogComponent implements OnInit {
   activityLogs = signal<IActivityLog[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['action', 'entityName', 'entityId', 'description', 'createdDate', 'employee', 'actions'];
+  displayedColumns: string[] = ['action', 'entityName', 'entityId', 'description', 'createdDate', 'employee'];
 
   // ---- Employee filter (searchable autocomplete) ----
   filterEmployeeId = signal<number | null>(null);
@@ -80,6 +82,13 @@ export class ActivityLogComponent implements OnInit {
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
   protected readonly employeeService = inject(EmployeeService);
+
+  // Right-click context menu (view/edit/delete moved here instead of an always-visible
+  // "actions" column), mirroring sprint/project/employee/task/milestone/department-desktop-view.
+  // mat-menu has no "open at x/y" API, so the standard approach is a hidden trigger
+  // element whose position we move to the cursor, then open it programmatically.
+  @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
+  contextMenuPosition = { x: 0, y: 0 };
 
   trackId = (item: IActivityLog): number => this.activityLogService.getActivityLogIdentifier(item);
 
@@ -116,6 +125,14 @@ export class ActivityLogComponent implements OnInit {
     this.employeeSearchTerm.set('');
     this.page = 1;
     this.load();
+  }
+
+  onRowContextMenu(event: MouseEvent, activityLog: IActivityLog): void {
+    event.preventDefault();
+    this.contextMenuPosition = { x: event.clientX, y: event.clientY };
+    this.contextMenu.menuData = { activityLog };
+    this.contextMenu.menu?.focusFirstItem('mouse');
+    this.contextMenu.openMenu();
   }
 
   delete(activityLog: IActivityLog): void {

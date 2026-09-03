@@ -8,6 +8,23 @@
   border-radius: 8px;
 }
 
+.employee-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-right: 8px;
+
+  mat-card-header {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.card-menu-btn {
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
 .employee-card-row {
   display: flex;
   align-items: center;
@@ -23,7 +40,7 @@
 .employee-note {
   margin: 8px 0 0;
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.7);
+  color: var(--app-text-secondary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -54,5 +71,5 @@
   align-items: center;
   gap: 4px;
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--app-text-secondary);
 }

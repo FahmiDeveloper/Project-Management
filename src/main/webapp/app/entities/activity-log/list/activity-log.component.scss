@@ -32,8 +32,12 @@
     text-overflow: ellipsis;
   }
 
-  .actions-cell {
-    white-space: nowrap;
+  .activity-log-row {
+    cursor: context-menu;
+
+    &:hover {
+      background-color: var(--app-hover-bg);
+    }
   }
 }
 
@@ -72,4 +76,8 @@
 .activity-log-filter-clear-btn {
   height: 56px;
   width: 56px;
+}
+
+::ng-deep .mat-mdc-tooltip .mdc-tooltip__surface {
+  font-size: 14px;
 }

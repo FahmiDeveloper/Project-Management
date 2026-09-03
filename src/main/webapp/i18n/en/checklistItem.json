@@ -4,7 +4,7 @@
       "home": {
         "title": "Checklists items",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Checklist Item",
+        "createLabel": "New checklist Item",
         "createOrEditLabel": "Create or edit a Checklist Item",
         "notFound": "No Checklist Items found"
       },

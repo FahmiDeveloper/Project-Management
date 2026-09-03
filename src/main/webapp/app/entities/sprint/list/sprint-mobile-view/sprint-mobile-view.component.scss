@@ -10,6 +10,23 @@
   border-radius: 8px;
 }
 
+.sprint-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-right: 8px;
+
+  mat-card-header {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.card-menu-btn {
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
 .sprint-card-row {
   display: flex;
   align-items: center;
@@ -18,10 +35,13 @@
   flex-wrap: wrap;
 }
 
+// Was hardcoded to rgba(0,0,0,0.7) (light-mode-only) - unreadable against a dark
+// card. --app-text-secondary already flips correctly between themes via the
+// :root/.theme-dark tokens in global.scss.
 .sprint-goal {
   margin: 8px 0 0;
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.7);
+  color: var(--app-text-secondary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -33,23 +53,26 @@
   justify-content: space-between;
 }
 
+// Was hardcoded to rgba(0,0,0,0.6) - same fix as above.
 .sprint-start-date {
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--app-text-secondary);
 }
 
 .sprint-stats {
   gap: 16px;
 }
 
+// Was hardcoded to #37474f/#263238 (light-mode-only dark grays) - same fix as
+// the Task card's stat-line.
 .stat-line {
   font-size: 12px;
-  color: #37474f;
+  color: var(--app-text-secondary);
 
   strong {
     font-weight: 600;
     margin-right: 4px;
-    color: #263238;
+    color: var(--app-text-primary);
   }
 }
 
@@ -69,12 +92,13 @@
   opacity: 0.7;
 }
 
+// Was hardcoded to rgba(0,0,0,0.6) - same fix as above.
 .sprint-end-date {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--app-text-secondary);
 }
 
 .status-chip {

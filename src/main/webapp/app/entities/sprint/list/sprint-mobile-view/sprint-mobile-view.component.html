@@ -1,9 +1,36 @@
 <div class="sprint-mobile-list">
   @for (sprint of sprints(); track sprint.id) {
     <mat-card class="sprint-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>{{ sprint.name }}</mat-card-title>
-      </mat-card-header>
+      <div class="sprint-card-header">
+        <mat-card-header>
+          <mat-card-title>{{ sprint.name }}</mat-card-title>
+        </mat-card-header>
+
+        <button
+          mat-icon-button
+          class="card-menu-btn"
+          [matMenuTriggerFor]="cardMenu"
+          aria-label="Sprint actions"
+          data-cy="entityActionsButton"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <mat-menu #cardMenu="matMenu">
+          <a mat-menu-item [routerLink]="['/sprint', sprint.id, 'view']" data-cy="entityDetailsButton">
+            <mat-icon class="menu-icon-view">visibility</mat-icon>
+            <span>View</span>
+          </a>
+          <a mat-menu-item [routerLink]="['/sprint', sprint.id, 'edit']" data-cy="entityEditButton">
+            <mat-icon class="menu-icon-edit">edit</mat-icon>
+            <span>Edit</span>
+          </a>
+          <button mat-menu-item (click)="delete.emit(sprint)" data-cy="entityDeleteButton">
+            <mat-icon class="menu-icon-delete">delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
 
       <mat-card-content>
         <div class="sprint-card-row">
@@ -43,18 +70,6 @@
           <span class="stat-line"><strong>Velocity:</strong> {{ sprint.velocity }}</span>
         </div>
       </mat-card-content>
-
-      <mat-card-actions align="end">
-        <a mat-icon-button color="primary" [routerLink]="['/sprint', sprint.id, 'view']" data-cy="entityDetailsButton" matTooltip="View">
-          <mat-icon>visibility</mat-icon>
-        </a>
-        <a mat-icon-button color="accent" [routerLink]="['/sprint', sprint.id, 'edit']" data-cy="entityEditButton" matTooltip="Edit">
-          <mat-icon>edit</mat-icon>
-        </a>
-        <button mat-icon-button color="warn" (click)="delete.emit(sprint)" data-cy="entityDeleteButton" matTooltip="Delete">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </mat-card-actions>
     </mat-card>
   }
 </div>
