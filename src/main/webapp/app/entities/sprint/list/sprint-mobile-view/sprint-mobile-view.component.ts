@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { ISprint } from '../../sprint.model';
 
@@ -15,7 +16,16 @@ import { ISprint } from '../../sprint.model';
   selector: 'jhi-sprint-mobile-view',
   templateUrl: './sprint-mobile-view.component.html',
   styleUrls: ['./sprint-mobile-view.component.scss'],
-  imports: [RouterModule, SharedModule, FormatMediumDatePipe, MatCardModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    RouterModule,
+    SharedModule,
+    FormatMediumDatePipe,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+  ],
 })
 export class SprintMobileViewComponent {
   @Input({ required: true }) sprints!: Signal<ISprint[]>;

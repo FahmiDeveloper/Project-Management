@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Employees should be deletable even when they have sent notifications.
+        Notifications are a historical/activity log, not an owned record like
+        Attachments - deleting the employee should detach the notification
+        (employee_id -> null) rather than being blocked or cascading the delete.
+        The original fk_notification__employee_id (20260630174852-2) had no
+        onDelete rule, which defaults to RESTRICT and blocks employee deletion
+        at the DB level. This replaces it with ON DELETE SET NULL.
+    -->
+    <changeSet id="20260903000000-1" author="fehmi">
+        <dropForeignKeyConstraint baseTableName="notification" constraintName="fk_notification__employee_id"/>
+
+        <addForeignKeyConstraint baseColumnNames="employee_id"
+                                 baseTableName="notification"
+                                 constraintName="fk_notification__employee_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="employee"
+                                 onDelete="SET NULL"
+                                 />
+    </changeSet>
+</databaseChangeLog>

@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { ITimeEntry } from '../../time-entry.model';
 
@@ -24,6 +25,7 @@ import { ITimeEntry } from '../../time-entry.model';
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
+    MatMenuModule,
   ],
 })
 export class TimeEntryMobileViewComponent {

@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { IChecklist } from '../../checklist.model';
 
@@ -15,7 +16,16 @@ import { IChecklist } from '../../checklist.model';
   selector: 'jhi-checklist-mobile-view',
   templateUrl: './checklist-mobile-view.component.html',
   styleUrls: ['./checklist-mobile-view.component.scss'],
-  imports: [RouterModule, SharedModule, FormatMediumDatetimePipe, MatCardModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    RouterModule,
+    SharedModule,
+    FormatMediumDatetimePipe,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+  ],
 })
 export class ChecklistMobileViewComponent {
   @Input({ required: true }) checklists!: Signal<IChecklist[]>;

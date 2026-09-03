@@ -8,6 +8,23 @@
   border-radius: 8px;
 }
 
+.checklist-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-right: 8px;
+
+  mat-card-header {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.card-menu-btn {
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
 .checklist-card-row {
   display: flex;
   align-items: center;

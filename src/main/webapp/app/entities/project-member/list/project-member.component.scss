@@ -25,8 +25,12 @@
     opacity: 1; /* Keeps full opacity to match the bold white text */
   }
 
-  .actions-cell {
-    white-space: nowrap;
+  .project-member-row {
+    cursor: context-menu;
+
+    &:hover {
+      background-color: var(--app-hover-bg);
+    }
   }
 
   .role-chip {

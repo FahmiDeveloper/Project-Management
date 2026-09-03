@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { Observable, Subject, Subscription, combineLatest, debounceTime, distinctUntilChanged, filter, tap } from 'rxjs';
@@ -21,6 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'jhi-client',
@@ -39,6 +40,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
+    MatMenuModule,
   ],
 })
 export class ClientComponent implements OnInit, OnDestroy {
@@ -46,7 +48,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   clients = signal<IClient[]>([]);
   isLoading = false;
 
-  displayedColumns: string[] = ['companyName', 'contactName', 'email', 'phone', 'address', 'city', 'country', 'website', 'note', 'actions'];
+  displayedColumns: string[] = ['companyName', 'contactName', 'email', 'phone', 'address', 'city', 'country', 'website', 'note'];
 
   // ---- Company name filter (debounced text input) ----
   filterCompanyName = signal<string>('');
@@ -65,6 +67,13 @@ export class ClientComponent implements OnInit, OnDestroy {
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+
+  // Right-click context menu (view/edit/delete moved here instead of an always-visible
+  // "actions" column), mirroring sprint/project/employee/task/milestone/department-desktop-view.
+  // mat-menu has no "open at x/y" API, so the standard approach is a hidden trigger
+  // element whose position we move to the cursor, then open it programmatically.
+  @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
+  contextMenuPosition = { x: 0, y: 0 };
 
   trackId = (item: IClient): number => this.clientService.getClientIdentifier(item);
 
@@ -96,6 +105,14 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.filterCompanyName.set('');
     this.page = 1;
     this.load();
+  }
+
+  onRowContextMenu(event: MouseEvent, client: IClient): void {
+    event.preventDefault();
+    this.contextMenuPosition = { x: event.clientX, y: event.clientY };
+    this.contextMenu.menuData = { client };
+    this.contextMenu.menu?.focusFirstItem('mouse');
+    this.contextMenu.openMenu();
   }
 
   delete(client: IClient): void {

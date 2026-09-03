@@ -34,8 +34,12 @@
     text-overflow: ellipsis;
   }
 
-  .actions-cell {
-    white-space: nowrap;
+  .sprint-row {
+    cursor: context-menu;
+
+    &:hover {
+      background-color: var(--app-hover-bg);
+    }
   }
 
   .status-chip {

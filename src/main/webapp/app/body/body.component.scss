@@ -694,10 +694,29 @@ $radius: 12px;
         min-width: 0;
 
         .notif-title {
-          font-size: 0.9rem;
+          // Employee name and title text now have their own explicit sizes below
+          // (matching the notifications list, whose .feed-title/.feed-employee-link
+          // class names are actually reversed from what they display - .feed-title is
+          // the employee name and .feed-employee-link is the title text). This
+          // container-level size is just a fallback/base for layout.
+          font-size: 14.5px;
           font-weight: 500;
           color: var(--app-text-primary);
           word-wrap: break-word;
+        }
+
+        .notif-title-separator {
+          color: var(--app-text-muted);
+          margin: 0 4px;
+        }
+
+        // The actual notification title (e.g. "Hello 👋") - was inheriting the
+        // container's 14.5px, rendering visibly larger than the same text in the
+        // notifications list. The list's equivalent element is (confusingly) named
+        // .feed-employee-link, styled at 12.5px/600 - matched here exactly.
+        .notif-title-text {
+          font-size: 12.5px;
+          color: var(--app-text-primary);
         }
 
         .notif-message {
@@ -1370,16 +1389,21 @@ button:focus-visible,
   }
 }
 
+// This renders the employee NAME (see body.component.html), so it should match the
+// notifications list's employee-name element - which is (confusingly) named
+// .feed-title, styled at 14.5px/500/var(--app-text-primary). The actual notification
+// title text is handled separately by .notif-title-text above.
 .notif-employee-link {
-  color: #3f51b5 !important;
-  text-decoration: none;
+  font-size: 14.5px;
+  color: var(--app-text-primary) !important;
   font-weight: 500;
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;
   }
 
   &:visited {
-    color: #3f51b5 !important;
+    color: var(--app-text-primary) !important;
   }
 }

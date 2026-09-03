@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { ITask } from '../../task.model';
 
@@ -25,6 +26,7 @@ import { ITask } from '../../task.model';
     MatButtonModule,
     MatTooltipModule,
     MatProgressBarModule,
+    MatMenuModule,
   ],
 })
 export class TaskMobileViewComponent {

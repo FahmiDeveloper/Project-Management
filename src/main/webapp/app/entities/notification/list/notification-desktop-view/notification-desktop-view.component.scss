@@ -9,7 +9,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #6b7280;
+  // Was a fixed #6b7280 - matches the dropdown's group headers, and stays legible
+  // against the dark card background instead of sinking into it.
+  color: var(--app-text-secondary);
   margin-bottom: 8px;
   padding-left: 4px;
 }
@@ -20,8 +22,11 @@
   gap: 14px;
   padding: 12px 14px;
   border-radius: 8px;
-  background-color: #fff;
-  border: 1px solid #eef0f3;
+  // Was a hardcoded #fff/#eef0f3 - the row stayed white even in dark mode since
+  // nothing here reacted to .theme-dark. Using the same --app-card-bg/--app-border-color
+  // tokens as the dropdown notification panel keeps both surfaces in sync.
+  background-color: var(--app-card-bg);
+  border: 1px solid var(--app-border-color);
   border-left: 4px solid transparent;
   margin-bottom: 6px;
   transition:
@@ -29,7 +34,7 @@
     box-shadow 0.15s ease;
 
   &:hover {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--app-shadow-sm);
   }
 
   &[data-type='desktop'] {
@@ -42,7 +47,10 @@
 }
 
 .feed-row-unread {
-  background-color: #f5f6fb;
+  // Matches the dropdown panel's unread tint (rgba(102, 126, 234, 0.04)) - a
+  // translucent overlay on top of --app-card-bg reads correctly in both themes
+  // instead of a flat light-mode-only hex.
+  background-color: rgba(102, 126, 234, 0.06);
 }
 
 .feed-row-avatar {
@@ -54,7 +62,7 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--app-border-color);
   display: block;
 }
 
@@ -83,7 +91,7 @@
 .feed-title {
   font-size: 14.5px;
   font-weight: 500;
-  color: #1f2937;
+  color: var(--app-text-primary);
   // Now doubles as the employee-name link (see .html) - resets the browser's
   // default anchor underline so it still reads as plain text at rest, and adds
   // a hover cue so it's clear it's clickable.
@@ -96,25 +104,26 @@
 
 .feed-title-unread {
   font-weight: 700;
-  color: #3f51b5;
+  // Was a fixed #3f51b5 - too dark/low-contrast against the dark card background.
+  // Matches the dropdown panel's unread rows, which only bold the title rather than
+  // recolor it.
+  color: var(--app-text-primary);
 }
 
 .feed-employee-link {
   font-size: 12.5px;
-  // Was rgba(0,0,0,0.55) - too faint now that this slot holds the title text
-  // instead of the employee name. Darkened and bolded for readability.
-  color: #1f2937;
+  color: var(--app-text-primary);
   font-weight: 600;
   text-decoration: none;
 
   &::before {
     content: '·';
     margin-right: 8px;
-    color: rgba(0, 0, 0, 0.3);
+    color: var(--app-text-muted);
   }
 
   &:hover {
-    color: #3f51b5;
+    color: var(--app-active-color);
     text-decoration: underline;
   }
 }
@@ -122,7 +131,7 @@
 .feed-message {
   margin-top: 4px;
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.65);
+  color: var(--app-text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -160,7 +169,7 @@
 
 .feed-time {
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--app-text-muted);
   white-space: nowrap;
 }
 
@@ -175,5 +184,29 @@
 
   &.read-false {
     color: #b0b6c0;
+  }
+}
+
+// .theme-dark is applied on <html>, outside this component's own template - Angular's
+// emulated encapsulation still lets a descendant selector like this match, since only
+// the rightmost compound (the class within this component) needs the scoping
+// attribute, not the ancestor. Solid light badge backgrounds (#eceff1/#e3ecfb/#e3f6e9)
+// read as near-white blocks on the dark card, so they're swapped for translucent
+// tints of the same hue - readable on the dark surface while keeping each type's
+// distinct color.
+.theme-dark {
+  .type-chip {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--app-text-secondary);
+
+    &[data-type='desktop'] {
+      background-color: rgba(26, 86, 176, 0.25);
+      color: #8ab4f8;
+    }
+
+    &[data-type='mobile'] {
+      background-color: rgba(30, 126, 52, 0.25);
+      color: #81c995;
+    }
   }
 }

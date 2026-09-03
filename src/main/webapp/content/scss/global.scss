@@ -59,6 +59,36 @@ Dark theme - direct overrides for Material's OWN generated classes
     color: var(--app-text-primary);
   }
 
+  // Bootstrap modals (e.g. delete-confirmation dialogs) - .modal-content has no
+  // themed background anywhere, so the h1-h6 rule above turns modal-title
+  // near-white while it's still sitting on Bootstrap's default white modal
+  // background, making it unreadable. Give the whole modal shell the app's
+  // dark surface/text colors so it matches every other themed component.
+  .modal-content {
+    background-color: var(--app-card-bg);
+    color: var(--app-text-primary);
+  }
+
+  .modal-header,
+  .modal-footer {
+    border-color: var(--app-border-color);
+  }
+
+  // Bootstrap generates .text-danger with `color: ... !important` baked in (its
+  // text-color-variant mixin), so a plain override loses the cascade entirely -
+  // needs !important to win. Also swapped to a warmer coral-red with added
+  // weight: straight saturated reds (#f56565/#fc8181) read as muddy/low-contrast
+  // against the #1a202c modal surface even though they pass on paper.
+  .modal-body .text-danger {
+    color: #ff6b6b !important;
+    font-weight: 500;
+  }
+
+  .btn-close {
+    // Bootstrap's default close icon is a dark SVG - invisible on a dark modal
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
+
   // Tables (e.g. the Projects list) - row/cell background and text only; header rows
   // that set their own explicit brand color (like .project-mat-table's indigo header)
   // are untouched since that rule has higher selector specificity than this one.
@@ -108,6 +138,19 @@ Dark theme - direct overrides for Material's OWN generated classes
   .mdc-text-field--outlined .mdc-notched-outline__notch,
   .mdc-text-field--outlined .mdc-notched-outline__trailing {
     border-color: var(--app-input-border) !important;
+  }
+
+  // mat-checkbox (e.g. "Active" on Project Member, "Is Done" on Checklist Item entity
+  // forms) - the static indigo-pink theme bakes the unchecked box's frame color for
+  // light mode only (a low-opacity black), so the outline all but disappears against
+  // the dark card surface, and the adjacent label text was left to the browser default
+  // instead of the app's themed text color.
+  .mdc-checkbox__background {
+    border-color: var(--app-input-border) !important;
+  }
+
+  .mat-mdc-checkbox label {
+    color: var(--app-text-primary) !important;
   }
 
   // Dropdown/select overlay panels (mat-select options, mat-menu, mat-autocomplete)
@@ -239,8 +282,39 @@ Dark theme - direct overrides for Material's OWN generated classes
   // delete) are excluded so their own deliberate colors above aren't touched.
   .mat-mdc-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) .mdc-button__label,
   .mat-mdc-unelevated-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) .mdc-button__label,
+  .mat-mdc-outlined-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) .mdc-button__label,
+  .mat-mdc-outlined-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) .mat-icon,
   .mat-mdc-icon-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) .mat-icon {
     color: inherit !important;
+  }
+
+  // mat-stroked-button (e.g. the Cancel button on entity edit forms) - same static-
+  // color issue as everything above (label/icon fixed by the inherit rule right above,
+  // but the host itself was never given a color to inherit, and the default outline
+  // is a light gray that's nearly invisible against the dark surface).
+  .mat-mdc-outlined-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) {
+    color: var(--app-text-primary) !important;
+    border-color: var(--app-input-border) !important;
+  }
+
+  // Disabled mat-flat-button color="primary" (e.g. Save on entity forms while
+  // invalid/saving) - Material computes its disabled container/label colors from
+  // light-mode-only rgba(0,0,0,...) tokens by default, so both the faint background
+  // and the label sink into near-invisibility on a dark surface, discarding the
+  // primary color entirely rather than just dimming it. Several attempts at picking
+  // a separate muted color (gray, then a pastel indigo tint) didn't match what was
+  // wanted - the actual ask is for the SAME solid indigo/white-text look as any other
+  // enabled color="primary" button (e.g. "Change password"), just dimmed via opacity
+  // so the hue stays intact instead of being swapped for a desaturated tone.
+  .mat-mdc-unelevated-button:disabled,
+  .mat-mdc-unelevated-button.mdc-button--disabled {
+    background-color: #3f51b5 !important;
+    opacity: 0.55;
+
+    .mdc-button__label,
+    .mat-icon {
+      color: #ffffff !important;
+    }
   }
 
   // Still reported as unclear even with the inherit fix above - going straight to the
@@ -372,8 +446,30 @@ body {
 }
 
 /* ==============================================================
-Bootstrap tweaks
+Angular Material form fields
 ===============================================================*/
+
+// Unscoped (applies in both themes, not just .theme-dark) - Project.component's
+// filter fields set both a mat-label ("Client") and a native placeholder ("Search
+// client"). Material's current MDC-based form-field only floats the label up on
+// focus/value - unlike the old pre-MDC appearance, it does NOT auto-dock the label
+// just because a placeholder is present. So while empty & unfocused, the centered
+// label and the placeholder render in the same spot and visually collide. Hiding
+// the placeholder until focus lets the idle label own that space; the placeholder
+// then appears once the label has floated out of the way.
+.mat-mdc-form-field input::placeholder {
+  color: transparent;
+}
+
+.mat-mdc-form-field input:focus::placeholder {
+  // Angular Material injects its own MDC placeholder color at roughly the same
+  // specificity, so depending on stylesheet injection order it can still win over
+  // this rule without !important - and --app-text-secondary alone still read as
+  // too dim/gray, per the "still not clear" screenshot. --app-text-primary matches
+  // the brightness of the text you actually type, which reads clearly at a glance.
+  color: var(--app-text-primary) !important;
+  opacity: 0.7;
+}
 
 body,
 h1,
@@ -572,6 +668,28 @@ entity detail page css
       border-bottom: 1px solid #eee;
       padding: 0.5em 0;
       margin-left: 0;
+    }
+  }
+}
+
+// Entity detail pages (e.g. Project view) never set a color on dt/dd, so they
+// inherit Bootstrap's default near-black body text - invisible against the dark
+// surface, as reported. The dd row divider was also hardcoded to a light gray
+// (#eee) that barely reads on dark. Theming both, plus the id/client/manager
+// links inside dd which fall under the app-wide `a { color: #533f03 }` rule -
+// same dark-brown-on-dark issue as the Client/Manager table links fixed earlier.
+.theme-dark {
+  .jh-entity-details {
+    dt {
+      color: var(--app-text-primary);
+    }
+    dd {
+      color: var(--app-text-secondary);
+      border-bottom-color: var(--app-border-color);
+
+      a {
+        color: var(--app-text-primary);
+      }
     }
   }
 }

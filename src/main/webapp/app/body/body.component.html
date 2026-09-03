@@ -69,12 +69,17 @@
               <a [routerLink]="['/employee', notif.employee.id, 'view']" class="notif-employee-link" (click)="$event.stopPropagation()">
                 {{ notif.employee.firstName }} {{ notif.employee.lastName }}
               </a>
-              <span class="notif-title-separator">&middot;</span>
-              <span class="notif-title-text">{{ notif.title }}</span>
+              @if (!isMobile) {
+                <span class="notif-title-separator">&middot;</span>
+                <span class="notif-title-text">{{ notif.title }}</span>
+              }
             } @else {
               <span class="notif-title-text">{{ notif.title }}</span>
             }
           </div>
+          @if (notif.employee && isMobile) {
+            <div class="notif-title-text notif-title-below">{{ notif.title }}</div>
+          }
           <div class="notif-message">{{ notif.message }}</div>
           <div class="notif-time">{{ getTimeAgo(notif.createdDate) }}</div>
         </div>

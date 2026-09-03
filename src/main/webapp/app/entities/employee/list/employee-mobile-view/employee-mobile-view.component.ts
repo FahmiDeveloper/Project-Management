@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { IEmployee } from '../../employee.model';
 
@@ -15,7 +16,16 @@ import { IEmployee } from '../../employee.model';
   selector: 'jhi-employee-mobile-view',
   templateUrl: './employee-mobile-view.component.html',
   styleUrls: ['./employee-mobile-view.component.scss'],
-  imports: [RouterModule, SharedModule, FormatMediumDatePipe, MatCardModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    RouterModule,
+    SharedModule,
+    FormatMediumDatePipe,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+  ],
 })
 export class EmployeeMobileViewComponent {
   @Input({ required: true }) employees!: Signal<IEmployee[]>;
