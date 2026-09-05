@@ -150,6 +150,16 @@ export class DashboardComponent implements OnInit {
     Chart.register(...registerables);
   }
 
+  // Chart.js draws directly onto <canvas>, so it can't pick up theme colors
+  // via CSS the way the rest of the dashboard does - tick labels, legend
+  // labels, and grid lines must be given an explicit color at chart-creation
+  // time. Reading the live --app-* custom properties here (instead of a
+  // hardcoded hex) keeps the charts correct if the theme is toggled/changed,
+  // since these variables are re-set by the theme class on the root element.
+  private getThemeColor(cssVar: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
+  }
+
   trackId = (item: IDashboard): number => this.dashboardService.getDashboardIdentifier(item);
 
   ngOnInit(): void {
@@ -287,12 +297,18 @@ export class DashboardComponent implements OnInit {
           y: {
             beginAtZero: true,
             grid: {
-              color: 'rgba(0, 0, 0, 0.04)',
+              color: this.getThemeColor('--app-border-color'),
+            },
+            ticks: {
+              color: this.getThemeColor('--app-text-secondary'),
             },
           },
           x: {
             grid: {
               display: false,
+            },
+            ticks: {
+              color: this.getThemeColor('--app-text-secondary'),
             },
           },
         },
@@ -330,6 +346,7 @@ export class DashboardComponent implements OnInit {
               padding: 12,
               usePointStyle: true,
               pointStyle: 'circle',
+              color: this.getThemeColor('--app-text-secondary'),
               font: {
                 size: 11,
               },

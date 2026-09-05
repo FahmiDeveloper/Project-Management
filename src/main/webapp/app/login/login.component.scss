@@ -10,7 +10,7 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   justify-content: center !important;
   align-items: center !important;
   padding: 1rem;
-  background: #f5f7fa;
+  background: var(--app-hover-bg);
   position: fixed;
   top: 0;
   left: 0;
@@ -21,17 +21,17 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 .login-box-container {
   width: 460px !important;
   max-width: 100% !important;
-  background: white;
+  background: var(--app-card-bg);
   border-radius: 16px;
   padding: 2.5rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: var(--app-shadow-lg);
+  border: 1px solid var(--app-border-color);
   animation: fadeIn 0.4s ease;
 
   h1 {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #2d3748;
+    color: var(--app-text-primary);
     margin-bottom: 1.5rem;
     text-align: center;
   }
@@ -40,15 +40,16 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     width: 100% !important;
     padding: 0.7rem 0.85rem;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--app-border-color);
     transition: all 0.3s ease;
     font-size: 0.95rem;
-    background: #f7fafc;
+    background: var(--app-hover-bg);
+    color: var(--app-text-primary);
 
     &:focus {
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-      background: white;
+      background: var(--app-card-bg);
       outline: none;
     }
 
@@ -60,7 +61,7 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   label {
     font-weight: 500;
     font-size: 0.9rem;
-    color: #2d3748;
+    color: var(--app-text-primary);
     margin-bottom: 0.3rem;
   }
 
@@ -71,7 +72,7 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     font-weight: 600;
     font-size: 1rem;
     border-radius: 8px;
-    background: $primary-gradient;
+    background: var(--app-primary-gradient, #{$primary-gradient});
     border: none;
     color: white;
     transition: all 0.3s ease;
@@ -103,18 +104,18 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     font-size: 0.9rem;
 
     &.alert-danger {
-      background: #fff5f5;
-      border: 1px solid #feb2b2;
-      color: #c53030;
+      background: rgba(245, 101, 101, 0.12);
+      border: 1px solid rgba(245, 101, 101, 0.35);
+      color: var(--app-text-primary);
     }
 
     &.alert-warning {
-      background: #fffbeb;
-      border: 1px solid #fcd34d;
-      color: #92400e;
+      background: rgba(252, 211, 77, 0.14);
+      border: 1px solid rgba(252, 211, 77, 0.4);
+      color: var(--app-text-primary);
 
       a {
-        color: #667eea;
+        color: #7f9cf5;
         text-decoration: none;
         font-weight: 500;
 
@@ -134,7 +135,7 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       width: 18px;
       height: 18px;
       border-radius: 4px;
-      border: 2px solid #e2e8f0;
+      border: 2px solid var(--app-border-color);
       cursor: pointer;
       transition: all 0.2s ease;
 
@@ -150,7 +151,7 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
     .form-check-label {
       font-size: 0.9rem;
-      color: #4a5568;
+      color: var(--app-text-secondary);
       cursor: pointer;
     }
   }
@@ -241,60 +242,6 @@ $primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     .btn-primary {
       padding: 0.5rem;
       font-size: 0.85rem;
-    }
-  }
-}
-
-// Dark mode support
-@media (prefers-color-scheme: dark) {
-  .login-page-viewport {
-    background: #1a202c;
-  }
-
-  .login-box-container {
-    background: #2d3748;
-    border-color: rgba(255, 255, 255, 0.05);
-
-    h1 {
-      color: #e2e8f0;
-    }
-
-    label {
-      color: #e2e8f0;
-    }
-
-    .form-control {
-      background: #1a202c;
-      border-color: #4a5568;
-      color: #e2e8f0;
-
-      &:focus {
-        background: #2d3748;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-      }
-    }
-
-    .form-check .form-check-label {
-      color: #a0aec0;
-    }
-
-    .alert {
-      &.alert-danger {
-        background: #742a2a;
-        border-color: #9b2c2c;
-        color: #feb2b2;
-      }
-
-      &.alert-warning {
-        background: #744210;
-        border-color: #9b6b2c;
-        color: #fcd34d;
-
-        a {
-          color: #7f9cf5;
-        }
-      }
     }
   }
 }

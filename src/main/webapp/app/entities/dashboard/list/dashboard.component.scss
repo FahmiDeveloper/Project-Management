@@ -15,12 +15,12 @@
       h1 {
         font-size: 1.8rem;
         font-weight: 700;
-        color: #2d3748;
+        color: var(--app-text-primary);
         margin: 0 0 4px 0;
       }
 
       p {
-        color: #718096;
+        color: var(--app-text-secondary);
         margin: 0;
         font-size: 0.95rem;
       }
@@ -47,18 +47,18 @@
     margin-bottom: 30px;
 
     .stat-card {
-      background: white;
+      background: var(--app-card-bg);
       border-radius: 12px;
       padding: 20px;
       display: flex;
       align-items: center;
       gap: 16px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-      border: 1px solid rgba(0, 0, 0, 0.04);
+      box-shadow: var(--app-shadow-sm);
+      border: 1px solid var(--app-border-color);
       transition: all 0.3s ease;
 
       &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--app-shadow-md);
         transform: translateY(-2px);
       }
 
@@ -91,14 +91,14 @@
           display: block;
           font-size: 2rem;
           font-weight: 700;
-          color: #2d3748;
+          color: var(--app-text-primary);
           line-height: 1.2;
         }
 
         .stat-label {
           display: block;
           font-size: 0.9rem;
-          color: #718096;
+          color: var(--app-text-secondary);
           margin-top: 2px;
           font-weight: 500;
         }
@@ -144,11 +144,11 @@
     margin-bottom: 30px;
 
     .chart-card {
-      background: white;
+      background: var(--app-card-bg);
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-      border: 1px solid rgba(0, 0, 0, 0.04);
+      box-shadow: var(--app-shadow-sm);
+      border: 1px solid var(--app-border-color);
 
       .chart-header {
         display: flex;
@@ -160,13 +160,14 @@
           margin: 0;
           font-size: 1.1rem;
           font-weight: 600;
-          color: #2d3748;
+          color: var(--app-text-primary);
         }
 
         .chart-badge {
           font-size: 0.8rem;
-          color: #667eea;
-          background: rgba(102, 126, 234, 0.08);
+          font-weight: 500;
+          color: var(--app-text-primary);
+          background: rgba(102, 126, 234, 0.25);
           padding: 4px 12px;
           border-radius: 12px;
         }
@@ -194,11 +195,11 @@
 
     .activity-card,
     .tasks-card {
-      background: white;
+      background: var(--app-card-bg);
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-      border: 1px solid rgba(0, 0, 0, 0.04);
+      box-shadow: var(--app-shadow-sm);
+      border: 1px solid var(--app-border-color);
       height: fit-content;
       min-width: 0;
       overflow: hidden;
@@ -213,13 +214,23 @@
           margin: 0;
           font-size: 1.1rem;
           font-weight: 600;
-          color: #2d3748;
+          color: var(--app-text-primary);
         }
 
         .view-all-btn {
           font-size: 0.9rem;
           text-transform: none;
           font-weight: 500;
+          // mat-button color="primary" pulls Material's theme primary, which
+          // reads too dim/low-contrast against this dark card background.
+          // Override with the app's own accent color and force it past the
+          // button's internal .mdc-button__label wrapper (same override
+          // pattern needed elsewhere against Material's static styles).
+          color: var(--app-text-primary) !important;
+
+          ::ng-deep .mdc-button__label {
+            color: var(--app-text-primary) !important;
+          }
         }
       }
     }
@@ -230,7 +241,7 @@
         display: flex;
         gap: 12px;
         padding: 12px 0;
-        border-bottom: 1px solid #f7fafc;
+        border-bottom: 1px solid var(--app-border-color);
         align-items: flex-start;
 
         &:last-child {
@@ -264,7 +275,7 @@
 
           .activity-text {
             font-size: 0.95rem;
-            color: #2d3748;
+            color: var(--app-text-primary);
             word-wrap: break-word;
             line-height: 1.4;
             font-weight: 500;
@@ -272,7 +283,7 @@
 
           .activity-time {
             font-size: 0.8rem;
-            color: #a0aec0;
+            color: var(--app-text-muted);
             display: block;
             margin-top: 2px;
           }
@@ -286,7 +297,7 @@
         display: flex;
         gap: 12px;
         padding: 12px 0;
-        border-bottom: 1px solid #f7fafc;
+        border-bottom: 1px solid var(--app-border-color);
         align-items: center;
 
         &:last-child {
@@ -318,7 +329,7 @@
           .task-title {
             font-size: 0.95rem;
             font-weight: 600;
-            color: #2d3748;
+            color: var(--app-text-primary);
             word-wrap: break-word;
           }
 
@@ -327,11 +338,11 @@
             flex-wrap: wrap;
             gap: 8px;
             font-size: 0.8rem;
-            color: #718096;
+            color: var(--app-text-secondary);
             margin-top: 2px;
 
             .task-project {
-              background: #f7fafc;
+              background: var(--app-hover-bg);
               padding: 2px 10px;
               border-radius: 4px;
               white-space: nowrap;
@@ -365,7 +376,7 @@
             min-width: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--app-border-color);
             display: block; /* Ensure image displays */
           }
         }
@@ -385,7 +396,18 @@
         margin: 0;
         font-size: 1.2rem;
         font-weight: 600;
-        color: #2d3748;
+        color: var(--app-text-primary);
+      }
+
+      .section-actions button {
+        // Same issue as .view-all-btn above: mat-button color="primary" is too
+        // dim on this dark background. Override host + Material's internal
+        // .mdc-button__label wrapper with the theme's primary text color.
+        color: var(--app-text-primary) !important;
+
+        ::ng-deep .mdc-button__label {
+          color: var(--app-text-primary) !important;
+        }
       }
     }
 
@@ -395,15 +417,15 @@
       gap: 20px;
 
       .project-card {
-        background: white;
+        background: var(--app-card-bg);
         border-radius: 12px;
         padding: 20px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-        border: 1px solid rgba(0, 0, 0, 0.04);
+        box-shadow: var(--app-shadow-sm);
+        border: 1px solid var(--app-border-color);
         transition: all 0.3s ease;
 
         &:hover {
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          box-shadow: var(--app-shadow-md);
           transform: translateY(-2px);
         }
 
@@ -425,11 +447,11 @@
             margin: 0;
             font-size: 1.05rem;
             font-weight: 600;
-            color: #2d3748;
+            color: var(--app-text-primary);
           }
 
           .project-menu-btn {
-            color: #a0aec0;
+            color: var(--app-text-muted);
             width: 32px;
             height: 32px;
             min-width: 32px;
@@ -438,7 +460,7 @@
             justify-content: center;
 
             &:hover {
-              color: #2d3748;
+              color: var(--app-text-primary);
             }
 
             mat-icon {
@@ -454,7 +476,7 @@
 
         .project-description {
           font-size: 0.9rem;
-          color: #718096;
+          color: var(--app-text-secondary);
           margin: 0 0 16px 0;
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -470,7 +492,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.85rem;
-            color: #718096;
+            color: var(--app-text-secondary);
             margin-bottom: 4px;
             font-weight: 500;
           }
@@ -478,7 +500,7 @@
           .progress-bar {
             width: 100%;
             height: 6px;
-            background: #edf2f7;
+            background: var(--app-hover-bg);
             border-radius: 3px;
             overflow: hidden;
 
@@ -505,7 +527,7 @@
               min-width: 40px;
               border-radius: 50%;
               object-fit: cover;
-              border: 2px solid white;
+              border: 2px solid var(--app-card-bg);
               margin-right: -10px;
               display: block; /* Ensure image displays */
 
@@ -519,20 +541,20 @@
               height: 36px;
               min-width: 36px;
               border-radius: 50%;
-              background: #edf2f7;
+              background: var(--app-hover-bg);
               display: flex;
               align-items: center;
               justify-content: center;
               font-size: 0.75rem;
               font-weight: 700;
-              color: #718096;
+              color: var(--app-text-secondary);
               margin-left: 4px;
             }
           }
 
           .project-tasks {
             font-size: 0.85rem;
-            color: #a0aec0;
+            color: var(--app-text-muted);
             font-weight: 500;
           }
         }

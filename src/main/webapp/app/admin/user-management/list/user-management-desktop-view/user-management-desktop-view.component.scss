@@ -25,15 +25,26 @@
     opacity: 1;
   }
 
-  .actions-cell {
-    white-space: nowrap;
-  }
-
   .status-btn {
     font-size: 12px;
     min-width: 0;
     padding: 0 12px;
     line-height: 32px;
+
+    // mat-flat-button's default [disabled] styling uses a static
+    // rgba(0,0,0,0.26)-ish text color tuned for light surfaces - on this
+    // dark-themed status-active button (the "Activated" state, disabled when
+    // it's the current user so they can't deactivate themselves) that reads
+    // as near-invisible. Override with the theme's own muted text color and
+    // force it past mat-button's internal .mdc-button__label wrapper.
+    &.status-active:disabled {
+      opacity: 0.85;
+      color: var(--app-text-secondary) !important;
+
+      ::ng-deep .mdc-button__label {
+        color: var(--app-text-secondary) !important;
+      }
+    }
   }
 
   .profile-chip {

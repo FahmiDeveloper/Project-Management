@@ -8,6 +8,23 @@
   border-radius: 8px;
 }
 
+.user-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-right: 8px;
+
+  mat-card-header {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.card-menu-btn {
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
 .user-card-row {
   display: flex;
   align-items: center;
@@ -29,7 +46,7 @@
   align-items: center;
   gap: 4px;
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--app-text-secondary);
 }
 
 .meta-icon {
@@ -45,6 +62,18 @@
   min-width: 0;
   padding: 0 12px;
   line-height: 32px;
+
+  // Same fix as the desktop view: mat-flat-button's default [disabled] text
+  // color is tuned for light surfaces and reads as near-invisible on this
+  // dark-themed status-active button.
+  &.status-active:disabled {
+    opacity: 0.85;
+    color: var(--app-text-secondary) !important;
+
+    ::ng-deep .mdc-button__label {
+      color: var(--app-text-secondary) !important;
+    }
+  }
 }
 
 .profile-chip {

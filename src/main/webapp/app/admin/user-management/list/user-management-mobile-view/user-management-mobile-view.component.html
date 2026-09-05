@@ -1,10 +1,42 @@
 <div class="user-mobile-list">
   @for (user of users() ?? []; track user.id) {
     <mat-card class="user-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>{{ user.login }}</mat-card-title>
-        <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
-      </mat-card-header>
+      <div class="user-card-header">
+        <mat-card-header>
+          <mat-card-title>{{ user.login }}</mat-card-title>
+          <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <button
+          mat-icon-button
+          class="card-menu-btn"
+          [matMenuTriggerFor]="cardMenu"
+          aria-label="User actions"
+          data-cy="entityActionsButton"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <mat-menu #cardMenu="matMenu">
+          <a mat-menu-item [routerLink]="['./', user.login, 'view']" data-cy="entityDetailsButton">
+            <mat-icon class="menu-icon-view">visibility</mat-icon>
+            <span>View</span>
+          </a>
+          <a mat-menu-item [routerLink]="['./', user.login, 'edit']" queryParamsHandling="merge" data-cy="entityEditButton">
+            <mat-icon class="menu-icon-edit">edit</mat-icon>
+            <span>Edit</span>
+          </a>
+          <button
+            mat-menu-item
+            (click)="delete.emit(user)"
+            [disabled]="!currentAccount() || currentAccount()?.login === user.login"
+            data-cy="entityDeleteButton"
+          >
+            <mat-icon class="menu-icon-delete">delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
 
       <mat-card-content>
         <div class="user-card-row">
@@ -52,24 +84,6 @@
           }
         </div>
       </mat-card-content>
-
-      <mat-card-actions align="end">
-        <a mat-icon-button color="primary" [routerLink]="['./', user.login, 'view']" matTooltip="View">
-          <mat-icon>visibility</mat-icon>
-        </a>
-        <a mat-icon-button color="accent" [routerLink]="['./', user.login, 'edit']" queryParamsHandling="merge" matTooltip="Edit">
-          <mat-icon>edit</mat-icon>
-        </a>
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="delete.emit(user)"
-          [disabled]="!currentAccount() || currentAccount()?.login === user.login"
-          matTooltip="Delete"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
-      </mat-card-actions>
     </mat-card>
   }
 </div>
