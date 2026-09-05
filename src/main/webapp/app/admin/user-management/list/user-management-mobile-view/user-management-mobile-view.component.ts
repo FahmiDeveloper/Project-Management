@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { Account } from 'app/core/auth/account.model';
 import { User } from '../../user-management.model';
@@ -16,7 +17,7 @@ import { SetActiveEvent } from '../user-management-desktop-view/user-management-
   selector: 'jhi-user-management-mobile-view',
   templateUrl: './user-management-mobile-view.component.html',
   styleUrls: ['./user-management-mobile-view.component.scss'],
-  imports: [RouterModule, SharedModule, MatCardModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [RouterModule, SharedModule, MatCardModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule],
 })
 export class UserManagementMobileViewComponent {
   @Input({ required: true }) users!: Signal<User[] | null>;

@@ -1,3 +1,15 @@
 ::ng-deep .ng-invalid:not(form) {
   border-left: none !important;
 }
+
+// The Profiles field is a mat-select with multiple options, which renders
+// Angular Material's internal mat-pseudo-checkbox (a component separate from
+// the <mat-checkbox> used for "Activated" above, with its own unrelated
+// border color). That default border is a low-opacity dark tone tuned for
+// light surfaces, so unselected options (e.g. ROLE_ADMIN) are nearly
+// invisible on this dark panel. Match it to the same clearly visible border
+// the Activated checkbox already gets - checked/indeterminate state is left
+// untouched since that already renders correctly.
+::ng-deep .mat-pseudo-checkbox-full:not(.mat-pseudo-checkbox-checked):not(.mat-pseudo-checkbox-indeterminate) {
+  border-color: var(--app-text-secondary) !important;
+}
